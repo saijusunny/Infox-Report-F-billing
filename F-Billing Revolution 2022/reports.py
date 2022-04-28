@@ -7,7 +7,7 @@ from pydoc import describe
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-from turtle import width
+from turtle import clear, width
 from PIL import ImageTk, Image
 import pandas as pd
 from tkinter.messagebox import showinfo
@@ -15,6 +15,7 @@ import tkinter.scrolledtext as scrolledtext
 from tkinter.filedialog import askopenfilename
 import os
 import webbrowser
+from setuptools import Command
 from tkcalendar import Calendar
 from tkcalendar import DateEntry
 from datetime import date
@@ -116,6 +117,7 @@ photo7 = PhotoImage(file = "images/priewok.png")
 photo8 = PhotoImage(file = "images/refresh_E.png")
 photo9 = PhotoImage(file = "images/sum.png")
 photo10 = PhotoImage(file = "images/text-message.png")
+photo11 = PhotoImage(file = "images/export excel.png")
 
 #==============================================++++++++++++++++++++++++++++++++++++++ Saiju
 reportframe=Frame(tab9, relief=GROOVE, bg="#f8f8f2")
@@ -124,12 +126,15 @@ reportframe.pack(side="top", fill=BOTH)
 midFrame=Frame(reportframe, bg="#f5f3f2", height=60)
 midFrame.pack(side="top", fill=X)
 
+midFrame2=Frame(reportframe, bg="#f5f3f2", height=60)
+midFrame2.pack(side="top", fill=X)
+
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(5, 2))
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(0, 5))
 
-refreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command="create")
+refreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
 refreshlebel.pack(side="left")
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(5, 2))
@@ -154,15 +159,280 @@ w.pack(side="left", padx=(0, 5))
 
 lbframe = LabelFrame(midFrame, height=60, width=1500, bg="#f8f8f2")
 lbframe.pack(side="left", padx=10, pady=0)
+
+lbframe2 = LabelFrame(midFrame2, height=60, width=1500, bg="#f8f8f2")
+lbframe2.pack(side="right", padx=100, pady=0)
+
+
+
+# first graph frame
+mainchartframe =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe.pack(side="left", padx=0, pady=0)
+
+#report visable a4sheet
+
+mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe1.pack(side="top", padx=0, pady=0)
+
+mainchartframe2 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe2.pack(side="left", padx=0, pady=0)
+
+mainchartframe3 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe3.pack(side="left", padx=0, pady=0)
+
+mainchartframe4 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe4.pack(side="left", padx=0, pady=0)
+
+mainchartframe5 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe5.pack(side="left", padx=0, pady=0)
+
+mainchartframe6 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe6.pack(side="left", padx=0, pady=0)
+
+mainchartframe7 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe7.pack(side="left", padx=0, pady=0)
+
+mainchartframe8 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe8.pack(side="left", padx=0, pady=0)
+
+mainchartframe9 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe9.pack(side="left", padx=0, pady=0)
+
+mainchartframe10 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe10.pack(side="left", padx=0, pady=0)
+
+mainchartframe11 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe11.pack(side="left", padx=0, pady=0)
+
+mainchartframe12 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe12.pack(side="left", padx=0, pady=0)
+
+mainchartframe13 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe13.pack(side="left", padx=0, pady=0)
+
+mainchartframe14 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe14.pack(side="left", padx=0, pady=0)
+
+mainchartframe15 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe15.pack(side="left", padx=0, pady=0)
+
+mainchartframe16 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe16.pack(side="left", padx=0, pady=0)
+
+mainchartframe17 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe17.pack(side="left", padx=0, pady=0)
+
+mainchartframe18 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe18.pack(side="left", padx=0, pady=0)
+
+mainchartframe19 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe19.pack(side="left", padx=0, pady=0)
+
+mainchartframe20 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+mainchartframe20.pack(side="left", padx=0, pady=0)
+
+
+
+#Drop down Functions----------------------------------------------------------------------------
+def maindropmenu(event):
+  menuvar=menu1.get()
+  if menuvar== "Screen Charts":
+    lbl_invdtt1 =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    
+   
+  elif menuvar== "Invoice Report":
+    midFrame.destroy()
+
+    #left side menu in invoice report
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(5, 2))
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(0, 5))
+
+    rp_refreshlebel = Button(midFrame2,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rp_refreshlebel.pack(side="left")
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(5, 2))
+
+    rp_printlabel = Button(midFrame2,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rp_printlabel.pack(side="left")
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(5, 2))
+
+    rp_saveLabel = Button(midFrame2,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo11,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rp_saveLabel.pack(side="left",)
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(0, 5))
+
+    rp_copyLabel = Button(midFrame2,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rp_copyLabel.pack(side="left")
+    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
+    w.pack(side="left", padx=(0, 5))
+
+    #right side menu---------------------------------------------------------------------------------------------
+    lbl_invdtt = Label(lbframe2, text="Report Type:  ", bg="#f8f8f2")
+    lbl_invdtt.grid(row=1, column=0)
+
+    # menu1 = StringVar()
+    drop=ttk.Combobox(lbframe2, textvariable=menu1, width=30)
+    drop.grid(row=2, column=0, pady=5, padx=(5, 0))
+    drop["values"]=("Screen Charts","Invoice Report","Invoice Report(With Customer)", "Order Report", "Recurring Invoice Report", "Past Due Invoices", "Payment Reports", "Customers List","Customers List(Detailed)","Product/Service List", "Price List", "Products Low Stock Report", "Tax Report(Invoices)", "Tax Report(Orders)", "Sales Report(group by date)", "Invoice Report(Detailed)", "Daily Invoices Report", "Purchase orders Report", "Expenses Report"
+    )
+    drop.current(0)
+    drop.bind("<<ComboboxSelected>>",maindropmenu)
+
+
+
+    lbl_invdtt = Label(lbframe2, text="Category:", bg="#f8f8f2")
+    lbl_invdtt.grid(row=1, column=0, pady=5, padx=(150, 0))
+
+    menu = StringVar()
+    drop1=ttk.Combobox(lbframe2, textvariable=menu)
+    drop1.grid(row=1, column=3, pady=5, padx=(5, 0))
+    drop1["values"]=("Java","Php", "POP")
+    drop1.current(0)
+
+    menu2 = StringVar()
+    drop2=ttk.Combobox(lbframe2, textvariable=menu2,)
+    drop2.grid(row=2, column=3, pady=5, padx=(5, 0))
+    drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
+    drop2.current(0)
+
+      
+    lbl_invdtt =Label(lbframe2, text="From:" , bg="#f8f8f2")
+    lbl_invdtt.grid(row=1, column=4, pady=5, padx=(5, 0))
+
+    expdt=DateEntry(lbframe2)
+    expdt.grid(row=1, column=5)
+
+    lbl_invdtt =Label(lbframe2, text="To:", bg="#f8f8f2")
+    lbl_invdtt.grid(row=2, column=4, pady=5, padx=(5, 0))
+
+    expdt=DateEntry(lbframe2)
+    expdt.grid(row=2, column=5)
+
+    checkvar1 = IntVar()
+    chkbtn1 = Checkbutton(lbframe2, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:invoicegraph())
+    chkbtn1.grid(row=0, column=6, rowspan=2, padx=(0,3))
+
+    checkvar2 = IntVar()
+    chkbtn1 = Checkbutton(lbframe2, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:outstandinggraph())
+    chkbtn1.grid(row=2, column=6,rowspan=2,padx=(25,0))
+
+    checkvar3 = IntVar()
+    chkbtn1 = Checkbutton(lbframe2, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:paidgraph())
+    chkbtn1.grid(row=1, column=7)
+
+#frame for display data to a a4 sheet
+
+    lbl_invdtt2 =Label(mainchartframe1, text="Invoice Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Invoice Report(With Customer)":
+  #   mainchartframe1.destroy()
+  #   lbl_invdtt3 =Label(mainchartframe2, text="Invoice Report(With Customer)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt3.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+  # elif menuvar=="Order Report":
+  #   mainchartframe2.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe3, text="Order Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Recurring Invoice Report":
+  #   mainchartframe3.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe4, text="Recurring Invoice Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Past Due Invoices":
+  #   mainchartframe4.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe5, text="Past Due Invoices", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+
+  
+  # elif menuvar=="Customers List":
+  #   mainchartframe5.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe6, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Customers List(Detailed)":
+  #   mainchartframe6.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe7, text="Customers List(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Product/Service List":
+  #   mainchartframe7.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe8, text="Product/Service List", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Price List":
+  #   mainchartframe8.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe9, text="Price List", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Products Low Stock Report":
+  #   mainchartframe9.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe10, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Tax Report(Invoices)":
+  #   mainchartframe10.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe11, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Tax Report(Orders)":
+  #   mainchartframe11.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe12, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Sales Report(group by date)":
+  #   mainchartframe12.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe13, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  
+  # elif menuvar=="Invoice Report(Detailed)":
+  #   mainchartframe13.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe14, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Daily Invoices Report":
+  #   mainchartframe14.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe15, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  # elif menuvar=="Purchase orders Report":
+  #   mainchartframe15.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe16, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+  # elif menuvar=="Expenses Report":
+  #   mainchartframe16.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe17, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    
+  # elif menuvar=="Payment Reports":
+  #   mainchartframe17.destroy()
+  #   lbl_invdtt1 =Label(mainchartframe18, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+
+  
+  else:
+    pass
+
 lbl_invdtt = Label(lbframe, text="Report Type:  ", bg="#f8f8f2")
 lbl_invdtt.grid(row=1, column=0)
-
 menu1 = StringVar()
 drop=ttk.Combobox(lbframe, textvariable=menu1, width=30)
 drop.grid(row=2, column=0, pady=5, padx=(5, 0))
 drop["values"]=("Screen Charts","Invoice Report","Invoice Report(With Customer)", "Order Report", "Recurring Invoice Report", "Past Due Invoices", "Payment Reports", "Customers List","Customers List(Detailed)","Product/Service List", "Price List", "Products Low Stock Report", "Tax Report(Invoices)", "Tax Report(Orders)", "Sales Report(group by date)", "Invoice Report(Detailed)", "Daily Invoices Report", "Purchase orders Report", "Expenses Report"
 )
 drop.current(0)
+drop.bind("<<ComboboxSelected>>",maindropmenu)
+
+
 
 lbl_invdtt = Label(lbframe, text="Category:", bg="#f8f8f2")
 lbl_invdtt.grid(row=1, column=0, pady=5, padx=(150, 0))
@@ -179,7 +449,7 @@ drop2.grid(row=2, column=3, pady=5, padx=(5, 0))
 drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
 drop2.current(0)
 
-
+  
 lbl_invdtt =Label(lbframe, text="From:" , bg="#f8f8f2")
 lbl_invdtt.grid(row=1, column=4, pady=5, padx=(5, 0))
 
@@ -193,24 +463,89 @@ expdt=DateEntry(lbframe)
 expdt.grid(row=2, column=5)
 
 checkvar1 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2")
+chkbtn1 = Checkbutton(lbframe, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:invoicegraph())
 chkbtn1.grid(row=0, column=6, rowspan=2, padx=(0,3))
 
 checkvar2 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2")
+chkbtn1 = Checkbutton(lbframe, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:outstandinggraph())
 chkbtn1.grid(row=2, column=6,rowspan=2,padx=(25,0))
 
 checkvar3 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2")
+chkbtn1 = Checkbutton(lbframe, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:paidgraph())
 chkbtn1.grid(row=1, column=7)
 
 
-# first graph
-mainchartframe = LabelFrame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe.pack(side="left", padx=0, pady=0)
 
-lbl_invdtt =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
-lbl_invdtt.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+#labels
+
+
+
+
+#first graph
+
+import matplotlib.pyplot as plt
+from pylab import plot, show, xlabel, ylabel
+
+invoice=StringVar()
+outstanding=StringVar()
+paid=StringVar()
+
+x=0
+invoice=1200
+outstanding=22
+paid=14
+
+MF1 = Frame(mainchartframe )
+MF1.grid(row=2, column=1, pady=5, padx=(5, 0))
+
+#graph function
+
+#invoice Grpah
+def invoicegraph():
+
+  global invoice
+  global x
+  y=float(invoice)
+  x+=1
+  plt.bar(x,y, label="Invoice", color="orange")
+  plt.legend()
+  plt.xlabel("x-axis")
+  plt.ylabel("y-label")
+  plt.show()
+  # chart1= label(mainchartframe,plt.show())
+  # chart1.grid(row=2, column=1)
+
+  
+
+#Out standing graph
+def outstandinggraph():
+  global outstanding
+  global x
+  y=float(outstanding)
+  x+=1
+  plt.bar(x,y, label="Outstanding", color="blue")
+  plt.legend()
+  plt.xlabel("x-axis")
+  plt.ylabel("y-label")
+  plt.show()
+
+#paid graph
+def paidgraph():
+  global paid
+  global x
+  y=float(paid)
+  x+=1
+  plt.bar(x,y, label="Paid", color="green")
+  plt.legend()
+  plt.xlabel("x-axis")
+  plt.ylabel("y-label")
+  plt.show()
+
+
+
+#secon graph
+
 
   
 root.mainloop()
