@@ -160,10 +160,6 @@ w.pack(side="left", padx=(0, 5))
 lbframe = LabelFrame(midFrame, height=60, width=1500, bg="#f8f8f2")
 lbframe.pack(side="left", padx=10, pady=0)
 
-lbframe2 = LabelFrame(midFrame2, height=60, width=1500, bg="#f8f8f2")
-lbframe2.pack(side="right", padx=100, pady=0)
-
-
 
 # first graph frame
 mainchartframe =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
@@ -239,183 +235,392 @@ def maindropmenu(event):
   if menuvar== "Screen Charts":
     lbl_invdtt1 =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-    
+
    
   elif menuvar== "Invoice Report":
-    midFrame.destroy()
-
-    #left side menu in invoice report
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(5, 2))
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(0, 5))
-
-    rp_refreshlebel = Button(midFrame2,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
-    rp_refreshlebel.pack(side="left")
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(5, 2))
-
-    rp_printlabel = Button(midFrame2,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
-    rp_printlabel.pack(side="left")
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(5, 2))
-
-    rp_saveLabel = Button(midFrame2,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo11,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
-    rp_saveLabel.pack(side="left",)
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(0, 5))
-
-    rp_copyLabel = Button(midFrame2,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
-    rp_copyLabel.pack(side="left")
-    w = Canvas(midFrame2, width=1, height=65, bg="#b3b3b3", bd=0)
-    w.pack(side="left", padx=(0, 5))
-
-    #right side menu---------------------------------------------------------------------------------------------
-    lbl_invdtt = Label(lbframe2, text="Report Type:  ", bg="#f8f8f2")
-    lbl_invdtt.grid(row=1, column=0)
-
-    # menu1 = StringVar()
-    drop=ttk.Combobox(lbframe2, textvariable=menu1, width=30)
-    drop.grid(row=2, column=0, pady=5, padx=(5, 0))
-    drop["values"]=("Screen Charts","Invoice Report","Invoice Report(With Customer)", "Order Report", "Recurring Invoice Report", "Past Due Invoices", "Payment Reports", "Customers List","Customers List(Detailed)","Product/Service List", "Price List", "Products Low Stock Report", "Tax Report(Invoices)", "Tax Report(Orders)", "Sales Report(group by date)", "Invoice Report(Detailed)", "Daily Invoices Report", "Purchase orders Report", "Expenses Report"
-    )
-    drop.current(0)
-    drop.bind("<<ComboboxSelected>>",maindropmenu)
-
-
-
-    lbl_invdtt = Label(lbframe2, text="Category:", bg="#f8f8f2")
-    lbl_invdtt.grid(row=1, column=0, pady=5, padx=(150, 0))
-
-    menu = StringVar()
-    drop1=ttk.Combobox(lbframe2, textvariable=menu)
-    drop1.grid(row=1, column=3, pady=5, padx=(5, 0))
-    drop1["values"]=("Java","Php", "POP")
-    drop1.current(0)
-
-    menu2 = StringVar()
-    drop2=ttk.Combobox(lbframe2, textvariable=menu2,)
-    drop2.grid(row=2, column=3, pady=5, padx=(5, 0))
-    drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
-    drop2.current(0)
-
-      
-    lbl_invdtt =Label(lbframe2, text="From:" , bg="#f8f8f2")
-    lbl_invdtt.grid(row=1, column=4, pady=5, padx=(5, 0))
-
-    expdt=DateEntry(lbframe2)
-    expdt.grid(row=1, column=5)
-
-    lbl_invdtt =Label(lbframe2, text="To:", bg="#f8f8f2")
-    lbl_invdtt.grid(row=2, column=4, pady=5, padx=(5, 0))
-
-    expdt=DateEntry(lbframe2)
-    expdt.grid(row=2, column=5)
-
-    checkvar1 = IntVar()
-    chkbtn1 = Checkbutton(lbframe2, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:invoicegraph())
-    chkbtn1.grid(row=0, column=6, rowspan=2, padx=(0,3))
-
-    checkvar2 = IntVar()
-    chkbtn1 = Checkbutton(lbframe2, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:outstandinggraph())
-    chkbtn1.grid(row=2, column=6,rowspan=2,padx=(25,0))
-
-    checkvar3 = IntVar()
-    chkbtn1 = Checkbutton(lbframe2, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:paidgraph())
-    chkbtn1.grid(row=1, column=7)
-
 #frame for display data to a a4 sheet
 
-    lbl_invdtt2 =Label(mainchartframe1, text="Invoice Report", bg="#f8f8f2" , font=("arial", 16))
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+        #--------------------------------check box-------------------------------------
+    rpcheckvar1 = IntVar()
+    rpchkbtn1 = Checkbutton(lbframe, text = "Paid", variable = rpcheckvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1.place(x=483,y=2)
+
+    rpcheckvar2 = IntVar()
+    rpchkbtn1 = Checkbutton(lbframe, text = "Void", variable = rpcheckvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1.place(x=483,y=40, )
+
+    rpcheckvar3 = IntVar()
+    rpchkbtn1 = Checkbutton(lbframe, text = "Unpaid", variable = rpcheckvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
+    rpchkbtn1.place(x=570,y=2)
+
+    #------------------------------------------Date---------------------
+    rpmenu2 = StringVar()
+    rpdrop2=ttk.Combobox(lbframe, textvariable=rpmenu2)
+    rpdrop2["values"]=("Month to date","Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2.current(0)
+    rpdrop2.place(x=212,y=48)
+
+
+
+    lbl_invdtt2 =Label(mainchartframe, text="Invoice Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.grid(row=0, column=1, pady=5, padx=(5, 0))
   
-  # elif menuvar=="Invoice Report(With Customer)":
-  #   mainchartframe1.destroy()
-  #   lbl_invdtt3 =Label(mainchartframe2, text="Invoice Report(With Customer)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt3.grid(row=0, column=1, pady=5, padx=(5, 0))
+  elif menuvar=="Invoice Report(With Customer)":
 
-  # elif menuvar=="Order Report":
-  #   mainchartframe2.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe3, text="Order Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    #frame for display data to a a4 sheet
+
+    rprefreshlebel_cst = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel_cst.place(x=22,y=12)
+
+
+    rpprintlabel_cst = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel_cst.place(x=95,y=12)
   
-  # elif menuvar=="Recurring Invoice Report":
-  #   mainchartframe3.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe4, text="Recurring Invoice Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Past Due Invoices":
-  #   mainchartframe4.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe5, text="Past Due Invoices", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    rpsaveLabel_cst = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel_cst.place(x=168,y=12)
+
+    rpcopyLabel_cst = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel_cst.place(x=240,y=12)
+
+    #--------------------------------check box-------------------------------------
+    rpcheckvar1_cst = IntVar()
+    rpchkbtn1_cst = Checkbutton(lbframe, text = "Paid", variable = rpcheckvar1_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_cst.place(x=483,y=2)
+
+    rpcheckvar2_cst = IntVar()
+    rpchkbtn1_cst = Checkbutton(lbframe, text = "Void", variable = rpcheckvar2_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_cst.place(x=483,y=40)
+
+    rpcheckvar3_cst = IntVar()
+    rpchkbtn1_cst = Checkbutton(lbframe, text = "Unpaid", variable = rpcheckvar3_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
+    rpchkbtn1_cst.place(x=570,y=2)
+
+    #----------------------------------------date----------------------
+    rpmenu2_cst = StringVar()
+    rpdrop2_cst=ttk.Combobox(lbframe, textvariable=rpmenu2_cst,)
+    rpdrop2_cst.grid(row=2, column=3, pady=5, padx=(5, 0))
+    rpdrop2_cst["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_cst.place(x=212,y=48)
+    rpdrop2_cst.current(0)
+
+
+    lbl_invdtt3 =Label(mainchartframe2, text="Invoice Report(With Customer)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt3.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+  elif menuvar=="Order Report":
+    #frame for display data to a a4 sheet
+
+
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
   
 
-  
-  # elif menuvar=="Customers List":
-  #   mainchartframe5.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe6, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Customers List(Detailed)":
-  #   mainchartframe6.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe7, text="Customers List(Detailed)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Product/Service List":
-  #   mainchartframe7.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe8, text="Product/Service List", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Price List":
-  #   mainchartframe8.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe9, text="Price List", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Products Low Stock Report":
-  #   mainchartframe9.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe10, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Tax Report(Invoices)":
-  #   mainchartframe10.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe11, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Tax Report(Orders)":
-  #   mainchartframe11.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe12, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Sales Report(group by date)":
-  #   mainchartframe12.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe13, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  
-  # elif menuvar=="Invoice Report(Detailed)":
-  #   mainchartframe13.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe14, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Daily Invoices Report":
-  #   mainchartframe14.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe15, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-  
-  # elif menuvar=="Purchase orders Report":
-  #   mainchartframe15.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe16, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
 
-  # elif menuvar=="Expenses Report":
-  #   mainchartframe16.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe17, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    w = Canvas(midFrame, width=170, height=75, bg="#f8f8f2")
+    w.place(x=820,y=2)
+
+
+    lbl_invdtt1 =Label(mainchartframe3, text="Order Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Recurring Invoice Report":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe4, text="Recurring Invoice Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
     
-  # elif menuvar=="Payment Reports":
-  #   mainchartframe17.destroy()
-  #   lbl_invdtt1 =Label(mainchartframe18, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    recuw1 = Canvas(midFrame, width=450, height=75, bg="#f8f8f2")
+    recuw1.place(x=530,y=2)
+    
+    recuw2 = Canvas(midFrame, width=100, height=20, bg="#f8f8f2")
+    recuw2.place(x=450,y=5 ) 
+  
+  elif menuvar=="Past Due Invoices":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+    
+    lbl_invdtt1 =Label(mainchartframe5, text="Past Due Invoices", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+
+  
+  elif menuvar=="Customers List":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+    lbl_invdtt1 =Label(mainchartframe6, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Customers List(Detailed)":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+    lbl_invdtt1 =Label(mainchartframe7, text="Customers List(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Product/Service List":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12) 
+    lbl_invdtt1 =Label(mainchartframe8, text="Product/Service List", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Price List":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe9, text="Price List", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Products Low Stock Report":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe10, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Tax Report(Invoices)":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe11, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Tax Report(Orders)":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe12, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Sales Report(group by date)":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe13, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  
+  elif menuvar=="Invoice Report(Detailed)":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe14, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Daily Invoices Report":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe15, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  
+  elif menuvar=="Purchase orders Report":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe16, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+  elif menuvar=="Expenses Report":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe17, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    
+  elif menuvar=="Payment Reports":
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel.place(x=22,y=12)
+
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel.place(x=95,y=12)
+  
+
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel.place(x=168,y=12)
+
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel.place(x=240,y=12)
+
+    lbl_invdtt1 =Label(mainchartframe18, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
 
   
@@ -423,7 +628,7 @@ def maindropmenu(event):
     pass
 
 lbl_invdtt = Label(lbframe, text="Report Type:  ", bg="#f8f8f2")
-lbl_invdtt.grid(row=1, column=0)
+lbl_invdtt.place(x=8, y=10)
 menu1 = StringVar()
 drop=ttk.Combobox(lbframe, textvariable=menu1, width=30)
 drop.grid(row=2, column=0, pady=5, padx=(5, 0))
