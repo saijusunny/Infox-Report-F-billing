@@ -232,12 +232,12 @@ mainchartframe20.pack(side="left", padx=0, pady=0)
 #Drop down Functions----------------------------------------------------------------------------
 def maindropmenu(event):
   menuvar=menu1.get()
-  if menuvar== "Screen Charts":
-    lbl_invdtt1 =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+  # if menuvar== "Screen Charts":
+  #   lbl_invdtt1 =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
+  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
 
    
-  elif menuvar== "Invoice Report":
+  if menuvar== "Invoice Report":
 #frame for display data to a a4 sheet
 
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -254,26 +254,52 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
-        #--------------------------------check box-------------------------------------
-    rpcheckvar1 = IntVar()
-    rpchkbtn1 = Checkbutton(lbframe, text = "Paid", variable = rpcheckvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
-    rpchkbtn1.place(x=483,y=2)
+    
+    iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    iruw1.place(x=415,y=9)
+    iruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    iruw2.place(x=530,y=9)
+    lbl_ir =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_ir.place(x=676,y=10)
 
-    rpcheckvar2 = IntVar()
-    rpchkbtn1 = Checkbutton(lbframe, text = "Void", variable = rpcheckvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
-    rpchkbtn1.place(x=483,y=40, )
+    exir=DateEntry(midFrame)
+    exir.place(x=721,y=10)
 
-    rpcheckvar3 = IntVar()
-    rpchkbtn1 = Checkbutton(lbframe, text = "Unpaid", variable = rpcheckvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
-    rpchkbtn1.place(x=570,y=2)
+    lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_ir.place(x=690,y=50)
 
-    #------------------------------------------Date---------------------
-    rpmenu2 = StringVar()
-    rpdrop2=ttk.Combobox(lbframe, textvariable=rpmenu2)
-    rpdrop2["values"]=("Month to date","Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
-    rpdrop2.current(0)
-    rpdrop2.place(x=212,y=48)
+    exir=DateEntry(midFrame)
+    exir.place(x=721,y=50)
 
+    lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_ir.place(x=470,y=10)
+
+    menuir = StringVar()
+    drop1ir=ttk.Combobox(midFrame, textvariable=menuir)
+    drop1ir.place(x=530,y=10)
+    drop1ir["values"]=("Java","Php", "POP")
+    drop1ir.current(0)
+
+    rpmenu2_ir = StringVar()
+    rpdrop2_ir=ttk.Combobox(midFrame, textvariable=rpmenu2_ir,)
+    rpdrop2_ir["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_ir.place(x=530,y=50)
+    rpdrop2_ir.current(0)
+
+
+
+    #--------------------------------check box-------------------------------------
+    rpcheckvar1_ir = IntVar()
+    rpchkbtn1_ir= Checkbutton(midFrame, text = "Paid", variable = rpcheckvar1_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_ir.place(x=815,y=2)
+
+    rpcheckvar2_ir = IntVar()
+    rpchkbtn1_ir = Checkbutton(midFrame, text = "Void", variable = rpcheckvar2_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_ir.place(x=815,y=40)
+
+    rpcheckvar3_ir = IntVar()
+    rpchkbtn1_ir= Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
+    rpchkbtn1_ir.place(x=883,y=2)
 
 
     lbl_invdtt2 =Label(mainchartframe, text="Invoice Report", bg="#f8f8f2" , font=("arial", 16))
@@ -296,30 +322,51 @@ def maindropmenu(event):
     rpcopyLabel_cst = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel_cst.place(x=240,y=12)
 
+    irwcuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    irwcuw1.place(x=415,y=9)
+    irwcuw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    irwcuw2.place(x=530,y=9)
+    lbl_irwc =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_irwc.place(x=676,y=10)
+
+    exirwc=DateEntry(midFrame)
+    exirwc.place(x=721,y=10)
+
+    lbl_irwc =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_irwc.place(x=690,y=50)
+
+    exirwc=DateEntry(midFrame)
+    exirwc.place(x=721,y=50)
+
+    lbl_irwc = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_irwc.place(x=470,y=10)
+
+    menuirwc = StringVar()
+    drop1irwc=ttk.Combobox(midFrame, textvariable=menuirwc)
+    drop1irwc.place(x=530,y=10)
+    drop1irwc["values"]=("Java","Php", "POP")
+    drop1irwc.current(0)
+
+    rpmenu2_irwc = StringVar()
+    rpdrop2_irwc=ttk.Combobox(midFrame, textvariable=rpmenu2_irwc,)
+    rpdrop2_irwc["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_irwc.place(x=530,y=50)
+    rpdrop2_irwc.current(0)
+
+
+
     #--------------------------------check box-------------------------------------
-    rpcheckvar1_cst = IntVar()
-    rpchkbtn1_cst = Checkbutton(lbframe, text = "Paid", variable = rpcheckvar1_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
-    rpchkbtn1_cst.place(x=483,y=2)
+    rpcheckvar1_irwc = IntVar()
+    rpchkbtn1_irwc= Checkbutton(midFrame, text = "Paid", variable = rpcheckvar1_irwc, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_irwc.place(x=815,y=2)
 
-    rpcheckvar2_cst = IntVar()
-    rpchkbtn1_cst = Checkbutton(lbframe, text = "Void", variable = rpcheckvar2_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
-    rpchkbtn1_cst.place(x=483,y=40)
+    rpcheckvar2_irwc = IntVar()
+    rpchkbtn1_irwc = Checkbutton(midFrame, text = "Void", variable = rpcheckvar2_irwc, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_irwc.place(x=815,y=40)
 
-    rpcheckvar3_cst = IntVar()
-    rpchkbtn1_cst = Checkbutton(lbframe, text = "Unpaid", variable = rpcheckvar3_cst, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
-    rpchkbtn1_cst.place(x=570,y=2)
-
-    #----------------------------------------date----------------------
-    rpmenu2_cst = StringVar()
-    rpdrop2_cst=ttk.Combobox(lbframe, textvariable=rpmenu2_cst,)
-    rpdrop2_cst.grid(row=2, column=3, pady=5, padx=(5, 0))
-    rpdrop2_cst["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
-    rpdrop2_cst.place(x=212,y=48)
-    rpdrop2_cst.current(0)
-
-
-    lbl_invdtt3 =Label(mainchartframe2, text="Invoice Report(With Customer)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt3.grid(row=0, column=1, pady=5, padx=(5, 0))
+    rpcheckvar3_irwc = IntVar()
+    rpchkbtn1_irwc = Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_irwc, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
+    rpchkbtn1_irwc.place(x=883,y=2)
 
   elif menuvar=="Order Report":
     #frame for display data to a a4 sheet
@@ -338,9 +385,39 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+    
+    oruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    oruw1.place(x=415,y=9)
+    oruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    oruw2.place(x=530,y=9)
 
-    w = Canvas(midFrame, width=170, height=75, bg="#f8f8f2")
-    w.place(x=820,y=2)
+    lbl_or =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_or.place(x=676,y=10)
+
+    exor=DateEntry(midFrame)
+    exor.place(x=721,y=10)
+
+    lbl_or =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_or.place(x=690,y=50)
+
+    exor=DateEntry(midFrame)
+    exor.place(x=721,y=50)
+
+    lbl_or = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_or.place(x=470,y=10)
+
+    menuor = StringVar()
+    drop1or=ttk.Combobox(midFrame, textvariable=menuor)
+    drop1or.place(x=530,y=10)
+    drop1or["values"]=("Java","Php", "POP")
+    drop1or.current(0)
+
+    rpmenu2_or = StringVar()
+    rpdrop2_or=ttk.Combobox(midFrame, textvariable=rpmenu2_or,)
+    rpdrop2_or["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_or.place(x=530,y=50)
+    rpdrop2_or.current(0)
+    
 
 
     lbl_invdtt1 =Label(mainchartframe3, text="Order Report", bg="#f8f8f2" , font=("arial", 16))
@@ -364,26 +441,42 @@ def maindropmenu(event):
     lbl_invdtt1 =Label(mainchartframe4, text="Recurring Invoice Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
     
-    recuw1 = Canvas(midFrame, width=450, height=75, bg="#f8f8f2")
-    recuw1.place(x=530,y=2)
-    
-    recuw2 = Canvas(midFrame, width=100, height=20, bg="#f8f8f2")
-    recuw2.place(x=450,y=5 ) 
+    pruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    pruw1.place(x=415,y=9)
+    pruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    pruw2.place(x=530,y=9)
   
   elif menuvar=="Past Due Invoices":
-    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
-    rprefreshlebel.place(x=22,y=12)
+
+    rprefreshlebelpdi = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebelpdi.place(x=22,y=12)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
-    rpprintlabel.place(x=95,y=12)
+    rpprintlabelpdi = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabelpdi.place(x=95,y=12)
   
 
-    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
-    rpsaveLabel.place(x=168,y=12)
+    rpsaveLabelpdi = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabelpdi.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
-    rpcopyLabel.place(x=240,y=12)
+    rpcopyLabelpdi = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabelpdi.place(x=240,y=12)
+    
+    pdiuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    pdiuw1.place(x=415,y=9)
+    pdiuw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    pdiuw2.place(x=530,y=9)
+
+
+    lbl_pdi = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_pdi.place(x=530,y=9)
+    
+    menupdi = StringVar()
+    drop1pdi=ttk.Combobox(midFrame, textvariable=menupdi, width=30)
+    drop1pdi.place(x=530,y=50)
+    drop1pdi["values"]=("Java","Php", "POP")
+    drop1pdi.current(0)
+
     
     lbl_invdtt1 =Label(mainchartframe5, text="Past Due Invoices", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -404,6 +497,33 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+
+    pdiuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    pdiuw1.place(x=415,y=9)
+
+    cluw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    cluw2.place(x=530,y=9)
+
+
+    lbl_cl = Label(midFrame, text=" Select Customer Category:", bg="#f8f8f2")
+    lbl_cl.place(x=530,y=9)
+    
+    menucl = StringVar()
+    drop1cl=ttk.Combobox(midFrame, textvariable=menucl, width=30)
+    drop1cl.place(x=530,y=50)
+    drop1cl["values"]=("All Customers ","Default")
+    drop1cl.current(0)
+
+    rpcheckvar1_cl = IntVar()
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_cl.place(x=725,y=2)
+
+    rpcheckvar2_cl = IntVar()
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_cl.place(x=730,y=40)
+
+
     lbl_invdtt1 =Label(mainchartframe6, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
@@ -421,6 +541,28 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+    cluw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    cluw2.place(x=530,y=9)
+
+
+    lbl_cl = Label(midFrame, text=" Select Customer Category:", bg="#f8f8f2")
+    lbl_cl.place(x=530,y=9)
+    
+    menucl = StringVar()
+    drop1cl=ttk.Combobox(midFrame, textvariable=menucl, width=30)
+    drop1cl.place(x=530,y=50)
+    drop1cl["values"]=("All Customers ","Default")
+    drop1cl.current(0)
+
+    rpcheckvar1_cl = IntVar()
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_cl.place(x=725,y=2)
+
+    rpcheckvar2_cl = IntVar()
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_cl.place(x=730,y=40)
+
     lbl_invdtt1 =Label(mainchartframe7, text="Customers List(Detailed)", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
@@ -438,6 +580,32 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12) 
+
+    psluw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    psluw1.place(x=415,y=9)
+
+    psluw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    psluw2.place(x=530,y=9)
+
+
+    lbl_psl = Label(midFrame, text=" Select Product Category:", bg="#f8f8f2")
+    lbl_psl.place(x=530,y=9)
+    
+    menupsl = StringVar()
+    drop1psl=ttk.Combobox(midFrame, textvariable=menupsl, width=30)
+    drop1psl.place(x=530,y=50)
+    drop1psl["values"]=("All product and Services ", "All products", "All Service","Default")
+    drop1psl.current(0)
+
+    rpcheckvar1_psl = IntVar()
+    rpchkbtn1_psl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_psl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_psl.place(x=725,y=2)
+
+    rpcheckvar2_psl = IntVar()
+    rpchkbtn1_psl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_psl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_psl.place(x=730,y=40)
+
+
     lbl_invdtt1 =Label(mainchartframe8, text="Product/Service List", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
@@ -455,6 +623,31 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+    pluw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    pluw1.place(x=415,y=9)
+
+    pluw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    pluw2.place(x=530,y=9)
+
+
+    lbl_pl = Label(midFrame, text=" Select Product Category:", bg="#f8f8f2")
+    lbl_pl.place(x=530,y=9)
+    
+    menupl = StringVar()
+    drop1pl=ttk.Combobox(midFrame, textvariable=menupl, width=30)
+    drop1pl.place(x=530,y=50)
+    drop1pl["values"]=("All product and Services ", "All products", "All Service","Default")
+    drop1pl.current(0)
+
+    rpcheckvar1_pl = IntVar()
+    rpchkbtn1_pl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_pl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_pl.place(x=725,y=2)
+
+    rpcheckvar2_pl = IntVar()
+    rpchkbtn1_pl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_pl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_pl.place(x=730,y=40)
+
 
     lbl_invdtt1 =Label(mainchartframe9, text="Price List", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -474,6 +667,21 @@ def maindropmenu(event):
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
 
+    plruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    plruw1.place(x=415,y=9)
+
+    plruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    plruw2.place(x=530,y=9)
+
+
+    rpcheckvar1_plr = IntVar()
+    rpchkbtn1_plr = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_plr, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_plr.place(x=530,y=2)
+
+    rpcheckvar2_plr = IntVar()
+    rpchkbtn1_plr = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_plr, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_plr.place(x=535,y=40)
+
     lbl_invdtt1 =Label(mainchartframe10, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
@@ -491,6 +699,52 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+    triuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    triuw1.place(x=415,y=9)
+
+    triuw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    triuw2.place(x=530,y=9)
+
+    lbl_tri =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_tri.place(x=676,y=10)
+
+    extri=DateEntry(midFrame)
+    extri.place(x=721,y=10)
+
+    lbl_tri =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_tri.place(x=690,y=50)
+
+    extri=DateEntry(midFrame)
+    extri.place(x=721,y=50)
+
+    lbl_tri = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_tri.place(x=470,y=10)
+
+    menutri = StringVar()
+    drop1tri=ttk.Combobox(midFrame, textvariable=menutri)
+    drop1tri.place(x=530,y=10)
+    drop1tri["values"]=("Java","Php", "POP")
+    drop1tri.current(0)
+
+    rpmenu2_tri = StringVar()
+    rpdrop2_tri=ttk.Combobox(midFrame, textvariable=rpmenu2_tri,)
+    rpdrop2_tri["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_tri.place(x=530,y=50)
+    rpdrop2_tri.current(0)
+      
+
+    rpcheckvar1_tri = IntVar()
+    rpchkbtn1_tri= Checkbutton(midFrame, text = "Paid", variable = rpcheckvar1_tri, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_tri.place(x=815,y=2)
+
+    rpcheckvar2_tri = IntVar()
+    rpchkbtn1_tri = Checkbutton(midFrame, text = "Void", variable = rpcheckvar2_tri, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_tri.place(x=815,y=40)
+
+    rpcheckvar3_tri = IntVar()
+    rpchkbtn1_tri = Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_tri, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
+    rpchkbtn1_tri.place(x=883,y=2)
 
     lbl_invdtt1 =Label(mainchartframe11, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -510,6 +764,40 @@ def maindropmenu(event):
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
 
+
+    trouw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    trouw1.place(x=415,y=9)
+
+    trouw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    trouw2.place(x=530,y=9)
+
+    lbl_tro =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_tro.place(x=676,y=10)
+
+    extro=DateEntry(midFrame)
+    extro.place(x=721,y=10)
+
+    lbl_tro =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_tro.place(x=690,y=50)
+
+    extro=DateEntry(midFrame)
+    extro.place(x=721,y=50)
+
+    lbl_tro = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_tro.place(x=470,y=10)
+
+    menutro = StringVar()
+    drop1tro=ttk.Combobox(midFrame, textvariable=menutro)
+    drop1tro.place(x=530,y=10)
+    drop1tro["values"]=("Java","Php", "POP")
+    drop1tro.current(0)
+
+    rpmenu2_tro = StringVar()
+    rpdrop2_tro=ttk.Combobox(midFrame, textvariable=rpmenu2_tro,)
+    rpdrop2_tro["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_tro.place(x=530,y=50)
+    rpdrop2_tro.current(0)
+      
     lbl_invdtt1 =Label(mainchartframe12, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
   
@@ -527,6 +815,40 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+    sruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    sruw1.place(x=415,y=9)
+
+    sruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    sruw2.place(x=530,y=9)
+
+    lbl_sr =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_sr.place(x=728,y=10)
+
+    exsr=DateEntry(midFrame)
+    exsr.place(x=773,y=10)
+
+    lbl_sr =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_sr.place(x=743,y=50)
+
+    exsr=DateEntry(midFrame)
+    exsr.place(x=773,y=50)
+
+    lbl_sr = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_sr.place(x=470,y=10)
+
+    menusr = StringVar()
+    drop1sr=ttk.Combobox(midFrame, textvariable=menu, width=30)
+    drop1sr.place(x=530,y=10)
+    drop1sr["values"]=("Java","Php", "POP")
+    drop1sr.current(0)
+
+    rpmenu2_sr = StringVar()
+    rpdrop2_sr=ttk.Combobox(midFrame, textvariable=rpmenu2_sr,width=30)
+    rpdrop2_sr["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_sr.place(x=530,y=50)
+    rpdrop2_sr.current(0)
+
 
     lbl_invdtt1 =Label(mainchartframe13, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -546,6 +868,40 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+    plruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    plruw1.place(x=415,y=9)
+
+    irduw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    irduw2.place(x=530,y=9)
+
+    lbl_ird =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_ird.place(x=728,y=10)
+
+    exird=DateEntry(midFrame)
+    exird.place(x=773,y=10)
+
+    lbl_ird =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_ird.place(x=743,y=50)
+
+    exird=DateEntry(midFrame)
+    exird.place(x=773,y=50)
+
+    lbl_ird = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_ird.place(x=470,y=10)
+
+    menuird = StringVar()
+    drop1ird=ttk.Combobox(midFrame, textvariable=menuird, width=30)
+    drop1ird.place(x=530,y=10)
+    drop1ird["values"]=("Java","Php", "POP")
+    drop1ird.current(0) 
+
+    rpmenu2_ird = StringVar()
+    rpdrop2_ird=ttk.Combobox(midFrame, textvariable=rpmenu2_ird,width=30)
+    rpdrop2_ird["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_ird.place(x=530,y=50)
+    rpdrop2_ird.current(0)
+
+
 
     lbl_invdtt1 =Label(mainchartframe14, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -563,7 +919,20 @@ def maindropmenu(event):
     rpsaveLabel.place(x=168,y=12)
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
-    rpcopyLabel.place(x=240,y=12)
+    rpcopyLabel.place(x=240,y=12)\
+
+    diruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    diruw1.place(x=415,y=9)
+
+    diruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    diruw2.place(x=530,y=9)
+
+
+    lbl_dir = Label(midFrame, text=" Day:", bg="#f8f8f2")
+    lbl_dir.place(x=526,y=9)
+    
+    exidir=DateEntry(midFrame)
+    exidir.place(x=530,y=50)
 
     lbl_invdtt1 =Label(mainchartframe15, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -583,6 +952,49 @@ def maindropmenu(event):
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
 
+    poruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    poruw1.place(x=415,y=9)
+
+    poruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    poruw2.place(x=530,y=9)
+
+    lbl_por =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_por.place(x=676,y=10)
+
+    expor=DateEntry(midFrame)
+    expor.place(x=721,y=10)
+
+    lbl_por =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_por.place(x=690,y=50)
+
+    expor=DateEntry(midFrame)
+    expor.place(x=721,y=50)
+
+    lbl_por = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_por.place(x=470,y=10)
+
+    menupor = StringVar()
+    drop1por=ttk.Combobox(midFrame, textvariable=menupor)
+    drop1por.place(x=530,y=10)
+    drop1por["values"]=("Java","Php", "POP")
+    drop1por.current(0)
+
+    rpmenu2_por = StringVar()
+    rpdrop2_por=ttk.Combobox(midFrame, textvariable=rpmenu2_por,)
+    rpdrop2_por["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_por.place(x=530,y=50)
+    rpdrop2_por.current(0)
+      
+
+    rpcheckvar1_por = IntVar()
+    rpchkbtn1_por= Checkbutton(midFrame, text = "Complete", variable = rpcheckvar1_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_por.place(x=815,y=2)
+
+    rpcheckvar2_por = IntVar()
+    rpchkbtn1_por = Checkbutton(midFrame, text = "Draft", variable = rpcheckvar2_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_por.place(x=815,y=40)
+
+
     lbl_invdtt1 =Label(mainchartframe16, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
 
@@ -600,6 +1012,46 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+    sruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    sruw1.place(x=415,y=9)
+
+    sruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    sruw2.place(x=530,y=9)
+
+    lbl_er =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_er.place(x=728,y=10)
+
+    exer=DateEntry(midFrame)
+    exsr.place(x=773,y=10)
+
+    lbl_er =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_er.place(x=743,y=50)
+
+    exer=DateEntry(midFrame)
+    exer.place(x=773,y=50)
+
+    lbl_er = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_er.place(x=470,y=10)
+
+    menuer = StringVar()
+    drop1er=ttk.Combobox(midFrame, textvariable=menuer, width=30)
+    drop1er.place(x=530,y=10)
+    drop1er["values"]=("Java","Php", "POP")
+    drop1er.current(0)
+
+    rpmenu2_er = StringVar()
+    rpdrop2_er=ttk.Combobox(midFrame, textvariable=rpmenu2_er,width=30)
+    rpdrop2_er["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    rpdrop2_er.place(x=530,y=50)
+    rpdrop2_er.current(0)
+
+    rpcheckvar1_er = IntVar()
+    rpchkbtn1_er= Checkbutton(midFrame, text = "Invoiced", variable = rpcheckvar1_er, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_er.place(x=868,y=2)
+
+    rpcheckvar2_er = IntVar()
+    rpchkbtn1_er = Checkbutton(midFrame, text = "Rebilable", variable = rpcheckvar2_er, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_er.place(x=868,y=40)
 
     lbl_invdtt1 =Label(mainchartframe17, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
@@ -618,6 +1070,35 @@ def maindropmenu(event):
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
+
+    pruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
+    pruw1.place(x=415,y=9)
+    pruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
+    pruw2.place(x=530,y=9)
+
+
+    lbl_pr = Label(midFrame, text="Category:", bg="#f8f8f2")
+    lbl_pr.place(x=530,y=9)
+    
+    menupr = StringVar()
+    drop1pr=ttk.Combobox(midFrame, textvariable=menupr, width=30)
+    drop1pr.place(x=530,y=50)
+    drop1pr["values"]=("Java","Php", "POP")
+    drop1pr.current(0)
+
+    lbl_pr =Label(midFrame, text="From:" , bg="#f8f8f2")
+    lbl_pr.place(x=725,y=10)
+
+    expr=DateEntry(midFrame)
+    expr.place(x=770,y=10)
+
+    lbl_pr =Label(midFrame, text="To:", bg="#f8f8f2")
+    lbl_pr.place(x=740,y=50)
+
+    expr=DateEntry(midFrame)
+    expr.place(x=770,y=50)
+
+
 
     lbl_invdtt1 =Label(mainchartframe18, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
