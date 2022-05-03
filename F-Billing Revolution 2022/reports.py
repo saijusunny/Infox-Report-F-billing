@@ -24,6 +24,9 @@ import subprocess
 import mysql.connector
 import io
 
+
+
+from tkPDFViewer import tkPDFViewer as pdf# For pdf view
 def reset():
   global root
   root.destroy()
@@ -120,7 +123,7 @@ photo10 = PhotoImage(file = "images/text-message.png")
 photo11 = PhotoImage(file = "images/export excel.png")
 
 #==============================================++++++++++++++++++++++++++++++++++++++ Saiju
-reportframe=Frame(tab9, relief=GROOVE, bg="#f8f8f2")
+reportframe=Frame(tab9, relief=GROOVE, bg="red")
 reportframe.pack(side="top", fill=BOTH)
 
 midFrame=Frame(reportframe, bg="#f5f3f2", height=60)
@@ -162,81 +165,18 @@ lbframe.pack(side="left", padx=10, pady=0)
 
 
 # first graph frame
-mainchartframe =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe.pack(side="left", padx=0, pady=0)
+mainchartframe =Frame(reportframe,height=1500,width=1500,bg="#f8f8f2")
+mainchartframe.place(x=0, y=90)
 
 #report visable a4sheet
 
 mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe1.pack(side="top", padx=0, pady=0)
-
-mainchartframe2 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe2.pack(side="left", padx=0, pady=0)
-
-mainchartframe3 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe3.pack(side="left", padx=0, pady=0)
-
-mainchartframe4 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe4.pack(side="left", padx=0, pady=0)
-
-mainchartframe5 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe5.pack(side="left", padx=0, pady=0)
-
-mainchartframe6 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe6.pack(side="left", padx=0, pady=0)
-
-mainchartframe7 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe7.pack(side="left", padx=0, pady=0)
-
-mainchartframe8 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe8.pack(side="left", padx=0, pady=0)
-
-mainchartframe9 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe9.pack(side="left", padx=0, pady=0)
-
-mainchartframe10 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe10.pack(side="left", padx=0, pady=0)
-
-mainchartframe11 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe11.pack(side="left", padx=0, pady=0)
-
-mainchartframe12 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe12.pack(side="left", padx=0, pady=0)
-
-mainchartframe13 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe13.pack(side="left", padx=0, pady=0)
-
-mainchartframe14 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe14.pack(side="left", padx=0, pady=0)
-
-mainchartframe15 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe15.pack(side="left", padx=0, pady=0)
-
-mainchartframe16 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe16.pack(side="left", padx=0, pady=0)
-
-mainchartframe17 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe17.pack(side="left", padx=0, pady=0)
-
-mainchartframe18 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe18.pack(side="left", padx=0, pady=0)
-
-mainchartframe19 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe19.pack(side="left", padx=0, pady=0)
-
-mainchartframe20 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe20.pack(side="left", padx=0, pady=0)
-
+mainchartframe1.place(x=0, y=90)
 
 
 #Drop down Functions----------------------------------------------------------------------------
 def maindropmenu(event):
   menuvar=menu1.get()
-  # if menuvar== "Screen Charts":
-  #   lbl_invdtt1 =Label(mainchartframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
-  #   lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
-
-   
   if menuvar== "Invoice Report":
 #frame for display data to a a4 sheet
 
@@ -301,10 +241,22 @@ def maindropmenu(event):
     rpchkbtn1_ir= Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
     rpchkbtn1_ir.place(x=883,y=2)
 
+    mainchartframe2 =Frame(reportframe,height=1500, width=200)
+    mainchartframe2.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt2 =Label(mainchartframe, text="Invoice Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt2.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe2,
+                 width = 100, height = 1000)
   
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   elif menuvar=="Invoice Report(With Customer)":
 
     #frame for display data to a a4 sheet
@@ -368,6 +320,24 @@ def maindropmenu(event):
     rpchkbtn1_irwc = Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_irwc, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
     rpchkbtn1_irwc.place(x=883,y=2)
 
+    mainchartframe3 =Frame(reportframe,height=1500, width=200)
+    mainchartframe3.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe3,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
+
+
   elif menuvar=="Order Report":
     #frame for display data to a a4 sheet
 
@@ -418,10 +388,22 @@ def maindropmenu(event):
     rpdrop2_or.place(x=530,y=50)
     rpdrop2_or.current(0)
     
+    mainchartframe4 =Frame(reportframe,height=1500, width=200)
+    mainchartframe4.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt1 =Label(mainchartframe3, text="Order Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe4,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Recurring Invoice Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -438,13 +420,28 @@ def maindropmenu(event):
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
 
-    lbl_invdtt1 =Label(mainchartframe4, text="Recurring Invoice Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
     
     pruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
     pruw1.place(x=415,y=9)
     pruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
     pruw2.place(x=530,y=9)
+
+    mainchartframe5 =Frame(reportframe,height=1500, width=200)
+    mainchartframe5.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe5,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Past Due Invoices":
 
@@ -477,9 +474,23 @@ def maindropmenu(event):
     drop1pdi["values"]=("Java","Php", "POP")
     drop1pdi.current(0)
 
-    
-    lbl_invdtt1 =Label(mainchartframe5, text="Past Due Invoices", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    mainchartframe6 =Frame(reportframe,height=1500, width=200)
+    mainchartframe6.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe6,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
+  
   
 
   
@@ -522,10 +533,23 @@ def maindropmenu(event):
     rpcheckvar2_cl = IntVar()
     rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_cl.place(x=730,y=40)
+    
+    mainchartframe7 =Frame(reportframe,height=1500, width=200)
+    mainchartframe7.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt1 =Label(mainchartframe6, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    lbl_invdtt2 =Label(reportframe, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe7,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Customers List(Detailed)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -563,8 +587,22 @@ def maindropmenu(event):
     rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_cl.place(x=730,y=40)
 
-    lbl_invdtt1 =Label(mainchartframe7, text="Customers List(Detailed)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    mainchartframe8 =Frame(reportframe,height=1500, width=200)
+    mainchartframe8.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe8,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Product/Service List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -605,10 +643,22 @@ def maindropmenu(event):
     rpchkbtn1_psl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_psl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_psl.place(x=730,y=40)
 
+    mainchartframe9 =Frame(reportframe,height=1500, width=200)
+    mainchartframe9.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt1 =Label(mainchartframe8, text="Product/Service List", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe9,
+                 width = 100, height = 1000)
   
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   elif menuvar=="Price List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -649,8 +699,22 @@ def maindropmenu(event):
     rpchkbtn1_pl.place(x=730,y=40)
 
 
-    lbl_invdtt1 =Label(mainchartframe9, text="Price List", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    mainchartframe10 =Frame(reportframe,height=1500, width=200)
+    mainchartframe10.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview ", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe10,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Products Low Stock Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -681,9 +745,23 @@ def maindropmenu(event):
     rpcheckvar2_plr = IntVar()
     rpchkbtn1_plr = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_plr, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_plr.place(x=535,y=40)
+    
+    mainchartframe11 =Frame(reportframe,height=1500, width=200)
+    mainchartframe11.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt1 =Label(mainchartframe10, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe11,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Tax Report(Invoices)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -745,9 +823,23 @@ def maindropmenu(event):
     rpcheckvar3_tri = IntVar()
     rpchkbtn1_tri = Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_tri, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
     rpchkbtn1_tri.place(x=883,y=2)
+    
+    mainchartframe12 =Frame(reportframe,height=1500, width=200)
+    mainchartframe12.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt1 =Label(mainchartframe11, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe12,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Tax Report(Orders)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -797,9 +889,23 @@ def maindropmenu(event):
     rpdrop2_tro["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
     rpdrop2_tro.place(x=530,y=50)
     rpdrop2_tro.current(0)
-      
-    lbl_invdtt1 =Label(mainchartframe12, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    
+    mainchartframe13 =Frame(reportframe,height=1500, width=200)
+    mainchartframe13.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe13,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Sales Report(group by date)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -850,8 +956,22 @@ def maindropmenu(event):
     rpdrop2_sr.current(0)
 
 
-    lbl_invdtt1 =Label(mainchartframe13, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    mainchartframe14 =Frame(reportframe,height=1500, width=200)
+    mainchartframe14.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe14,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   
   elif menuvar=="Invoice Report(Detailed)":
@@ -902,9 +1022,23 @@ def maindropmenu(event):
     rpdrop2_ird.current(0)
 
 
+    
+    mainchartframe15 =Frame(reportframe,height=1500, width=200)
+    mainchartframe15.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt1 =Label(mainchartframe14, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2")
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe15,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Daily Invoices Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -934,8 +1068,23 @@ def maindropmenu(event):
     exidir=DateEntry(midFrame)
     exidir.place(x=530,y=50)
 
-    lbl_invdtt1 =Label(mainchartframe15, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+   
+    mainchartframe16 =Frame(reportframe,height=1500, width=200)
+    mainchartframe16.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe16,
+                 width = 100, height = 1000)
+  
+# Placing Pdf in my gui.
+    v2.grid(row=2, column=2)
   
   elif menuvar=="Purchase orders Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -995,8 +1144,20 @@ def maindropmenu(event):
     rpchkbtn1_por.place(x=815,y=40)
 
 
-    lbl_invdtt1 =Label(mainchartframe16, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    mainchartframe17 =Frame(reportframe,height=1500, width=200)
+    mainchartframe17.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe17,
+                 width = 100, height = 1000)
+
 
   elif menuvar=="Expenses Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -1022,7 +1183,7 @@ def maindropmenu(event):
     lbl_er.place(x=728,y=10)
 
     exer=DateEntry(midFrame)
-    exsr.place(x=773,y=10)
+    exer.place(x=773,y=10)
 
     lbl_er =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_er.place(x=743,y=50)
@@ -1053,13 +1214,25 @@ def maindropmenu(event):
     rpchkbtn1_er = Checkbutton(midFrame, text = "Rebilable", variable = rpcheckvar2_er, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_er.place(x=868,y=40)
 
-    lbl_invdtt1 =Label(mainchartframe17, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+
+    mainchartframe19 =Frame(reportframe,height=1500, width=200)
+    mainchartframe19.pack(side="top", padx=0, pady=0)
+
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe19,
+                 width = 100, height = 1000)
     
   elif menuvar=="Payment Reports":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
-
+ 
 
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
@@ -1099,9 +1272,20 @@ def maindropmenu(event):
     expr.place(x=770,y=50)
 
 
+    mainchartframe18 =Frame(reportframe,height=1500, width=200)
+    mainchartframe18.pack(side="top", padx=0, pady=0)
 
-    lbl_invdtt1 =Label(mainchartframe18, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
-    lbl_invdtt1.grid(row=0, column=1, pady=5, padx=(5, 0))
+    irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+    irwcuw1.place(x=2,y=95)
+
+
+    lbl_invdtt2 =Label(reportframe, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2.place(x=2, y=100)
+
+    v1 = pdf.ShowPdf()
+    v2 = v1.pdf_view(mainchartframe18,
+                 width = 100, height = 1000)
+
   
 
   
@@ -1163,6 +1347,13 @@ chkbtn1.grid(row=1, column=7)
 
 
 
+irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+irwcuw1.place(x=2,y=95)
+
+
+lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
+lbl_invdtt2.place(x=2, y=100)
+
 #labels
 
 
@@ -1182,8 +1373,8 @@ invoice=1200
 outstanding=22
 paid=14
 
-MF1 = Frame(mainchartframe )
-MF1.grid(row=2, column=1, pady=5, padx=(5, 0))
+# MF1 = Frame(mainchartframe )
+# MF1.grid(row=2, column=1, pady=5, padx=(5, 0))
 
 #graph function
 

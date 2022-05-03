@@ -1,36 +1,40 @@
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QApplication, QFormLayout, QWidget, QTextEdit, QSpinBox
+#Import the required Libraries
+import PyPDF2
+from tkinter import *
+from tkinter import filedialog
+#Create an instance of tkinter frame
+win= Tk()
+#Set the Geometry
+win.geometry("750x450")
+#Create a Text Box
+text= Text(win,width= 80,height=100)
+text.pack(pady=20)
+#Define a function to clear the text
+def clear_text():
+   text.delete(1.0, END)
+#Define a function to open the pdf file
+def open_pdf():
+   file= filedialog.askopenfilename(title="Select a PDF", filetype=(("PDF    Files","*.pdf"),("All Files","*.*")))
+   if file:
+      #Open the PDF File
+      pdf_file= PyPDF2.PdfFileReader(file)
+      #Select a Page to read
+      page= pdf_file.getPage(0)
+      #Get the content of the Page
+      content=page.extractText()
+      #Add the content to TextBox
+      text.insert(1.0,content)
 
-class Window(QWidget):
-
-    def __init__(self):
-        super().__init__()
-
-        self.name = QLineEdit()
-        self.program_type = QLineEdit()
-        self.product_code = QLineEdit()
-        self.customer = QLineEdit()
-        self.vendor = QLineEdit()
-        self.n_errors = QSpinBox()
-        self.n_errors.setRange(0, 1000)
-        self.comments = QTextEdit()
-
-        self.generate_btn = QPushButton("Generate PDF")
-
-        layout = QFormLayout()
-        layout.addRow("Name", self.name)
-        layout.addRow("Program Type", self.program_type)
-        layout.addRow("Product Code", self.product_code)
-        layout.addRow("Customer", self.customer)
-        layout.addRow("Vendor", self.vendor)
-        layout.addRow("No. of Errors", self.n_errors)
-
-        layout.addRow("Comments", self.comments)
-        layout.addRow(self.generate_btn)
-
-        self.setLayout(layout)
-
-
-app = QApplication([])
-w = Window()
-w.show()
-app.exec()
+#Define function to Quit the window
+def quit_app():
+   win.destroy()
+#Create a Menu
+my_menu= Menu(win)
+win.config(menu=my_menu)
+#Add dropdown to the Menus
+file_menu=Menu(my_menu,tearoff=False)
+my_menu.add_cascade(label="File",menu= file_menu)
+file_menu.add_command(label="Open",command=open_pdf)
+file_menu.add_command(label="Clear",command=clear_text)
+file_menu.add_command(label="Quit",command=quit_app)
+win.mainloop()
