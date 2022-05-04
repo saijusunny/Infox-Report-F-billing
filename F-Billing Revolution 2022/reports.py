@@ -218,6 +218,22 @@ def category():
 
         canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
+        # tree = ttk.Treeview(frame, columns = (1,2,3,4,5,6,7), height = 15, show = "headings")
+        # tree.place(x=200, y=350)
+        # tree.heading(1)
+        # tree.heading(2, text="Invoice#")
+        # tree.heading(3, text="Next Invoice")
+        # tree.heading(4, text="Recurring Period")
+        # tree.heading(5, text="Stop After")
+        # tree.heading(6, text="Customer Name")
+        # tree.heading(7, text="Invoice Total")  
+        # tree.column(1, width = 20)
+        # tree.column(2, width = 20)
+        # tree.column(3, width = 20)
+        # tree.column(4, width = 20)
+        # tree.column(5, width = 20) 
+        # tree.column(6, width = 20)
+        # tree.column(7, width = 20)
   else:
     pass
 
