@@ -174,13 +174,63 @@ mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
 mainchartframe1.place(x=0, y=90)
 
 
+#Filter by category----------------------------------------------------------------------------
+def category():
+  # firtst filter-----------------------------------Month to date
+  rth=invfilter.get()
+  if rth=="Month to date":
+        frame = Frame(
+        reportframe,
+        width=953, 
+        height=1000,
+        )
+        frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+        frame.place(x=20,y=125)
+        canvas=Canvas(
+            frame,
+            bg='grey',
+            width=1400,
+            height=1200,
+            scrollregion=(0,0,1500, 1500)
+            )
+
+        vertibar=Scrollbar(
+            frame,
+            orient=VERTICAL
+            )
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        canvas.config(width=1300,height=600)
+
+        canvas.config(
+            yscrollcommand=vertibar.set
+            )
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+        canvas.create_text(375,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+        canvas.create_text(350,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+        canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+        
+        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(855,145,text="Date From:01-04-2022     Date From:01-04-2022\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+
+        canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+
+  else:
+    pass
+
+
+
+invfilter = StringVar()# veriable for store category filter
 #Drop down Functions----------------------------------------------------------------------------
 def maindropmenu(event):
   menuvar=menu1.get()
   if menuvar== "Invoice Report":
 #frame for display data to a a4 sheet
 
-    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+    rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=category)
     rprefreshlebel.place(x=22,y=12)
 
 
@@ -220,9 +270,9 @@ def maindropmenu(event):
     drop1ir["values"]=("Java","Php", "POP")
     drop1ir.current(0)
 
-    rpmenu2_ir = StringVar()
-    rpdrop2_ir=ttk.Combobox(midFrame, textvariable=rpmenu2_ir,)
-    rpdrop2_ir["values"]=("Month to date,""Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
+    
+    rpdrop2_ir=ttk.Combobox(midFrame, textvariable=invfilter)
+    rpdrop2_ir["values"]=("Month to date","Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
     rpdrop2_ir.place(x=530,y=50)
     rpdrop2_ir.current(0)
 
@@ -251,12 +301,42 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe2,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Invoice Report(With Customer)":
 
     #frame for display data to a a4 sheet
@@ -330,14 +410,42 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe3,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
 
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Order Report":
     #frame for display data to a a4 sheet
 
@@ -398,13 +506,43 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe4,
-                 width = 100, height = 1000)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
   
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+      #----------------------------------------------------------------------------------------------------
   elif menuvar=="Recurring Invoice Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -436,13 +574,43 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe5,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+      #----------------------------------------------------------------------------------------------------
   elif menuvar=="Past Due Invoices":
 
     rprefreshlebelpdi = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -484,15 +652,42 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe6,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
-  
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Customers List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -541,15 +736,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Customers List", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe7,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Customers List(Detailed)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -596,13 +821,42 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe8,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Product/Service List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -652,13 +906,44 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe9,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+      #----------------------------------------------------------------------------------------------------
+
   elif menuvar=="Price List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -709,12 +994,42 @@ def maindropmenu(event):
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview ", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe10,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Products Low Stock Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -753,16 +1068,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Products Low Stock Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe11,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+   
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Tax Report(Invoices)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -831,16 +1175,46 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Tax Report(Invoices)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe12,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Tax Report(Orders)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -897,15 +1271,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Tax Report(Orders)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe13,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Sales Report(group by date)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
@@ -963,17 +1367,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Sales Report(group by date)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe14,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
-  
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+      #----------------------------------------------------------------------------------------------------
   elif menuvar=="Invoice Report(Detailed)":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -1030,16 +1462,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Invoice Report(Detailed)", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe15,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Daily Invoices Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -1076,16 +1537,44 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Daily Invoices Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe16,
-                 width = 100, height = 1000)
-  
-# Placing Pdf in my gui.
-    v2.grid(row=2, column=2)
-  
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    #----------------------------------------------------------------------------------------------------  
   elif menuvar=="Purchase orders Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -1151,14 +1640,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Purchase orders Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe17,
-                 width = 100, height = 1000)
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
 
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
 
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Expenses Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -1222,13 +1742,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Expenses Report", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe19,
-                 width = 100, height = 1000)
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
     
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
+    #----------------------------------------------------------------------------------------------------
   elif menuvar=="Payment Reports":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
     rprefreshlebel.place(x=22,y=12)
@@ -1279,12 +1831,45 @@ def maindropmenu(event):
     irwcuw1.place(x=2,y=95)
 
 
-    lbl_invdtt2 =Label(reportframe, text="Payment Reports", bg="#f8f8f2" , font=("arial", 16))
+    lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
 
-    v1 = pdf.ShowPdf()
-    v2 = v1.pdf_view(mainchartframe18,
-                 width = 100, height = 1000)
+#Pdf page
+    frame = Frame(
+        reportframe,
+        width=953,
+        height=1000,
+        )
+    frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+    frame.place(x=20,y=125)
+    canvas=Canvas(
+        frame,
+        bg='grey',
+        width=1400,
+        height=1200,
+        scrollregion=(0,0,1500, 1500)
+        )
+
+    vertibar=Scrollbar(
+        frame,
+        orient=VERTICAL
+        )
+    vertibar.pack(side=RIGHT,fill=Y)
+    vertibar.config(command=canvas.yview)
+    canvas.config(width=1300,height=600)
+
+    canvas.config(
+        yscrollcommand=vertibar.set
+        )
+    canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+    
+    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+
+    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+
+    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+
 
   
 
