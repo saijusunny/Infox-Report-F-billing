@@ -13,6 +13,11 @@ frame = Frame(
     )
 frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
 frame.place(x=247,y=90)
+
+
+
+
+
 canvas=Canvas(
     frame,
     bg='grey',
@@ -34,6 +39,26 @@ canvas.config(
     )
 canvas.pack(expand=True,side=LEFT,fill=BOTH)
 canvas.create_rectangle(25,25,935,1120,  outline='yellow',fill='white')
+
+
+def my_popup(event):
+    my_menu.tk_popup(event.x_root, event.y_root)
+
+
+my_menu= Menu(canvas, tearoff=False)
+my_menu.add_command(label="Run Report", command="run")
+my_menu.add_separator()
+my_menu.add_command(label="Print Report", command="pr")
+my_menu.add_command(label="Email Report", command="em")
+
+my_menu.add_separator()
+my_menu.add_command(label="Export Report To Excel", command="excel")
+my_menu.add_command(label="Export Report To PDF", command="pdf")
+
+
+canvas.bind("<Button-3>", my_popup)
+
+
 # #Create a Text Box
 # text= Text(win,width= 80,height=100)
 # text.pack(pady=20)

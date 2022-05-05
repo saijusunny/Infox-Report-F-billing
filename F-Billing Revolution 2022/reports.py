@@ -23,7 +23,7 @@ from tkinter import filedialog
 import subprocess
 import mysql.connector
 import io
-
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 from tkPDFViewer import tkPDFViewer as pdf# For pdf view
@@ -165,14 +165,12 @@ lbframe.pack(side="left", padx=10, pady=0)
 
 
 # first graph frame
-mainchartframe =Frame(reportframe,height=1500,width=1500,bg="#f8f8f2")
-mainchartframe.place(x=0, y=90)
+
 
 #report visable a4sheet
 
 mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe1.place(x=0, y=90)
-
+mainchartframe1.pack()
 
 #Filter by category----------------------------------------------------------------------------
 def category():
@@ -217,9 +215,9 @@ def category():
         canvas.create_text(855,145,text="Date From:01-04-2022     Date From:01-04-2022\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-
-        # tree = ttk.Treeview(frame, columns = (1,2,3,4,5,6,7), height = 15, show = "headings")
-        # tree.place(x=200, y=350)
+        
+        # tree = ttk.Treeview(canvas, columns = (1,2,3,4,5,6,7),  show = "headings")
+        # tree.pack()
         # tree.heading(1)
         # tree.heading(2, text="Invoice#")
         # tree.heading(3, text="Next Invoice")
@@ -234,6 +232,142 @@ def category():
         # tree.column(5, width = 20) 
         # tree.column(6, width = 20)
         # tree.column(7, width = 20)
+
+
+        
+        def emailrp():
+            rpmailDetail=Toplevel()
+            rpmailDetail.title("E-Mail")
+            p2 = PhotoImage(file = "images/fbicon.png")
+            rpmailDetail.iconphoto(False, p2)
+            rpmailDetail.geometry("1030x550+150+120")
+            
+            def myrp_SMTP():
+                if True:
+                    em_ser_conbtn.destroy()
+                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
+                    mysmtpservercon.place(x=610, y=110)
+                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
+                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
+                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
+                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
+                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
+                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
+                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
+                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
+                    ssl_chkvar=IntVar()
+                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
+                    ssl_chkbtn.place(x=50, y=110)
+                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
+                else:
+                    pass
+            
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(rpmailDetail)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
+            messagelbframe.place(x=5, y=5)
+            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
+            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
+            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
+            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
+            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
+            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
+            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
+            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
+            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
+            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
+            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
+            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
+            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
+            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
+            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
+
+            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
+            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
+            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
+            attachlbframe.place(x=740, y=5)
+            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
+            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
+            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
+            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
+            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
+            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
+            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
+            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
+            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
+            confirm_chkvar=IntVar()
+            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
+            confirm_chkbtn.place(x=200, y=215)
+            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
+
+            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
+            sendatalbframe.place(x=610, y=5)
+            servar=IntVar()
+            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
+            SMTP_rbtn.place(x=10, y=10)
+            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
+            MySMTP_rbtn.place(x=10, y=40)
+            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
+            em_ser_conbtn.place(x=710, y=110)
+        
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvas, tearoff=False)
+        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Report", command="pr")
+        my_menu.add_command(label="Email Report", command=emailrp)
+
+        my_menu.add_separator()
+        my_menu.add_command(label="Export Report To Excel", command="excel")
+        my_menu.add_command(label="Export Report To PDF", command="pdf")
+
+
+        canvas.bind("<Button-3>", my_popup)
   else:
     pass
 
@@ -316,6 +450,10 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
 
 
     frame = Frame(
@@ -425,6 +563,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 
     frame = Frame(
         reportframe,
@@ -521,6 +664,10 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
 
 #Pdf page
     frame = Frame(
@@ -589,6 +736,10 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
 
 #Pdf page
     frame = Frame(
@@ -667,6 +818,10 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
 
 #Pdf page
     frame = Frame(
@@ -754,6 +909,12 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
+
 
 #Pdf page
     frame = Frame(
@@ -837,6 +998,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -922,6 +1088,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1009,6 +1180,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview ", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 
 #Pdf page
     frame = Frame(
@@ -1086,6 +1262,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1193,6 +1374,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 
 #Pdf page
     frame = Frame(
@@ -1289,6 +1475,10 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
 
 #Pdf page
     frame = Frame(
@@ -1385,6 +1575,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1480,6 +1675,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1555,6 +1755,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1658,6 +1863,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1760,6 +1970,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 #Pdf page
     frame = Frame(
         reportframe,
@@ -1849,6 +2064,11 @@ def maindropmenu(event):
 
     lbl_invdtt2 =Label(reportframe, text="Report Result Preview", bg="#f8f8f2" , font=("arial", 16))
     lbl_invdtt2.place(x=2, y=100)
+    irwcuw1 = Label(reportframe,text="                                                                                               ", bg="#f8f8f2")
+    irwcuw1.place(x=1140, y=105)
+    lbl_invdtt2 =Label(reportframe, text="Right Click  on Preview For More Options", bg="#f8f8f2" , font=("arial",8 ))
+    lbl_invdtt2.place(x=1140, y=105)
+
 
 #Pdf page
     frame = Frame(
@@ -1955,6 +2175,8 @@ irwcuw1.place(x=2,y=95)
 lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
 lbl_invdtt2.place(x=2, y=100)
 
+
+
 #labels
 
 
@@ -1974,51 +2196,61 @@ invoice=1200
 outstanding=22
 paid=14
 
-# MF1 = Frame(mainchartframe )
-# MF1.grid(row=2, column=1, pady=5, padx=(5, 0))
+y=float(invoice)
+x+=1
 
-#graph function
+fig = plt.figure(figsize=(10, 3), dpi=100)
 
-#invoice Grpah
-def invoicegraph():
+plt.bar(x,y, label="Invoice", color="orange")
+plt.legend()
+plt.xlabel("x-axis")
+plt.ylabel("y-label")
 
-  global invoice
-  global x
-  y=float(invoice)
-  x+=1
-  plt.bar(x,y, label="Invoice", color="orange")
-  plt.legend()
-  plt.xlabel("x-axis")
-  plt.ylabel("y-label")
-  plt.show()
-  # chart1= label(mainchartframe,plt.show())
-  # chart1.grid(row=2, column=1)
+
+canvasbar = FigureCanvasTkAgg(fig, master=mainchartframe1)
+canvasbar.draw()
+canvasbar.get_tk_widget().place(x=0, y=0)  # show the barchart on the ouput window
+
+
+# def invoicegraph():
+
+#   global invoice
+#   global x
+#   y=float(invoice)
+#   x+=1
+#   plt.bar(x,y, label="Invoice", color="orange")
+#   plt.legend()
+#   plt.xlabel("x-axis")
+#   plt.ylabel("y-label")
+#   plt.show()
+#   # chart1= label(mainchartframe,plt.show())
+#   # chart1.grid(row=2, column=1)
 
   
 
 #Out standing graph
-def outstandinggraph():
-  global outstanding
-  global x
-  y=float(outstanding)
-  x+=1
-  plt.bar(x,y, label="Outstanding", color="blue")
-  plt.legend()
-  plt.xlabel("x-axis")
-  plt.ylabel("y-label")
-  plt.show()
+# def outstandinggraph():
+#   global outstanding
+#   global x
+#   y=float(outstanding)
+#   x+=1
+#   plt.bar(x,y, label="Outstanding", color="blue")
+#   plt.legend()
+#   plt.xlabel("x-axis")
+#   plt.ylabel("y-label")
+#   plt.show()
 
-#paid graph
-def paidgraph():
-  global paid
-  global x
-  y=float(paid)
-  x+=1
-  plt.bar(x,y, label="Paid", color="green")
-  plt.legend()
-  plt.xlabel("x-axis")
-  plt.ylabel("y-label")
-  plt.show()
+# #paid graph
+# def paidgraph():
+#   global paid
+#   global x
+#   y=float(paid)
+#   x+=1
+#   plt.bar(x,y, label="Paid", color="green")
+#   plt.legend()
+#   plt.xlabel("x-axis")
+#   plt.ylabel("y-label")
+#   plt.show()
 
 
 
