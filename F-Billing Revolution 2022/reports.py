@@ -4,10 +4,12 @@ from enum import auto
 
 from itertools import count
 from pydoc import describe
+from sqlite3 import Cursor
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-from turtle import clear, width
+
+from turtle import clear, color, width
 from PIL import ImageTk, Image
 import pandas as pd
 from tkinter.messagebox import showinfo
@@ -24,6 +26,7 @@ import subprocess
 import mysql.connector
 import io
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 
 
 from tkPDFViewer import tkPDFViewer as pdf# For pdf view
@@ -123,7 +126,7 @@ photo10 = PhotoImage(file = "images/text-message.png")
 photo11 = PhotoImage(file = "images/export excel.png")
 
 #==============================================++++++++++++++++++++++++++++++++++++++ Saiju
-reportframe=Frame(tab9, relief=GROOVE, bg="red")
+reportframe=Frame(tab9, relief=GROOVE, bg="#f5f3f2")
 reportframe.pack(side="top", fill=BOTH)
 
 midFrame=Frame(reportframe, bg="#f5f3f2", height=60)
@@ -169,8 +172,8 @@ lbframe.pack(side="left", padx=10, pady=0)
 
 #report visable a4sheet
 
-mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
-mainchartframe1.pack()
+# mainchartframe1 =Frame(reportframe,height=1500, width=1500, bg="#f8f8f2")
+# mainchartframe1.pack()
 
 #Filter by category----------------------------------------------------------------------------
 def category():
@@ -2154,25 +2157,25 @@ expdt=DateEntry(lbframe)
 expdt.grid(row=2, column=5)
 
 checkvar1 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:invoicegraph())
+chkbtn1 = Checkbutton(lbframe, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
 chkbtn1.grid(row=0, column=6, rowspan=2, padx=(0,3))
 
 checkvar2 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:outstandinggraph())
+chkbtn1 = Checkbutton(lbframe, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
 chkbtn1.grid(row=2, column=6,rowspan=2,padx=(25,0))
 
 checkvar3 = IntVar()
-chkbtn1 = Checkbutton(lbframe, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:paidgraph())
+chkbtn1 = Checkbutton(lbframe, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
 chkbtn1.grid(row=1, column=7)
 
 
 
 
-irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f8f8f2") 
+irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f5f3f2") 
 irwcuw1.place(x=2,y=95)
 
 
-lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="#f8f8f2" , font=("arial", 16))
+lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="#f5f3f2" , font=("arial", 16))
 lbl_invdtt2.place(x=2, y=100)
 
 
@@ -2186,6 +2189,7 @@ lbl_invdtt2.place(x=2, y=100)
 
 import matplotlib.pyplot as plt
 from pylab import plot, show, xlabel, ylabel
+from matplotlib.widgets import Cursor
 
 invoice=StringVar()
 outstanding=StringVar()
@@ -2196,65 +2200,99 @@ invoice=1200
 outstanding=22
 paid=14
 
+#------------------------------------with cursor----------------
+# y=float(invoice)
+# x+=1
+# fig, ax =plt.subplots()
+# plt.bar(x,y, label="Invoice", color="orange")
+# plt.legend()
+# plt.xlabel("x-axis")
+# plt.ylabel("y-label")
+# axes=plt.gca()
+# axes.yaxis.grid()
+# cursor=Cursor(ax, horizOn=True, vertOn=True, color='r', linewidth=1)
+# plt.show()
+#-------------------------------------------------------------------------------
+
+
+
 y=float(invoice)
 x+=1
-
-fig = plt.figure(figsize=(10, 3), dpi=100)
-
+figfirst = plt.figure(figsize=(30, 4), dpi=80)
 plt.bar(x,y, label="Invoice", color="orange")
 plt.legend()
 plt.xlabel("x-axis")
 plt.ylabel("y-label")
+axes=plt.gca()
+axes.yaxis.grid()
+
+# cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+x=1
+y=float(outstanding)
+x+=1
+plt.bar(x,y, label="Outstanding", color="blue")
+plt.legend()
+plt.xlabel("x-axis")
+plt.ylabel("y-label")
+axes=plt.gca()
+axes.yaxis.grid()
+# cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
 
-canvasbar = FigureCanvasTkAgg(fig, master=mainchartframe1)
+x=100
+y=float(paid)
+x+=1
+plt.bar(x,y, label="Paid", color="green") 
+plt.legend()
+plt.xlabel("x-axis")
+plt.ylabel("y-label")
+axes=plt.gca()
+axes.yaxis.grid()
+# cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+#used to display chart in our frame
+canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
 canvasbar.draw()
-canvasbar.get_tk_widget().place(x=0, y=0)  # show the barchart on the ouput window
+canvasbar.get_tk_widget().pack(side="top") # show the barchart on the ouput window
+
+#second graph
+
+figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+x=2
+y=float(paid)
+x+=1
+plt.barh(x,y, label="Paid", color="orange") 
+plt.legend()
+plt.xlabel("x-axis")
+plt.ylabel("y-label")
+axes=plt.gca()
+axes.xaxis.grid()
 
 
-# def invoicegraph():
+canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+canvasbar.draw()
+canvasbar.get_tk_widget().pack(side="left")
 
-#   global invoice
-#   global x
-#   y=float(invoice)
-#   x+=1
-#   plt.bar(x,y, label="Invoice", color="orange")
-#   plt.legend()
-#   plt.xlabel("x-axis")
-#   plt.ylabel("y-label")
-#   plt.show()
-#   # chart1= label(mainchartframe,plt.show())
-#   # chart1.grid(row=2, column=1)
+#second graph
 
-  
+figlast = plt.figure(figsize=(9, 4), dpi=80)
 
-#Out standing graph
-# def outstandinggraph():
-#   global outstanding
-#   global x
-#   y=float(outstanding)
-#   x+=1
-#   plt.bar(x,y, label="Outstanding", color="blue")
-#   plt.legend()
-#   plt.xlabel("x-axis")
-#   plt.ylabel("y-label")
-#   plt.show()
+x=2
+y=float(paid)
+x+=1
+plt.barh(x,y, label="Paid", color="blue") 
+plt.legend()
+plt.xlabel("x-axis")
+plt.ylabel("y-label")
+axes=plt.gca()
+axes.yaxis.grid()
+ 
 
-# #paid graph
-# def paidgraph():
-#   global paid
-#   global x
-#   y=float(paid)
-#   x+=1
-#   plt.bar(x,y, label="Paid", color="green")
-#   plt.legend()
-#   plt.xlabel("x-axis")
-#   plt.ylabel("y-label")
-#   plt.show()
-
-
-
-#secon graph
+canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+canvasbar.draw()
+canvasbar.get_tk_widget().pack(side="right")
 
 
   
