@@ -1,7 +1,9 @@
 #Import the required Libraries
+from tkinter import font
 import PyPDF2
 from tkinter import *
 from tkinter import filedialog
+from tkinter import ttk
 #Create an instance of tkinter frame
 win= Tk()
 #Set the Geometry
@@ -39,55 +41,42 @@ canvas.config(
     )
 canvas.pack(expand=True,side=LEFT,fill=BOTH)
 canvas.create_rectangle(25,25,935,1120,  outline='yellow',fill='white')
+canvas.create_text(345,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+        
+canvas.create_text(900,100,text="menu1.get()",fill='black',font=("Helvetica", 16), justify='right')
+canvas.create_text(855,145,text="Date From:01-04-2022      Date From:01-04-2022\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+
+canvas.create_text(345,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+        
 
 
-def my_popup(event):
-    my_menu.tk_popup(event.x_root, event.y_root)
+        # Add a Treeview widget
 
 
-my_menu= Menu(canvas, tearoff=False)
-my_menu.add_command(label="Run Report", command="run")
-my_menu.add_separator()
-my_menu.add_command(label="Print Report", command="pr")
-my_menu.add_command(label="Email Report", command="em")
+tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+style=ttk.Style()
+style.configure('mystyle.Treeview', font('Arial Bold', 10))
+tree.column("# 1", anchor=E, stretch=NO, width=100)
+tree.heading("# 1", text="No")
+tree.column("# 2", anchor=E, stretch=NO, width=100)
+tree.heading("# 2", text="Date")
+tree.column("# 3", anchor=E, stretch=NO, width=100)
+tree.heading("# 3", text="Due Date")
+tree.column("# 4", anchor=E, stretch=NO, width=100)
+tree.heading("# 4", text="Terms")
+tree.column("# 5", anchor=E, stretch=NO, width=100)
+tree.heading("# 5", text="Status")
+tree.column("# 6", anchor=E, stretch=NO, width=100)
+tree.heading("# 6", text="Invoice Total")
+tree.column("# 7", anchor=E, stretch=NO, width=100)
+tree.heading("# 7", text="Invoice Paid")
+tree.column("# 8", anchor=E, stretch=NO, width=100)
+tree.heading("# 8", text="Balance")
+# Insert the data in Treeview widget
+tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
 
-my_menu.add_separator()
-my_menu.add_command(label="Export Report To Excel", command="excel")
-my_menu.add_command(label="Export Report To PDF", command="pdf")
+window = canvas.create_window(85, 290, anchor="nw", window=tree)
 
-
-canvas.bind("<Button-3>", my_popup)
-
-
-# #Create a Text Box
-# text= Text(win,width= 80,height=100)
-# text.pack(pady=20)
-# #Define a function to clear the text
-# def clear_text():
-#    text.delete(1.0, END)
-# #Define a function to open the pdf file
-# def open_pdf():
-#    file= filedialog.askopenfilename(title="Select a PDF", filetype=(("PDF    Files","*.pdf"),("All Files","*.*")))
-#    if file:
-#       #Open the PDF File
-#       pdf_file= PyPDF2.PdfFileReader(file)
-#       #Select a Page to read
-#       page= pdf_file.getPage(0)
-#       #Get the content of the Page
-#       content=page.extractText()
-#       #Add the content to TextBox
-#       text.insert(1.0,content)
-
-# #Define function to Quit the window
-# def quit_app():
-#    win.destroy()
-# #Create a Menu
-# my_menu= Menu(win)
-# win.config(menu=my_menu)
-# #Add dropdown to the Menus
-# file_menu=Menu(my_menu,tearoff=False)
-# my_menu.add_cascade(label="File",menu= file_menu)
-# file_menu.add_command(label="Open",command=open_pdf)
-# file_menu.add_command(label="Clear",command=clear_text)
-# file_menu.add_command(label="Quit",command=quit_app)
 win.mainloop()
