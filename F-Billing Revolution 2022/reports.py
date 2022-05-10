@@ -27,9 +27,15 @@ import mysql.connector
 import io
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import datetime as dt
-
-
 from tkPDFViewer import tkPDFViewer as pdf# For pdf view
+
+
+##########################################################################################################
+fbilldb = mysql.connector.connect(
+    host="localhost", user="root", password="", database="fbillingsintgrtd", port="3306"
+)
+fbcursor = fbilldb.cursor()
+##########################################################################################################
 def reset():
   global root
   root.destroy()
@@ -166,7 +172,7 @@ w.pack(side="left", padx=(0, 5))
 lbframe = LabelFrame(midFrame, height=60, width=1500, bg="#f8f8f2")
 lbframe.pack(side="left", padx=10, pady=0)
 
-
+##################################### (Report Preview) ############################################################# 
 
 #Filter by category----------------------------------------------------------------------------
 #---------------------------------------------------INVOICE FILTER-----------------------------------------------
@@ -179,7 +185,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -211,7 +217,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -251,7 +257,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -283,7 +289,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date to:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -457,7 +463,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -489,7 +495,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -663,7 +669,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -695,7 +701,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -869,7 +875,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -901,7 +907,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -1074,7 +1080,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1106,7 +1112,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -1281,7 +1287,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1313,7 +1319,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -1486,7 +1492,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1518,7 +1524,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -1692,7 +1698,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1724,7 +1730,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -1897,7 +1903,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1929,7 +1935,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2103,7 +2109,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -2135,7 +2141,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2309,7 +2315,7 @@ def category():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -2341,7 +2347,7 @@ def category():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2524,7 +2530,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -2556,7 +2562,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2586,6 +2592,139 @@ def category_irwc():
         tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        def emailrp():
+            rpmailDetail=Toplevel()
+            rpmailDetail.title("E-Mail")
+            p2 = PhotoImage(file = "images/fbicon.png")
+            rpmailDetail.iconphoto(False, p2)
+            rpmailDetail.geometry("1030x550+150+120")
+            
+            def myrp_SMTP():
+                if True:
+                    em_ser_conbtn.destroy()
+                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
+                    mysmtpservercon.place(x=610, y=110)
+                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
+                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
+                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
+                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
+                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
+                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
+                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
+                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
+                    ssl_chkvar=IntVar()
+                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
+                    ssl_chkbtn.place(x=50, y=110)
+                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
+                else:
+                    pass
+            
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(rpmailDetail)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
+            messagelbframe.place(x=5, y=5)
+            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
+            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
+            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
+            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
+            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
+            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
+            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
+            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
+            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
+            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
+            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
+            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
+            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
+            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
+            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
+
+            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
+            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
+            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
+            attachlbframe.place(x=740, y=5)
+            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
+            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
+            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
+            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
+            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
+            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
+            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
+            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
+            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
+            confirm_chkvar=IntVar()
+            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
+            confirm_chkbtn.place(x=200, y=215)
+            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
+
+            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
+            sendatalbframe.place(x=610, y=5)
+            servar=IntVar()
+            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
+            SMTP_rbtn.place(x=10, y=10)
+            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
+            MySMTP_rbtn.place(x=10, y=40)
+            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
+            em_ser_conbtn.place(x=710, y=110)
+        
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvas, tearoff=False)
+        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Report", command="pr")
+        my_menu.add_command(label="Email Report", command=emailrp)
+
+        my_menu.add_separator()
+        my_menu.add_command(label="Export Report To Excel", command="excel")
+        my_menu.add_command(label="Export Report To PDF", command="pdf")
+
+
+        canvas.bind("<Button-3>", my_popup)
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
@@ -2593,7 +2732,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -2625,7 +2764,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2653,6 +2792,7 @@ def category_irwc():
 
         # Insert the data in Treeview widget
         tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -2794,7 +2934,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -2826,7 +2966,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -2997,7 +3137,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -3029,7 +3169,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -3200,7 +3340,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -3232,7 +3372,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -3402,7 +3542,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -3434,7 +3574,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -3606,7 +3746,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -3638,7 +3778,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -3809,7 +3949,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -3841,7 +3981,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4011,7 +4151,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4043,7 +4183,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4214,7 +4354,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4246,7 +4386,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date From:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irwcfrm.get()+"      Date To:"+irwcto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4416,7 +4556,7 @@ def category_irwc():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4448,7 +4588,7 @@ def category_irwc():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date From:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4628,7 +4768,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4660,7 +4800,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4697,7 +4837,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4729,7 +4869,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -4900,7 +5040,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -4932,7 +5072,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -5100,7 +5240,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -5132,7 +5272,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -5303,7 +5443,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -5335,7 +5475,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -5505,7 +5645,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -5537,7 +5677,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -5709,7 +5849,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -5741,7 +5881,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -5913,7 +6053,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -5945,7 +6085,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
         # Create an instance of Style widget
@@ -6114,7 +6254,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -6146,7 +6286,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -6314,7 +6454,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -6346,7 +6486,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -6516,7 +6656,7 @@ def category_or():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -6548,7 +6688,7 @@ def category_or():
        
         
         canvas.create_text(900,100,text="Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -6727,7 +6867,7 @@ def category_tri():
         reportframe,
         width=1500, 
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -6759,7 +6899,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -6798,7 +6938,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -6830,7 +6970,7 @@ def category_tri():
        
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
         
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -7003,7 +7143,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -7035,7 +7175,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -7208,7 +7348,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -7240,7 +7380,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -7413,7 +7553,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -7445,7 +7585,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -7617,7 +7757,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -7649,7 +7789,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -7823,7 +7963,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -7855,7 +7995,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date From:"+orto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+orfrm.get()+"      Date To:"+orto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8029,7 +8169,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -8060,7 +8200,7 @@ def category_tri():
 
        
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8232,7 +8372,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -8263,7 +8403,7 @@ def category_tri():
 
        
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8436,7 +8576,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -8466,7 +8606,7 @@ def category_tri():
         canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
 
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8638,7 +8778,7 @@ def category_tri():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -8670,7 +8810,7 @@ def category_tri():
        
         
         canvas.create_text(875,100,text="Tax Report(Invoice)",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date From:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trifrm.get()+"      Date To:"+trito.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8842,7 +8982,7 @@ def category_tri():
     else:
         pass
 
-#-------------------------------------------------Order report-----------------------------------------
+#-------------------------------------------------tax report order-----------------------------------------
 def category_tro():
   # firtst filter-----------------------------------Month to date
     rth=trofilter.get()
@@ -8852,7 +8992,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -8883,8 +9023,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -8896,25 +9036,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
@@ -9057,7 +9196,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -9088,8 +9227,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -9101,25 +9240,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -9263,7 +9401,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -9294,8 +9432,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -9307,25 +9445,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -9469,7 +9606,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -9500,8 +9637,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\nOrder Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -9513,25 +9650,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -9675,7 +9811,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -9706,8 +9842,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -9719,25 +9855,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -9880,7 +10015,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -9911,8 +10046,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -9924,25 +10059,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -10087,7 +10221,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -10118,8 +10252,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -10131,25 +10265,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -10294,7 +10427,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -10325,8 +10458,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -10338,25 +10471,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -10499,7 +10631,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -10530,8 +10662,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -10543,25 +10675,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -10705,7 +10836,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -10736,8 +10867,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -10749,25 +10880,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="Nossss")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -10910,7 +11040,7 @@ def category_tro():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -10941,8 +11071,8 @@ def category_tro():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date From:"+troto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -10954,25 +11084,24 @@ def category_tro():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Order No")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Issue Date")
         tree.column("# 3", anchor=E, stretch=NO, width=70)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Total Before TAX")
+        tree.column("# 5", anchor=E, stretch=NO, width=90)
+        tree.heading("# 5", text="TAX1")
+        tree.column("# 6", anchor=E, stretch=NO, width=90)
+        tree.heading("# 6", text="TAX2")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 7", text="Order Total")
+
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -11124,7 +11253,7 @@ def category_srgd():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -11156,7 +11285,7 @@ def category_srgd():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+srgdfrm.get()+"      Date From:"+srgdto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+srgdfrm.get()+"      Date To:"+srgdto.get()+"\nOrder Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -11333,7 +11462,7 @@ def category_ird():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -11365,7 +11494,7 @@ def category_ird():
        
         
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+irdfrm.get()+"      Date From:"+irdto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(875,145,text="Date From:"+irdfrm.get()+"      Date To:"+irdto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -11377,25 +11506,21 @@ def category_ird():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Invoice Total")
+        tree.column("# 5", anchor=E, stretch=NO, width=130)
+        tree.heading("# 5", text="Paid")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 6", text="Balance")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
@@ -11537,7 +11662,7 @@ def category_dir():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -11568,8 +11693,8 @@ def category_dir():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(915,145,text="Date:"+dirdate.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(880,100,text="Daily Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(935,145,text="Date:"+dirdate.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -11581,25 +11706,21 @@ def category_dir():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Invoice Total")
+        tree.column("# 5", anchor=E, stretch=NO, width=130)
+        tree.heading("# 5", text="Paid")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 6", text="Balance")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
@@ -11738,7 +11859,7 @@ def category_dir():
 
 #----------------------------------------------Purchase Order Report-------------------------------------
 
-def category_por():
+def category_por():  
   # firtst filter-----------------------------------Month to date
     rth=porfilter.get()
     if rth=="Month to date":
@@ -11747,7 +11868,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -11778,8 +11899,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -11791,25 +11912,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -11953,7 +12070,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -11984,8 +12101,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -11997,25 +12114,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -12159,7 +12272,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -12190,8 +12303,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -12203,25 +12316,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -12365,7 +12474,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -12396,8 +12505,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -12409,25 +12518,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -12571,7 +12676,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -12602,8 +12707,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -12615,25 +12720,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -12776,7 +12877,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -12807,8 +12908,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -12820,25 +12921,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -12983,7 +13080,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -13014,8 +13111,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -13027,25 +13124,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -13188,7 +13281,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -13219,8 +13312,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -13232,25 +13325,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -13394,7 +13483,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -13425,8 +13514,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -13438,25 +13527,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -13599,7 +13684,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -13630,8 +13715,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -13643,25 +13728,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -13805,7 +13886,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -13836,8 +13917,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -13849,25 +13930,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -14011,7 +14088,7 @@ def category_por():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -14042,8 +14119,8 @@ def category_por():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+porfrm.get()+"      Date From:"+porto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -14055,25 +14132,21 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
         tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Vendor")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
         tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="P.Order Total")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -14225,7 +14298,7 @@ def category_exp():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -14256,8 +14329,8 @@ def category_exp():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+expfrm.get()+"      Date From:"+expto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Expenses Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+expfrm.get()+"      Date To:"+expto.get()+"\n Expense Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -14269,25 +14342,21 @@ def category_exp():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Date")
+        tree.column("# 2", anchor=E, stretch=NO, width=150)
+        tree.heading("# 2", text="Customer")
+        tree.column("# 3", anchor=E, stretch=NO, width=120)
+        tree.heading("# 3", text="Vendor")
         tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 4", text="Invoice")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
+        tree.heading("# 5", text="Rebill.Amount")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
+        tree.heading("# 6", text="Amount")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
@@ -14433,7 +14502,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -14464,8 +14533,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -14477,27 +14546,26 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(260, 260, anchor="nw", window=tree)
 
         def emailrp():
             rpmailDetail=Toplevel()
@@ -14639,7 +14707,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -14670,8 +14738,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -14683,25 +14751,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -14845,7 +14912,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -14876,8 +14943,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -14889,25 +14956,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -15051,7 +15117,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -15082,8 +15148,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -15095,25 +15161,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -15257,7 +15322,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -15288,8 +15353,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -15301,25 +15366,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -15462,7 +15526,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -15493,8 +15557,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -15506,25 +15570,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -15669,7 +15732,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -15700,8 +15763,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -15713,25 +15776,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -15874,7 +15936,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -15905,8 +15967,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        ccanvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -15918,27 +15980,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         
         def emailrp():
@@ -16080,7 +16139,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -16111,8 +16170,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -16124,25 +16183,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
@@ -16285,7 +16343,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -16316,8 +16374,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -16329,25 +16387,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -16491,7 +16548,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -16522,8 +16579,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -16535,25 +16592,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
@@ -16697,7 +16753,7 @@ def category_pyr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -16728,8 +16784,8 @@ def category_pyr():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date From:"+pyrto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
         
@@ -16741,27 +16797,24 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=140)
+        tree.heading("# 2", text="Invoice Issue Date")
+        tree.column("# 3", anchor=E, stretch=NO, width=130)
+        tree.heading("# 3", text="Customer")
+        tree.column("# 4", anchor=E, stretch=NO, width=90)
+        tree.heading("# 4", text="Payment ID")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Payment Date")
+        tree.column("# 6", anchor=E, stretch=NO, width=80)
+        tree.heading("# 6", text="Paid By")
+        tree.column("# 7", anchor=E, stretch=NO, width=110)
+        tree.heading("# 7", text="Amount Paid")
+   
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         
         def emailrp():
@@ -16909,7 +16962,7 @@ def category_rir():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -16940,7 +16993,7 @@ def category_rir():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(865,100,text="Recurring Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
 
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
@@ -16953,25 +17006,21 @@ def category_rir():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
+        tree.heading("# 1", text="Invoice No")
+        tree.column("# 2", anchor=E, stretch=NO, width=130)
+        tree.heading("# 2", text="Customer")
+        tree.column("# 3", anchor=E, stretch=NO, width=100)
+        tree.heading("# 3", text="Next Invoice")
+        tree.column("# 4", anchor=E, stretch=NO, width=140)
+        tree.heading("# 4", text="Recurring Interval")
+        tree.column("# 5", anchor=E, stretch=NO, width=115)
+        tree.heading("# 5", text="Stop After")
+        tree.column("# 6", anchor=E, stretch=NO, width=115)
         tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','Total'))
 
         window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
@@ -17108,14 +17157,14 @@ def category_rir():
 
         canvas.bind("<Button-3>", my_popup)
 
-#-------------------------------------------------pat due invoice------------------------------------------
+#-------------------------------------------------past due invoice------------------------------------------
 def category_pdi():
 
         frame = Frame(
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -17146,8 +17195,8 @@ def category_pdi():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(865,100,text="Past Due Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(930,145,text="Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
@@ -17160,27 +17209,27 @@ def category_pdi():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6","c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
+        tree.column("# 2", anchor=E, stretch=NO, width=60)
         tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
+        tree.column("# 3", anchor=E, stretch=NO, width=80)
         tree.heading("# 3", text="Due Date")
         tree.column("# 4", anchor=E, stretch=NO, width=100)
         tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 5", anchor=E, stretch=NO, width=110)
+        tree.heading("# 5", text="Overdue Days")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
         tree.heading("# 6", text="Invoice Total")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
+        tree.heading("# 7", text="Total Paid")
         tree.column("# 8", anchor=E, stretch=NO, width=100)
         tree.heading("# 8", text="Balance")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','Total', '', ''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(270, 260, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -17324,7 +17373,7 @@ def category_cl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -17348,13 +17397,13 @@ def category_cl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right') 
+        canvas.create_text(1070,100,text="Customers List",fill='black',font=("Helvetica", 16), justify='right') 
 
         
         # Create an instance of Style widget
@@ -17365,27 +17414,23 @@ def category_cl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Customer Id")
+        tree.column("# 2", anchor=E, stretch=NO, width=170)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=250)
+        tree.heading("# 3", text="Customer Businnes Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=180)
+        tree.heading("# 4", text="Customer Person")
+        tree.column("# 5", anchor=E, stretch=NO, width=130)
+        tree.heading("# 5", text="Tel")
+        tree.column("# 6", anchor=E, stretch=NO, width=130)
+        tree.heading("# 6", text="Fax")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -17526,7 +17571,7 @@ def category_cl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -17550,10 +17595,13 @@ def category_cl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+
+       
+        
+        canvas.create_text(1070,100,text="Customers List",fill='black',font=("Helvetica", 16), justify='right') 
 
         
         # Create an instance of Style widget
@@ -17564,27 +17612,23 @@ def category_cl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Customer Id")
+        tree.column("# 2", anchor=E, stretch=NO, width=170)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=250)
+        tree.heading("# 3", text="Customer Businnes Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=180)
+        tree.heading("# 4", text="Customer Person")
+        tree.column("# 5", anchor=E, stretch=NO, width=130)
+        tree.heading("# 5", text="Tel")
+        tree.column("# 6", anchor=E, stretch=NO, width=130)
+        tree.heading("# 6", text="Fax")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -17731,7 +17775,7 @@ def category_cld():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -17933,7 +17977,7 @@ def category_cld():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18138,7 +18182,7 @@ def category_psl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18162,13 +18206,14 @@ def category_psl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+
        
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        
+        canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
-
- 
         
         # Create an instance of Style widget
         style=ttk.Style()
@@ -18179,26 +18224,26 @@ def category_psl():
         # Add a Treeview widge
                 
         tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=120)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=180)
+        tree.heading("# 3", text="Product/ Service Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Description")
+        tree.column("# 5", anchor=E, stretch=NO, width=150)
+        tree.heading("# 5", text="Warehouse")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.heading("# 6", text="Stock")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
+        tree.heading("# 7", text="Cost")
         tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 8", text="Price")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -18339,7 +18384,7 @@ def category_psl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18363,14 +18408,13 @@ def category_psl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
- 
-
+        canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
         
         # Create an instance of Style widget
@@ -18382,27 +18426,26 @@ def category_psl():
         # Add a Treeview widge
                 
         tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=120)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=180)
+        tree.heading("# 3", text="Product/ Service Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Description")
+        tree.column("# 5", anchor=E, stretch=NO, width=150)
+        tree.heading("# 5", text="Warehouse")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.heading("# 6", text="Stock")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
+        tree.heading("# 7", text="Cost")
         tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 8", text="Price")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
-
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
         
         def emailrp():
             rpmailDetail=Toplevel()
@@ -18543,7 +18586,7 @@ def category_psl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18567,10 +18610,13 @@ def category_psl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+
+       
+        
+        canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
         
         # Create an instance of Style widget
@@ -18582,26 +18628,26 @@ def category_psl():
         # Add a Treeview widge
                 
         tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=120)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=180)
+        tree.heading("# 3", text="Product/ Service Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Description")
+        tree.column("# 5", anchor=E, stretch=NO, width=150)
+        tree.heading("# 5", text="Warehouse")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.heading("# 6", text="Stock")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
+        tree.heading("# 7", text="Cost")
         tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 8", text="Price")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -18743,7 +18789,7 @@ def category_psl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18767,12 +18813,14 @@ def category_psl():
             yscrollcommand=vertibar.set
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
+        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
+
+       
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-     
+        canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
+
         
         # Create an instance of Style widget
         style=ttk.Style()
@@ -18783,26 +18831,26 @@ def category_psl():
         # Add a Treeview widge
                 
         tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=120)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=180)
+        tree.heading("# 3", text="Product/ Service Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Description")
+        tree.column("# 5", anchor=E, stretch=NO, width=150)
+        tree.heading("# 5", text="Warehouse")
         tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
+        tree.heading("# 6", text="Stock")
         tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
+        tree.heading("# 7", text="Cost")
         tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree.heading("# 8", text="Price")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(170, 150, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -18950,7 +18998,7 @@ def category_prl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -18977,7 +19025,7 @@ def category_prl():
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
        
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
 
  
@@ -18990,27 +19038,20 @@ def category_prl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=150)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=200)
+        tree.heading("# 2", text="Product/Service Name")
+        tree.column("# 3", anchor=E, stretch=NO, width=200)
+        tree.heading("# 3", text="Description")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Unit Price")
+        
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(280, 130, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -19151,7 +19192,7 @@ def category_prl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -19180,10 +19221,10 @@ def category_prl():
 
        
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
+
+
  
-
-
         
         # Create an instance of Style widget
         style=ttk.Style()
@@ -19193,27 +19234,20 @@ def category_prl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=150)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=200)
+        tree.heading("# 2", text="Product/Service Name")
+        tree.column("# 3", anchor=E, stretch=NO, width=200)
+        tree.heading("# 3", text="Description")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Unit Price")
+        
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(280, 130, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -19355,7 +19389,7 @@ def category_prl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -19382,8 +19416,10 @@ def category_prl():
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
+
+ 
         
         # Create an instance of Style widget
         style=ttk.Style()
@@ -19393,27 +19429,20 @@ def category_prl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=150)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=200)
+        tree.heading("# 2", text="Product/Service Name")
+        tree.column("# 3", anchor=E, stretch=NO, width=200)
+        tree.heading("# 3", text="Description")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Unit Price")
+        
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(280, 130, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -19555,7 +19584,7 @@ def category_prl():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -19583,8 +19612,10 @@ def category_prl():
         canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-     
+        canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
+
+
+ 
         
         # Create an instance of Style widget
         style=ttk.Style()
@@ -19594,27 +19625,20 @@ def category_prl():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=150)
+        tree.heading("# 1", text="Product ID")
+        tree.column("# 2", anchor=E, stretch=NO, width=200)
+        tree.heading("# 2", text="Product/Service Name")
+        tree.column("# 3", anchor=E, stretch=NO, width=200)
+        tree.heading("# 3", text="Description")
+        tree.column("# 4", anchor=E, stretch=NO, width=150)
+        tree.heading("# 4", text="Unit Price")
+        
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(280, 130, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -19760,7 +19784,7 @@ def category_plsr():
         reportframe,
         width=1500,
         height=1000,
-        bg="red"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -19788,7 +19812,7 @@ def category_plsr():
         canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
         
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(840,100,text="Product Low Stock Report",fill='black',font=("Helvetica", 16), justify='right')
 
 
         # Create an instance of Style widget
@@ -19799,27 +19823,23 @@ def category_plsr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree.column("# 1", anchor=E, stretch=NO, width=100)
+        tree.heading("# 1", text="Product Id")
+        tree.column("# 2", anchor=E, stretch=NO, width=100)
+        tree.heading("# 2", text="Category")
+        tree.column("# 3", anchor=E, stretch=NO, width=150)
+        tree.heading("# 3", text="Product Name")
+        tree.column("# 4", anchor=E, stretch=NO, width=130)
+        tree.heading("# 4", text="Warehouse")
+        tree.column("# 5", anchor=E, stretch=NO, width=130)
+        tree.heading("# 5", text="Low Stock Limit")
+        tree.column("# 6", anchor=E, stretch=NO, width=70)
+        tree.heading("# 6", text="Stock")
         # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+        tree.insert('', 'end',text="1",values=('','','','','',''))
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        window = canvas.create_window(290, 130, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -19953,7 +19973,17 @@ def category_plsr():
 
 
         canvas.bind("<Button-3>", my_popup)
-#######################################################################################################################
+
+############################################################################################################################################################################################################################################
+
+
+######################################################################################################################
+#-------------------------------------------------Print Function-------------------------------------------------
+
+
+
+
+######################################################################################################################
 
 #it is for invoice report
 invfilter = StringVar()# veriable for store category filter
@@ -20019,7 +20049,7 @@ pslfilter = StringVar()
 #price list
 prlfilter = StringVar()
 
-#Drop down Functions----------------------------------------------------------------------------
+#####################################(Drop down Function)##################################################
 def maindropmenu(event):
   menuvar=menu1.get()
   if menuvar== "Invoice Report":
@@ -21746,6 +21776,10 @@ def maindropmenu(event):
   else:
     pass
 
+#############################################################################################################
+
+
+############################################################(Screen Chart)###################################
 lbl_invdtt = Label(lbframe, text="Report Type:  ", bg="#f8f8f2")
 lbl_invdtt.place(x=8, y=10)
 menu1 = StringVar()
@@ -21798,18 +21832,10 @@ checkvar3 = IntVar()
 chkbtn1 = Checkbutton(lbframe, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
 chkbtn1.grid(row=1, column=7)
 
+######################################################################################################################
 
 
-
-
-
-
-
-#labels
-
-
-
-
+#########################################(Graph Section)#############################################################
 #first graph
 
 import matplotlib.pyplot as plt
@@ -21930,13 +21956,7 @@ canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
 canvasbar.draw()
 canvasbar.get_tk_widget().place(x=650, y=370)
 
-
-
-# irwcuw1 = Label(reportframe,text="                                                                                                                                                               \n", bg="#f5f3f2") 
-# irwcuw1.place(x=2,y=95)
-
-
 lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
 lbl_invdtt2.place(x=2, y=85)
-  
+##################################################################################################################
 root.mainloop()
