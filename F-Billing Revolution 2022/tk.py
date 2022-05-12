@@ -1,38 +1,39 @@
+from datetime import date, datetime
 from tkinter import *
+from matplotlib.pyplot import text
 
-def make_right_menu(root):
-    global rightmenu
-    rightmenu = Menu(root,tearoff=0)
-    rightmenu.add_command(label='Cut',accelerator='Ctrl+X')
-    rightmenu.add_command(label='Copy',accelerator='Ctrl+C')
-    rightmenu.add_command(label='Paste',accelerator='Ctrl+V')
-    rightmenu.add_separator()
-    rightmenu.add_command(label='Select All',accelerator='Ctrl+A')
+from tkcalendar import DateEntry
 
-def select_all(event=None):
-    t1.tag_add(SEL,'1.0',END)
-    t1.mark_set(INSERT,'1.0')
-    t1.see(INSERT)
-    return 'break'
-def show_rightmenu(event):
-    widget = event.widget
-    rightmenu.entryconfigure('Cut',command=lambda:widget.event_generate('<<Cut>>'))
-    rightmenu.entryconfigure('Copy',command=lambda:widget.event_generate('<<Copy>>'))
-    rightmenu.entryconfigure('Paste',command=lambda:widget.event_generate('<<Paste>>'))
-    if type(widget) == Entry:
-         rightmenu.entryconfigure('Select All',command=lambda:widget.select_range(0,END))
-    elif type(widget) == Text:
-        rightmenu.entryconfigure('Select All',command=select_all)
-    rightmenu.tk.call('tk_popup',rightmenu,event.x_root,event.y_root)
-
-    
 root = Tk()
-make_right_menu(root)
-root.bind_class('Text',"<Button-3><ButtonRelease-3>",show_rightmenu)
-root.bind_class('Entry',"<Button-3><ButtonRelease-3>",show_rightmenu)
+root.geometry("750x450")
 
-t1 = Text(root)
-t1.pack()
-e1 = Entry(root)
-e1.pack()
+import datetime
+import calendar
+
+def add_months(sourcedate, months):
+    month = sourcedate.month - 1 + months
+    year = sourcedate.year + month // 12
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year,month)[1])
+    return datetime.date(year, month, day)
+    
+def tak(event):
+   d1=expdt3.get_date()
+   d2=date.today()
+   d3=d1-d2
+   print(d3)
+
+   expdt2=DateEntry(root, textvariable=d3)
+   print(type(expdt2))
+   expdt2.pack()
+    
+
+
+
+
+expdt3=DateEntry(root)
+# print(type(expdt3))
+expdt3.bind("<<DateEntrySelected>>",tak)
+expdt3.pack()
+
 root.mainloop()
