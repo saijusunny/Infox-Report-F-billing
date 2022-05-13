@@ -216,7 +216,7 @@ CREATE TABLE `expenses` (
 --
 
 INSERT INTO `expenses` (`expensesid`, `customerid`, `companyid`, `expense_amount`, `date`, `vendor`, `catagory`, `description`, `staff_members`, `taxable`, `customer`, `image`, `notes`, `rebillable`, `invoiced`, `id_sku`, `rebill_amount`, `assign_customer`, `receipt`) VALUES
-(44, NULL, NULL, 123, '2022-05-06', 'Customer12', 'Def', 'sasda', 'Administrator', '1', 'Customer2', 'as.png', 'asdaa', '1', NULL, 12, 23, '1', '1');
+(44, NULL, NULL, 123, '2022-05-06', 'Customer12', 'Def', 'sasda', 'Administrator', '1', 'Internal ', 'as.png', 'asdaa', '1', NULL, 12, 23, '1', '1');
 
 -- --------------------------------------------------------
 

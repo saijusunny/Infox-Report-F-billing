@@ -234,7 +234,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -261,8 +261,24 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -271,7 +287,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -476,7 +492,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -503,8 +519,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -513,7 +544,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -716,7 +747,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -743,8 +774,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -753,7 +799,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -956,7 +1002,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -983,8 +1029,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -993,7 +1054,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -1197,7 +1258,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -1224,8 +1285,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -1234,7 +1310,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -1437,7 +1513,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -1464,8 +1540,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -1474,7 +1565,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -1679,7 +1770,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -1706,8 +1797,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -1716,7 +1822,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -1907,47 +2013,105 @@ def category():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
-
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
-
-       
-        
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
         style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
+        if company is not None:
+            canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
+
+            # Add a Treeview widge
+                
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
+            rp_inv_tree.heading("# 1", text="No")
+            rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
+            rp_inv_tree.heading("# 2", text="Date")
+            rp_inv_tree.column("# 3", anchor=E, stretch=NO, width=80)
+            rp_inv_tree.heading("# 3", text="Due Date")
+            rp_inv_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_inv_tree.heading("# 4", text="Terms")
+            rp_inv_tree.column("# 5", anchor=E, stretch=NO, width=100)
+            rp_inv_tree.heading("# 5", text="Status")
+            rp_inv_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_inv_tree.heading("# 6", text="Invoice Total")
+            rp_inv_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_inv_tree.heading("# 7", text="Invoice Paid")
+            rp_inv_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_inv_tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            
+            for record in rp_inv_tree.get_children():
+                rp_inv_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * FROM invoice;')
+
+            for i in fbcursor:
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
+
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=50)
+            tree.heading("# 1", text="No")
+            tree.column("# 2", anchor=E, stretch=NO, width=70)
+            tree.heading("# 2", text="Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=70)
+            tree.heading("# 3", text="Due Date")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Terms")
+            tree.column("# 5", anchor=E, stretch=NO, width=100)
+            tree.heading("# 5", text="Status")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Invoice Total")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Invoice Paid")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+
+        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -2125,7 +2289,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -2152,8 +2316,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2162,7 +2341,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -2366,7 +2545,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -2393,8 +2572,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2403,7 +2597,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -2607,7 +2801,7 @@ def category():
 
             # Add a Treeview widge
                 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -2634,8 +2828,23 @@ def category():
             fbcursor.execute('SELECT * FROM invoice;')
 
             for i in fbcursor:
-                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_tri= fbcursor.fetchone()
+            
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2644,7 +2853,7 @@ def category():
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
             canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
 
-            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+            rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
             rp_inv_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_inv_tree.heading("# 1", text="No")
             rp_inv_tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -2863,7 +3072,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -3065,7 +3274,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -3267,7 +3476,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -3470,7 +3679,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -3673,7 +3882,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -3875,7 +4084,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -4079,7 +4288,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -4282,7 +4491,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -4484,7 +4693,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -4687,7 +4896,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -4889,7 +5098,7 @@ def category_irwc():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -5100,7 +5309,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -5123,8 +5332,16 @@ def category_or():
             fbcursor.execute('SELECT * from orders')
 
             for i in fbcursor:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -5145,7 +5362,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -5344,7 +5561,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -5369,6 +5586,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -5389,7 +5613,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -5588,7 +5812,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -5613,6 +5837,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -5633,7 +5864,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -5830,8 +6061,8 @@ def category_or():
             style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
             # Add a Treeview widge
-            print(orfrm.get_date())
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -5856,6 +6087,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -5876,7 +6114,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -6076,7 +6314,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -6101,6 +6339,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6121,7 +6366,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -6318,7 +6563,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -6343,6 +6588,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6363,7 +6615,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -6563,7 +6815,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -6588,6 +6840,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6608,7 +6867,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -6808,7 +7067,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -6833,6 +7092,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6853,7 +7119,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -7051,7 +7317,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -7076,6 +7342,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7096,7 +7369,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -7294,7 +7567,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -7319,6 +7592,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7339,7 +7619,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -7536,7 +7816,7 @@ def category_or():
 
             # Add a Treeview widge
                     
-            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            rp_or_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             rp_or_tree.column("# 1", anchor=E, stretch=NO, width=50)
             rp_or_tree.heading("# 1", text="No")
             rp_or_tree.column("# 2", anchor=E, stretch=NO, width=80)
@@ -7561,6 +7841,13 @@ def category_or():
             for i in fbcursor:
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
+            total_tri='SELECT SUM(sum_subtotal) from orders'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7581,7 +7868,7 @@ def category_or():
 
                 # Add a Treeview widge
                         
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=50)
             tree.heading("# 1", text="No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -7792,7 +8079,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -7853,7 +8140,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8055,7 +8342,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8116,7 +8403,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8318,7 +8605,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8379,7 +8666,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8581,7 +8868,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8642,7 +8929,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8845,7 +9132,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -8906,7 +9193,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9108,7 +9395,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9169,7 +9456,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9373,7 +9660,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9434,7 +9721,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9637,7 +9924,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9698,7 +9985,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9900,7 +10187,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -9961,7 +10248,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10162,7 +10449,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10223,7 +10510,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10424,7 +10711,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Invoice No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10485,7 +10772,7 @@ def category_tri():
 
             # Add a Treeview widge
                     
-            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tri_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tri_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tri_tree.heading("# 1", text="Invoice No")
             rep_tri_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10702,7 +10989,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10767,7 +11054,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -10966,7 +11253,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11033,7 +11320,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11232,7 +11519,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11297,7 +11584,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11496,7 +11783,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11561,7 +11848,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11761,7 +12048,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -11826,7 +12113,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12025,7 +12312,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12090,7 +12377,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12290,7 +12577,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12355,7 +12642,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12556,7 +12843,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12621,7 +12908,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12820,7 +13107,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -12885,7 +13172,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -13085,7 +13372,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -13150,7 +13437,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -13349,7 +13636,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            rep_tro_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             rep_tro_tree.column("# 1", anchor=E, stretch=NO, width=100)
             rep_tro_tree.heading("# 1", text="Order No")
             rep_tro_tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -13414,7 +13701,7 @@ def category_tro():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=100)
             tree.heading("# 1", text="Order No")
             tree.column("# 2", anchor=E, stretch=NO, width=100)
@@ -13629,7 +13916,7 @@ def category_srgd():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -13894,7 +14181,7 @@ def category_ird():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=80)
             tree.heading("# 1", text="Invoice No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -14150,7 +14437,7 @@ def category_dir():
 
             # Add a Treeview widge
                     
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
             tree.column("# 1", anchor=E, stretch=NO, width=80)
             tree.heading("# 1", text="Invoice No")
             tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -14360,7 +14647,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -14562,7 +14849,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -14764,7 +15051,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -14966,7 +15253,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -15168,7 +15455,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -15369,7 +15656,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -15572,7 +15859,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -15773,7 +16060,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -15975,7 +16262,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -16176,7 +16463,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -16378,7 +16665,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -16580,7 +16867,7 @@ def category_por():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -16740,6 +17027,10 @@ def category_por():
 def category_exp():
   # firtst filter-----------------------------------Month to date
     rth=expfilter.get()
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
     if rth=="All":
 
         frame = Frame(
@@ -16771,42 +17062,97 @@ def category_exp():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_exp_tree.heading("# 1", text="Date")
+            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 2", text="Customer")
+            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 3", text="Vendor")
+            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_exp_tree.heading("# 4", text="Invoice")
+            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 5", text="Rebill.Amount")
+            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+            
+            for record in rp_exp_tree.get_children():
+                rp_exp_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from expenses')
 
-       
-        
+            for i in fbcursor:
+                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                count += 1
+
+            total_tri='SELECT SUM(expense_amount) from expenses'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(rebill_amount) from expenses'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','Summary',tot_tax1_tri,tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+            
+            
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Expenses Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+expfrm.get()+"      Date To:"+expto.get()+"\n Expense Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Date")
-        tree.column("# 2", anchor=E, stretch=NO, width=150)
-        tree.heading("# 2", text="Customer")
-        tree.column("# 3", anchor=E, stretch=NO, width=120)
-        tree.heading("# 3", text="Vendor")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Invoice")
-        tree.column("# 5", anchor=E, stretch=NO, width=115)
-        tree.heading("# 5", text="Rebill.Amount")
-        tree.column("# 6", anchor=E, stretch=NO, width=115)
-        tree.heading("# 6", text="Amount")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -16940,10 +17286,272 @@ def category_exp():
 
 
         canvas.bind("<Button-3>", my_popup)
+
+    elif rth=="Internal":
+
+        frame = Frame(
+        reportframe,
+        width=1500,
+        height=1000,
+        bg="#f8f8f2"
+        )
+        frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+        frame.place(x=20,y=115)
+        canvas=Canvas(
+            frame,
+            bg='grey',
+            width=1400,
+            height=1200,
+            scrollregion=(0,0,1500, 1500)
+            )
+
+        vertibar=Scrollbar(
+            frame,
+            orient=VERTICAL
+            )
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        canvas.config(width=1310,height=600)
+
+        canvas.config(
+            yscrollcommand=vertibar.set
+            )
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_exp_tree.heading("# 1", text="Date")
+            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 2", text="Customer")
+            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 3", text="Vendor")
+            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_exp_tree.heading("# 4", text="Invoice")
+            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 5", text="Rebill.Amount")
+            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+            
+            for record in rp_exp_tree.get_children():
+                rp_exp_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from expenses WHERE customer="Internal"')
+
+            for i in fbcursor:
+                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                count += 1
+
+            total_tri='SELECT SUM(expense_amount) from expenses WHERE customer="Internal" '
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(rebill_amount) from expenses WHERE customer="Internal"'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_tri= fbcursor.fetchone()
+
+            
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','Summary',tot_tax1_tri,tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+            
+            
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        canvas.create_text(900,100,text="Expenses Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+expfrm.get()+"      Date To:"+expto.get()+"\n Expense Category: All",fill='black',font=("Helvetica", 8), justify='right')
+
+        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+
+        def emailrp():
+            rpmailDetail=Toplevel()
+            rpmailDetail.title("E-Mail")
+            p2 = PhotoImage(file = "images/fbicon.png")
+            rpmailDetail.iconphoto(False, p2)
+            rpmailDetail.geometry("1030x550+150+120")
+            
+            def myrp_SMTP():
+                if True:
+                    em_ser_conbtn.destroy()
+                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
+                    mysmtpservercon.place(x=610, y=110)
+                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
+                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
+                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
+                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
+                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
+                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
+                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
+                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
+                    ssl_chkvar=IntVar()
+                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
+                    ssl_chkbtn.place(x=50, y=110)
+                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
+                else:
+                    pass
+            
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(rpmailDetail)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
+            messagelbframe.place(x=5, y=5)
+            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
+            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
+            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
+            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
+            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
+            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
+            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
+            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
+            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
+            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
+            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
+            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
+            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
+            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
+            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
+
+            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
+            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
+            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
+            attachlbframe.place(x=740, y=5)
+            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
+            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
+            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
+            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
+            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
+            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
+            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
+            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
+            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
+            confirm_chkvar=IntVar()
+            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
+            confirm_chkbtn.place(x=200, y=215)
+            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
+
+            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
+            sendatalbframe.place(x=610, y=5)
+            servar=IntVar()
+            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
+            SMTP_rbtn.place(x=10, y=10)
+            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
+            MySMTP_rbtn.place(x=10, y=40)
+            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
+            em_ser_conbtn.place(x=710, y=110)
+        
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvas, tearoff=False)
+        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Report", command="pr")
+        my_menu.add_command(label="Email Report", command=emailrp)
+
+        my_menu.add_separator()
+        my_menu.add_command(label="Export Report To Excel", command="excel")
+        my_menu.add_command(label="Export Report To PDF", command="pdf")
+
+
+        canvas.bind("<Button-3>", my_popup)
+    else:
+        pass
 #------------------------------payment report------------------------
 def category_pyr():
   # firtst filter-----------------------------------Month to date
     rth=pyrfilter.get()
+    tri_company = "SELECT * from company"
+    fbcursor.execute(tri_company)
+    company_tri= fbcursor.fetchone()
+
     if rth=="Month to date":
 
         frame = Frame(
@@ -16975,45 +17583,87 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from invoice')
 
-       
-        
+            for i in fbcursor:
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[29],i[9]))
+                count += 1
+
+            total_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tri)
+            tot_tri= fbcursor.fetchone()
+            
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(260, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(260, 260, anchor="nw", window=tree)
 
         def emailrp():
             rpmailDetail=Toplevel()
@@ -17199,7 +17849,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -17404,7 +18054,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -17609,7 +18259,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -17814,7 +18464,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -18018,7 +18668,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -18224,7 +18874,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -18428,7 +19078,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -18631,7 +19281,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -18835,7 +19485,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -19040,7 +19690,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -19245,7 +19895,7 @@ def category_pyr():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=80)
         tree.heading("# 1", text="Invoice No")
         tree.column("# 2", anchor=E, stretch=NO, width=140)
@@ -19405,7 +20055,9 @@ def category_pyr():
 
 #Recurring Invoice----------------------------------------------
 def category_rir():
-
+        tro_company = "SELECT * from company"
+        fbcursor.execute(tro_company)
+        company_tro= fbcursor.fetchone()
         frame = Frame(
         reportframe,
         width=1500,
@@ -19435,42 +20087,90 @@ def category_rir():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_rir_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_rir_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_rir_tree.heading("# 1", text="Invoice No")
+            rp_rir_tree.column("# 2", anchor=E, stretch=NO, width=130)
+            rp_rir_tree.heading("# 2", text="Customer")
+            rp_rir_tree.column("# 3", anchor=E, stretch=NO, width=100)
+            rp_rir_tree.heading("# 3", text="Next Invoice")
+            rp_rir_tree.column("# 4", anchor=E, stretch=NO, width=140)
+            rp_rir_tree.heading("# 4", text="Recurring Interval")
+            rp_rir_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_rir_tree.heading("# 5", text="Stop After")
+            rp_rir_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_rir_tree.heading("# 6", text="Invoice Total")
+            # Insert the data in Treeview widget
+            rp_rir_tree.insert('', 'end',text="1",values=('','','','','','Total'))
+            # Insert the data in Treeview widget
+            for record in rp_rir_tree.get_children():
+                rp_rir_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from invoice')
+            for i in fbcursor:
+                rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[26], i[24], i[27], i[8]))
+                count += 1
 
-       
-        
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_ird= fbcursor.fetchone()
+            
+            
+            rp_rir_tree.insert('', 'end',text="1",values=('','','','','','Total'))
+
+            rp_rir_tree.insert('', 'end',text="1",values=('','','-End List-','','Total',tot_ird))
+            
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_rir_tree)
+
+            
+        else:
+                
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+
+            canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=130)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=100)
+            tree.heading("# 3", text="Next Invoice")
+            tree.column("# 4", anchor=E, stretch=NO, width=140)
+            tree.heading("# 4", text="Recurring Interval")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Stop After")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Invoice Total")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','Total'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(865,100,text="Recurring Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
 
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=130)
-        tree.heading("# 2", text="Customer")
-        tree.column("# 3", anchor=E, stretch=NO, width=100)
-        tree.heading("# 3", text="Next Invoice")
-        tree.column("# 4", anchor=E, stretch=NO, width=140)
-        tree.heading("# 4", text="Recurring Interval")
-        tree.column("# 5", anchor=E, stretch=NO, width=115)
-        tree.heading("# 5", text="Stop After")
-        tree.column("# 6", anchor=E, stretch=NO, width=115)
-        tree.heading("# 6", text="Invoice Total")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Total'))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -19607,6 +20307,9 @@ def category_rir():
 
 #-------------------------------------------------past due invoice------------------------------------------
 def category_pdi():
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
 
         frame = Frame(
         reportframe,
@@ -19637,47 +20340,104 @@ def category_pdi():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company is not None:
+            canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+             # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-       
-        
-        canvas.create_text(865,100,text="Past Due Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(930,145,text="Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
-
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
+            # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6","c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=60)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=80)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Overdue Days")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Total Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Total', '', ''))
+            rp_pdi_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pdi_tree.column("# 1", anchor=E, stretch=NO, width=50)
+            rp_pdi_tree.heading("# 1", text="No")
+            rp_pdi_tree.column("# 2", anchor=E, stretch=NO, width=80)
+            rp_pdi_tree.heading("# 2", text="Date")
+            rp_pdi_tree.column("# 3", anchor=E, stretch=NO, width=80)
+            rp_pdi_tree.heading("# 3", text="Due Date")
+            rp_pdi_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_pdi_tree.heading("# 4", text="Terms")
+            rp_pdi_tree.column("# 5", anchor=E, stretch=NO, width=100)
+            rp_pdi_tree.heading("# 5", text="Status")
+            rp_pdi_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_pdi_tree.heading("# 6", text="Invoice Total")
+            rp_pdi_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_pdi_tree.heading("# 7", text="Invoice Paid")
+            rp_pdi_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_pdi_tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            
+            rp_pdi_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            
+            for record in rp_pdi_tree.get_children():
+                rp_pdi_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * FROM invoice WHERE duedate IS NOT NULL;')
 
-        window = canvas.create_window(270, 260, anchor="nw", window=tree)
+            for i in fbcursor:
+                rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[4], i[4], i[8], i[9],i[10]))
+                count += 1
+
+            total_tri='SELECT SUM(invoicetot) from invoice'
+            fbcursor.execute(total_tri)
+            tot_ird= fbcursor.fetchone()
+            
+
+            total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            fbcursor.execute(total_tax1_tri)
+            tot_tax1_ird= fbcursor.fetchone()
+
+            total_tax2_tri='SELECT SUM(balance) from invoice'
+            fbcursor.execute(total_tax2_tri)
+            tot_tax2_ird= fbcursor.fetchone()
+            
+
+            rp_pdi_tree.insert('', 'end',text="1",values=('','','','','',tot_ird,tot_tax1_ird,tot_tax2_ird))
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pdi_tree)
+        else:
+            
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(930,145,text="Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
+            canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6","c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="No")
+            tree.column("# 2", anchor=E, stretch=NO, width=60)
+            tree.heading("# 2", text="Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=80)
+            tree.heading("# 3", text="Due Date")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Terms")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Overdue Days")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Invoice Total")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Total Paid")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','Total', '', ''))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=tree)
+        canvas.create_text(865,100,text="Past Due Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -19815,6 +20575,11 @@ def category_pdi():
 def category_cl():
   # firtst filter-----------------------------------Month to date
     rth=clfilter.get()
+    # #for company details
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
     if rth=="All Customers ":
 
         frame = Frame(
@@ -19846,39 +20611,73 @@ def category_cl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
+            # Add a Treeview widge
+                    
+            rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_cl_tree.heading("# 1", text="Customer Id")
+            rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+            rp_cl_tree.heading("# 2", text="Category")
+            rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+            rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+            rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+            rp_cl_tree.heading("# 4", text="Customer Person")
+            rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+            rp_cl_tree.heading("# 5", text="Tel")
+            rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+            rp_cl_tree.heading("# 6", text="Fax")
+            # Insert the data in Treeview widget
+            rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
 
-       
+            # Insert the data in Treeview widget
+            for record in rp_cl_tree.get_children():
+                rp_cl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from customer')
+            for i in fbcursor:
+                rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                count += 1
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
         
+        
+        else:
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+                
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Customer Id")
+            tree.column("# 2", anchor=E, stretch=NO, width=170)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=250)
+            tree.heading("# 3", text="Customer Businnes Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=180)
+            tree.heading("# 4", text="Customer Person")
+            tree.column("# 5", anchor=E, stretch=NO, width=130)
+            tree.heading("# 5", text="Tel")
+            tree.column("# 6", anchor=E, stretch=NO, width=130)
+            tree.heading("# 6", text="Fax")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
         canvas.create_text(1070,100,text="Customers List",fill='black',font=("Helvetica", 16), justify='right') 
 
         
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Customer Id")
-        tree.column("# 2", anchor=E, stretch=NO, width=170)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=250)
-        tree.heading("# 3", text="Customer Businnes Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=180)
-        tree.heading("# 4", text="Customer Person")
-        tree.column("# 5", anchor=E, stretch=NO, width=130)
-        tree.heading("# 5", text="Tel")
-        tree.column("# 6", anchor=E, stretch=NO, width=130)
-        tree.heading("# 6", text="Fax")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -20044,39 +20843,77 @@ def category_cl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_cl_tree.heading("# 1", text="Customer Id")
+            rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+            rp_cl_tree.heading("# 2", text="Category")
+            rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+            rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+            rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+            rp_cl_tree.heading("# 4", text="Customer Person")
+            rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+            rp_cl_tree.heading("# 5", text="Tel")
+            rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+            rp_cl_tree.heading("# 6", text="Fax")
+            # Insert the data in Treeview widget
+            rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+            # Insert the data in Treeview widget
+            for record in rp_cl_tree.get_children():
+                rp_cl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from customer WHERE category="Default"')
+            if fbcursor is not None:
+                for i in fbcursor:
+                    rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                    count += 1
+            else:
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','-No Data-','',''))
 
 
-       
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
         
+        
+        else:
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Customer Id")
+            tree.column("# 2", anchor=E, stretch=NO, width=170)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=250)
+            tree.heading("# 3", text="Customer Businnes Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=180)
+            tree.heading("# 4", text="Customer Person")
+            tree.column("# 5", anchor=E, stretch=NO, width=130)
+            tree.heading("# 5", text="Tel")
+            tree.column("# 6", anchor=E, stretch=NO, width=130)
+            tree.heading("# 6", text="Fax")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
         canvas.create_text(1070,100,text="Customers List",fill='black',font=("Helvetica", 16), justify='right') 
-
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Customer Id")
-        tree.column("# 2", anchor=E, stretch=NO, width=170)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=250)
-        tree.heading("# 3", text="Customer Businnes Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=180)
-        tree.heading("# 4", text="Customer Person")
-        tree.column("# 5", anchor=E, stretch=NO, width=130)
-        tree.heading("# 5", text="Tel")
-        tree.column("# 6", anchor=E, stretch=NO, width=130)
-        tree.heading("# 6", text="Fax")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -20264,7 +21101,7 @@ def category_cld():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -20463,7 +21300,7 @@ def category_cld():
 
         # Add a Treeview widge
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
+        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
         tree.column("# 1", anchor=E, stretch=NO, width=50)
         tree.heading("# 1", text="No")
         tree.column("# 2", anchor=E, stretch=NO, width=70)
@@ -20624,6 +21461,10 @@ def category_cld():
 def category_psl():
   # firtst filter-----------------------------------Month to date
     rth=pslfilter.get()
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
     if rth=="All product and Services ":
 
         frame = Frame(
@@ -20655,43 +21496,81 @@ def category_psl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_psl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_psl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 1", text="Product ID")
+            rp_psl_tree.column("# 2", anchor=E, stretch=NO, width=120)
+            rp_psl_tree.heading("# 2", text="Category")
+            rp_psl_tree.column("# 3", anchor=E, stretch=NO, width=180)
+            rp_psl_tree.heading("# 3", text="Product/ Service Name")
+            rp_psl_tree.column("# 4", anchor=E, stretch=NO, width=130)
+            rp_psl_tree.heading("# 4", text="Description")
+            rp_psl_tree.column("# 5", anchor=E, stretch=NO, width=150)
+            rp_psl_tree.heading("# 5", text="Warehouse")
+            rp_psl_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 6", text="Stock")
+            rp_psl_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 7", text="Cost")
+            rp_psl_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            rp_psl_tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
 
-       
+            # Insert the data in Treeview widget
+            for record in rp_psl_tree.get_children():
+                rp_psl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice')
+            for i in fbcursor:
+                rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                count += 1
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
         
+        
+        else:
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=120)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=180)
+            tree.heading("# 3", text="Product/ Service Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=130)
+            tree.heading("# 4", text="Description")
+            tree.column("# 5", anchor=E, stretch=NO, width=150)
+            tree.heading("# 5", text="Warehouse")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Stock")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Cost")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
         canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=120)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=180)
-        tree.heading("# 3", text="Product/ Service Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=130)
-        tree.heading("# 4", text="Description")
-        tree.column("# 5", anchor=E, stretch=NO, width=150)
-        tree.heading("# 5", text="Warehouse")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Stock")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Cost")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Price")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -20857,44 +21736,83 @@ def category_psl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_psl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_psl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 1", text="Product ID")
+            rp_psl_tree.column("# 2", anchor=E, stretch=NO, width=120)
+            rp_psl_tree.heading("# 2", text="Category")
+            rp_psl_tree.column("# 3", anchor=E, stretch=NO, width=180)
+            rp_psl_tree.heading("# 3", text="Product/ Service Name")
+            rp_psl_tree.column("# 4", anchor=E, stretch=NO, width=130)
+            rp_psl_tree.heading("# 4", text="Description")
+            rp_psl_tree.column("# 5", anchor=E, stretch=NO, width=150)
+            rp_psl_tree.heading("# 5", text="Warehouse")
+            rp_psl_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 6", text="Stock")
+            rp_psl_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 7", text="Cost")
+            rp_psl_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            rp_psl_tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
 
-       
+            # Insert the data in Treeview widget
+            for record in rp_psl_tree.get_children():
+                rp_psl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="products" ')
+            for i in fbcursor:
+                rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                count += 1
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
         
+        
+        else:
+
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=120)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=180)
+            tree.heading("# 3", text="Product/ Service Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=130)
+            tree.heading("# 4", text="Description")
+            tree.column("# 5", anchor=E, stretch=NO, width=150)
+            tree.heading("# 5", text="Warehouse")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Stock")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Cost")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
         canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
-
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=120)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=180)
-        tree.heading("# 3", text="Product/ Service Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=130)
-        tree.heading("# 4", text="Description")
-        tree.column("# 5", anchor=E, stretch=NO, width=150)
-        tree.heading("# 5", text="Warehouse")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Stock")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Cost")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Price")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
-        
+            
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -21059,45 +21977,84 @@ def category_psl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_psl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_psl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 1", text="Product ID")
+            rp_psl_tree.column("# 2", anchor=E, stretch=NO, width=120)
+            rp_psl_tree.heading("# 2", text="Category")
+            rp_psl_tree.column("# 3", anchor=E, stretch=NO, width=180)
+            rp_psl_tree.heading("# 3", text="Product/ Service Name")
+            rp_psl_tree.column("# 4", anchor=E, stretch=NO, width=130)
+            rp_psl_tree.heading("# 4", text="Description")
+            rp_psl_tree.column("# 5", anchor=E, stretch=NO, width=150)
+            rp_psl_tree.heading("# 5", text="Warehouse")
+            rp_psl_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 6", text="Stock")
+            rp_psl_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 7", text="Cost")
+            rp_psl_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            rp_psl_tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
 
-       
+            # Insert the data in Treeview widget
+            for record in rp_psl_tree.get_children():
+                rp_psl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="Service" ')
+            for i in fbcursor:
+                rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                count += 1
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
         
+        
+        else:
+                
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=120)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=180)
+            tree.heading("# 3", text="Product/ Service Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=130)
+            tree.heading("# 4", text="Description")
+            tree.column("# 5", anchor=E, stretch=NO, width=150)
+            tree.heading("# 5", text="Warehouse")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Stock")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Cost")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
+
         canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=120)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=180)
-        tree.heading("# 3", text="Product/ Service Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=130)
-        tree.heading("# 4", text="Description")
-        tree.column("# 5", anchor=E, stretch=NO, width=150)
-        tree.heading("# 5", text="Warehouse")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Stock")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Cost")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Price")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
-
-        
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -21262,43 +22219,82 @@ def category_psl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(120,25,1200,1430,  outline='yellow',fill='white')
-        canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(190,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_psl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            rp_psl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 1", text="Product ID")
+            rp_psl_tree.column("# 2", anchor=E, stretch=NO, width=120)
+            rp_psl_tree.heading("# 2", text="Category")
+            rp_psl_tree.column("# 3", anchor=E, stretch=NO, width=180)
+            rp_psl_tree.heading("# 3", text="Product/ Service Name")
+            rp_psl_tree.column("# 4", anchor=E, stretch=NO, width=130)
+            rp_psl_tree.heading("# 4", text="Description")
+            rp_psl_tree.column("# 5", anchor=E, stretch=NO, width=150)
+            rp_psl_tree.heading("# 5", text="Warehouse")
+            rp_psl_tree.column("# 6", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 6", text="Stock")
+            rp_psl_tree.column("# 7", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 7", text="Cost")
+            rp_psl_tree.column("# 8", anchor=E, stretch=NO, width=100)
+            rp_psl_tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            rp_psl_tree.insert('', 'end',text="1",values=('','','','','','','',''))
 
 
-       
+            # Insert the data in Treeview widget
+            for record in rp_psl_tree.get_children():
+                rp_psl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="Default"')
+            for i in fbcursor:
+                rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                count += 1
+            window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
         
+        
+        else:
+
+            canvas.create_text(240,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+   
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=120)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=180)
+            tree.heading("# 3", text="Product/ Service Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=130)
+            tree.heading("# 4", text="Description")
+            tree.column("# 5", anchor=E, stretch=NO, width=150)
+            tree.heading("# 5", text="Warehouse")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Stock")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Cost")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Price")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','','',''))
+
+            window = canvas.create_window(170, 150, anchor="nw", window=tree)
         canvas.create_text(1000,100,text="Products And Services Report",fill='black',font=("Helvetica", 16), justify='right') 
 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=120)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=180)
-        tree.heading("# 3", text="Product/ Service Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=130)
-        tree.heading("# 4", text="Description")
-        tree.column("# 5", anchor=E, stretch=NO, width=150)
-        tree.heading("# 5", text="Warehouse")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Stock")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Cost")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Price")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','','',''))
-
-        window = canvas.create_window(170, 150, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -21440,6 +22436,10 @@ def category_psl():
 def category_prl():
   # firtst filter-----------------------------------Month to date
     rth=prlfilter.get()
+     # #for company details
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
     if rth=="All product and Services ":
 
         frame = Frame(
@@ -21471,35 +22471,68 @@ def category_prl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
-       
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_pl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pl_tree.column("# 1", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 1", text="Product ID")
+            rp_pl_tree.column("# 2", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 2", text="Product/Service Name")
+            rp_pl_tree.column("# 3", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 3", text="Description")
+            rp_pl_tree.column("# 4", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            rp_pl_tree.insert('', 'end',text="1",values=('','','',''))
+
+
+            # Insert the data in Treeview widget
+            for record in rp_pl_tree.get_children():
+                rp_pl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice')
+            for i in fbcursor:
+                rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                count += 1
+            window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
+        
+        
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=150)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=200)
+            tree.heading("# 2", text="Product/Service Name")
+            tree.column("# 3", anchor=E, stretch=NO, width=200)
+            tree.heading("# 3", text="Description")
+            tree.column("# 4", anchor=E, stretch=NO, width=150)
+            tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','',''))
+
+            window = canvas.create_window(280, 130, anchor="nw", window=tree)
         canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
-
- 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=150)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=200)
-        tree.heading("# 2", text="Product/Service Name")
-        tree.column("# 3", anchor=E, stretch=NO, width=200)
-        tree.heading("# 3", text="Description")
-        tree.column("# 4", anchor=E, stretch=NO, width=150)
-        tree.heading("# 4", text="Unit Price")
-        
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','',''))
-
-        window = canvas.create_window(280, 130, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -21665,37 +22698,69 @@ def category_prl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-       
+            # Add a Treeview widge
+                    
+            rp_pl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pl_tree.column("# 1", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 1", text="Product ID")
+            rp_pl_tree.column("# 2", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 2", text="Product/Service Name")
+            rp_pl_tree.column("# 3", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 3", text="Description")
+            rp_pl_tree.column("# 4", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            rp_pl_tree.insert('', 'end',text="1",values=('','','',''))
+
+
+            # Insert the data in Treeview widget
+            for record in rp_pl_tree.get_children():
+                rp_pl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="Products"')
+            for i in fbcursor:
+                rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                count += 1
+            window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
         
+        
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=150)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=200)
+            tree.heading("# 2", text="Product/Service Name")
+            tree.column("# 3", anchor=E, stretch=NO, width=200)
+            tree.heading("# 3", text="Description")
+            tree.column("# 4", anchor=E, stretch=NO, width=150)
+            tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','',''))
+
+            window = canvas.create_window(280, 130, anchor="nw", window=tree)
         canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
-
- 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=150)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=200)
-        tree.heading("# 2", text="Product/Service Name")
-        tree.column("# 3", anchor=E, stretch=NO, width=200)
-        tree.heading("# 3", text="Description")
-        tree.column("# 4", anchor=E, stretch=NO, width=150)
-        tree.heading("# 4", text="Unit Price")
-        
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','',''))
-
-        window = canvas.create_window(280, 130, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -21862,37 +22927,67 @@ def category_prl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_pl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pl_tree.column("# 1", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 1", text="Product ID")
+            rp_pl_tree.column("# 2", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 2", text="Product/Service Name")
+            rp_pl_tree.column("# 3", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 3", text="Description")
+            rp_pl_tree.column("# 4", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            rp_pl_tree.insert('', 'end',text="1",values=('','','',''))
+
+
+            # Insert the data in Treeview widget
+            for record in rp_pl_tree.get_children():
+                rp_pl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="Service"')
+            for i in fbcursor:
+                rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                count += 1
+            window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=150)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=200)
+            tree.heading("# 2", text="Product/Service Name")
+            tree.column("# 3", anchor=E, stretch=NO, width=200)
+            tree.heading("# 3", text="Description")
+            tree.column("# 4", anchor=E, stretch=NO, width=150)
+            tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','',''))
+
+            window = canvas.create_window(280, 130, anchor="nw", window=tree)
 
         canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
-
- 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=150)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=200)
-        tree.heading("# 2", text="Product/Service Name")
-        tree.column("# 3", anchor=E, stretch=NO, width=200)
-        tree.heading("# 3", text="Description")
-        tree.column("# 4", anchor=E, stretch=NO, width=150)
-        tree.heading("# 4", text="Unit Price")
-        
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','',''))
-
-        window = canvas.create_window(280, 130, anchor="nw", window=tree)
-
-        
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -22057,38 +23152,66 @@ def category_prl():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        
+            # Add a Treeview widge
+                    
+            rp_pl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pl_tree.column("# 1", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 1", text="Product ID")
+            rp_pl_tree.column("# 2", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 2", text="Product/Service Name")
+            rp_pl_tree.column("# 3", anchor=E, stretch=NO, width=200)
+            rp_pl_tree.heading("# 3", text="Description")
+            rp_pl_tree.column("# 4", anchor=E, stretch=NO, width=150)
+            rp_pl_tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            rp_pl_tree.insert('', 'end',text="1",values=('','','',''))
+
+
+            # Insert the data in Treeview widget
+            for record in rp_pl_tree.get_children():
+                rp_pl_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from productservice WHERE category="Default"')
+            for i in fbcursor:
+                rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                count += 1
+            window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=150)
+            tree.heading("# 1", text="Product ID")
+            tree.column("# 2", anchor=E, stretch=NO, width=200)
+            tree.heading("# 2", text="Product/Service Name")
+            tree.column("# 3", anchor=E, stretch=NO, width=200)
+            tree.heading("# 3", text="Description")
+            tree.column("# 4", anchor=E, stretch=NO, width=150)
+            tree.heading("# 4", text="Unit Price")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','',''))
+
+            window = canvas.create_window(280, 130, anchor="nw", window=tree)
+
         canvas.create_text(930,100,text="Price List",fill='black',font=("Helvetica", 16), justify='right')
 
-
- 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=150)
-        tree.heading("# 1", text="Product ID")
-        tree.column("# 2", anchor=E, stretch=NO, width=200)
-        tree.heading("# 2", text="Product/Service Name")
-        tree.column("# 3", anchor=E, stretch=NO, width=200)
-        tree.heading("# 3", text="Description")
-        tree.column("# 4", anchor=E, stretch=NO, width=150)
-        tree.heading("# 4", text="Unit Price")
-        
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','',''))
-
-        window = canvas.create_window(280, 130, anchor="nw", window=tree)
-
-        
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -22227,7 +23350,9 @@ def category_prl():
 
 #-------------------------product low stock report---------------------
 def category_plsr():
-
+        tro_company = "SELECT * from company"
+        fbcursor.execute(tro_company)
+        company_tro= fbcursor.fetchone()
         frame = Frame(
         reportframe,
         width=1500,
@@ -22257,37 +23382,73 @@ def category_plsr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
+            
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        
+            # Add a Treeview widge
+                    
+            rp_plsr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_plsr_tree.column("# 1", anchor=E, stretch=NO, width=100)
+            rp_plsr_tree.heading("# 1", text="Product Id")
+            rp_plsr_tree.column("# 2", anchor=E, stretch=NO, width=100)
+            rp_plsr_tree.heading("# 2", text="Category")
+            rp_plsr_tree.column("# 3", anchor=E, stretch=NO, width=150)
+            rp_plsr_tree.heading("# 3", text="Product Name")
+            rp_plsr_tree.column("# 4", anchor=E, stretch=NO, width=130)
+            rp_plsr_tree.heading("# 4", text="Warehouse")
+            rp_plsr_tree.column("# 5", anchor=E, stretch=NO, width=130)
+            rp_plsr_tree.heading("# 5", text="Low Stock Limit")
+            rp_plsr_tree.column("# 6", anchor=E, stretch=NO, width=70)
+            rp_plsr_tree.heading("# 6", text="Stock")
+            # Insert the data in Treeview widget
+            rp_plsr_tree.insert('', 'end',text="1",values=('','','','','',''))
+            # Insert the data in Treeview widget
+            for record in rp_plsr_tree.get_children():
+                rp_plsr_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from storingproduct WHERE stock=stocklimit')
+            for i in fbcursor:
+                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[5], i[6], i[17], i[16], i[15]))
+                count += 1
+            
+            window = canvas.create_window(290, 130, anchor="nw", window=rp_plsr_tree)
+
+            
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=100)
+            tree.heading("# 1", text="Product Id")
+            tree.column("# 2", anchor=E, stretch=NO, width=100)
+            tree.heading("# 2", text="Category")
+            tree.column("# 3", anchor=E, stretch=NO, width=150)
+            tree.heading("# 3", text="Product Name")
+            tree.column("# 4", anchor=E, stretch=NO, width=130)
+            tree.heading("# 4", text="Warehouse")
+            tree.column("# 5", anchor=E, stretch=NO, width=130)
+            tree.heading("# 5", text="Low Stock Limit")
+            tree.column("# 6", anchor=E, stretch=NO, width=70)
+            tree.heading("# 6", text="Stock")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','',''))
+
+            window = canvas.create_window(290, 130, anchor="nw", window=tree)
         canvas.create_text(840,100,text="Product Low Stock Report",fill='black',font=("Helvetica", 16), justify='right')
 
-
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=8, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=100)
-        tree.heading("# 1", text="Product Id")
-        tree.column("# 2", anchor=E, stretch=NO, width=100)
-        tree.heading("# 2", text="Category")
-        tree.column("# 3", anchor=E, stretch=NO, width=150)
-        tree.heading("# 3", text="Product Name")
-        tree.column("# 4", anchor=E, stretch=NO, width=130)
-        tree.heading("# 4", text="Warehouse")
-        tree.column("# 5", anchor=E, stretch=NO, width=130)
-        tree.heading("# 5", text="Low Stock Limit")
-        tree.column("# 6", anchor=E, stretch=NO, width=70)
-        tree.heading("# 6", text="Stock")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','',''))
-
-        window = canvas.create_window(290, 130, anchor="nw", window=tree)
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -24260,7 +25421,7 @@ def maindropmenu(event):
     drop1er.current(0)
 
     rpdrop2_er=ttk.Combobox(midFrame, textvariable=expfilter,width=30)
-    rpdrop2_er["values"]=("All")
+    rpdrop2_er["values"]=("All","Internal")
     rpdrop2_er.place(x=530,y=50)
     rpdrop2_er.current(0)
 
