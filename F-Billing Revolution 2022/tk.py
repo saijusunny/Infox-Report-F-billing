@@ -10,12 +10,12 @@ root.geometry("750x450")
 import datetime
 import calendar
 
-def add_months(sourcedate, months):
-    month = sourcedate.month - 1 + months
-    year = sourcedate.year + month // 12
-    month = month % 12 + 1
-    day = min(sourcedate.day, calendar.monthrange(year,month)[1])
-    return datetime.date(year, month, day)
+# def add_months(sourcedate, months):
+#     month = sourcedate.month - 1 + months
+#     year = sourcedate.year + month // 12
+#     month = month % 12 + 1
+#     day = min(sourcedate.day, calendar.monthrange(year,month)[1])
+#     return datetime.date(year, month, day)
     
 def tak(event):
    d1=expdt3.get_date()
