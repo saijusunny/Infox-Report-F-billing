@@ -17,6 +17,7 @@ import tkinter.scrolledtext as scrolledtext
 from tkinter.filedialog import askopenfilename
 import os
 import webbrowser
+
 from setuptools import Command
 from tkcalendar import Calendar
 from tkcalendar import DateEntry
@@ -34,6 +35,7 @@ import matplotlib.pyplot as plt
 from pylab import plot, show, xlabel, ylabel
 from matplotlib.widgets import Cursor
 from dateutil.relativedelta import relativedelta
+import pendulum
 
 
 
@@ -189,10 +191,7 @@ lbframe.pack(side="left", padx=10, pady=0)
 def category():
   # firtst filter-----------------------------------Month to date
     rth=invfilter.get()
-    print(rp_exir1.get_date())
-    date_filter=rp_exir1.get_date()
-    # print(rp_exir.get_date())
-    # display company name
+    
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
     company= fbcursor.fetchone()
@@ -201,12 +200,15 @@ def category():
     
     
     if rth=="Month to date":
+        
         given_date = datetime.today().date()
-        
         in_dat = given_date.replace(day=1)
-        
         rp_exir.delete(0,'end')
         rp_exir.insert(0, in_dat)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -275,26 +277,41 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
-            for i in fbcursor:
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            
+            
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # print ('haii')
+            # tot_tri= fbcursor.fetchall()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
-
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchall()
+            
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_inv_bal= fbcursor.fetchall()
+            
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','-End Of List- ','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_inv_bal))
 
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -467,6 +484,15 @@ def category():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        rp_exir.delete(0,'end')
+        rp_exir.insert(0, start)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -499,7 +525,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -533,26 +559,36 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -722,6 +758,16 @@ def category():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        rp_exir.delete(0,'end')
+        rp_exir.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -788,26 +834,37 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
-            for i in fbcursor:
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tot_tris= fbcursor.fetchall()
+           
+            
+            for i in tot_tris:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz1=(var1,var2)
+            fbcursor.execute(total_tri,inv_valuz1)
+            tot_tri1= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
+            total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz2=(var1,var2)
+            fbcursor.execute(total_tax1_tri,inv_valuz2)
             tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz3=(var1,var2)
+            fbcursor.execute(total_tax2_tri,inv_valuz3)
+            tot_balance= fbcursor.fetchone()
             
             rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri1,tot_tax1_tri,tot_balance))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -977,6 +1034,16 @@ def category():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        rp_exir.delete(0,'end')
+        rp_exir.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, nxt_mnth)
+        
         frame = Frame(
         reportframe,
         width=1500,
@@ -1009,7 +1076,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -1043,26 +1110,36 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -1233,11 +1310,19 @@ def category():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        rp_exir.delete(0,'end')
+        rp_exir.insert(0,given_date)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
         height=1000,
-        bg="#"
+        bg="#f8f8f2"
         )
         frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
         frame.place(x=20,y=115)
@@ -1265,7 +1350,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -1299,25 +1384,35 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
+            total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz1=(var1,var2)
+            fbcursor.execute(total_tri,inv_valuz1)
             tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
+            total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz2=(var1,var2)
+            fbcursor.execute(total_tax1_tri,inv_valuz2)
             tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
+            total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            inv_valuz3=(var1,var2)
+            fbcursor.execute(total_tax2_tri,inv_valuz3)
             tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoicess Total','Total Paid','Balance'))
             rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -1488,10 +1583,14 @@ def category():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
-
+        date_filter=date.today()
         in_dat=date_filter-timedelta(days=30)
         rp_exir.delete(0,'end')
         rp_exir.insert(0, in_dat)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -1525,7 +1624,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -1559,26 +1658,35 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
 
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -1750,9 +1858,15 @@ def category():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
         in_dat=date_filter-timedelta(days=60)
         rp_exir.delete(0,'end')
         rp_exir.insert(0, in_dat)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -1785,7 +1899,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -1819,26 +1933,35 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
 
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2009,9 +2132,15 @@ def category():
     #========================================================================================================
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
         in_dat=date_filter-timedelta(days=90)
         rp_exir.delete(0,'end')
         rp_exir.insert(0, in_dat)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -2044,7 +2173,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -2078,26 +2207,35 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
 
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2276,10 +2414,13 @@ def category():
         #====================================================================================================
     elif rth=="Previous month":
         last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
-        print(last_day_of_prev_month)
         in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
         rp_exir.delete(0,'end')
         rp_exir.insert(0, in_dat)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -2313,7 +2454,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -2347,26 +2488,35 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
 
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2538,11 +2688,14 @@ def category():
         #===========================================================================================================
     elif rth=="Previous year":
         
-        
 
         last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
         rp_exir.delete(0,'end')
         rp_exir.insert(0, last_year)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -2576,7 +2729,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -2610,26 +2763,36 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
 
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -2800,6 +2963,14 @@ def category():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
+        cr1=date.today()
+        rp_exir.delete(0,'end')
+        rp_exir.insert(0, cr1)
+
+        cr=date.today()
+        rp_exir1.delete(0,'end')
+        rp_exir1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -2832,7 +3003,7 @@ def category():
         # Create an instance of Style widget
         style=ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
@@ -2866,26 +3037,36 @@ def category():
             for record in rp_inv_tree.get_children():
                 rp_inv_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * FROM invoice;')
+           
+            var1=cr1
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
 
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+           
+            
             for i in fbcursor:
                 rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                 count += 1
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz1=(var1,var2)
+            # fbcursor.execute(total_tri,inv_valuz1)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(totpaid) from invoice WHERE totpaid = (SELECT totpaid FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz2=(var1,var2)
+            # fbcursor.execute(total_tax1_tri,inv_valuz2)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(balance) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(balance) from invoice WHERE balance = (SELECT balance FROM invoice WHERE invodate BETWEEN %s and %s)'
+            # inv_valuz3=(var1,var2)
+            # fbcursor.execute(total_tax2_tri,inv_valuz3)
+            # tot_tax2_tri= fbcursor.fetchone()
             
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
-            rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+            # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_tax2_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
 
@@ -3060,7 +3241,7 @@ def category():
         pass
 
 #---------------------------------------------------INVOICE REPORT (WITH CUSTOMER)---------------------------------
-def category_irwc():
+def category_irwc(): 
   # firtst filter-----------------------------------Month to date
     rth=irwcfilter.get()
     # #for company details
@@ -3068,6 +3249,15 @@ def category_irwc():
     fbcursor.execute(tro_company)
     company_tro= fbcursor.fetchone()
     if rth=="Month to date":
+
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -3131,20 +3321,30 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            
+
+            
             rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -3323,6 +3523,15 @@ def category_irwc():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, start)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -3385,20 +3594,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -3577,6 +3792,16 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -3639,20 +3864,25 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -3832,6 +4062,16 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, nxt_mnth)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -3894,20 +4134,25 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -4087,6 +4332,14 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0,given_date)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -4149,20 +4402,25 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -4341,6 +4599,15 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -4402,20 +4669,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -4596,6 +4869,14 @@ def category_irwc():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
         frame = Frame(
         reportframe,
         width=1500,
@@ -4658,20 +4939,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -4851,6 +5138,15 @@ def category_irwc():
  
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -4913,20 +5209,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -5105,6 +5407,15 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -5167,20 +5478,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -5360,6 +5677,14 @@ def category_irwc():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, last_year)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -5422,20 +5747,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+            
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -5614,6 +5945,14 @@ def category_irwc():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        cr1=date.today()
+        irwcfrm1.delete(0,'end')
+        irwcfrm1.insert(0, cr1)
+
+        cr=date.today()
+        irwcto1.delete(0,'end')
+        irwcto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -5676,20 +6015,26 @@ def category_irwc():
             for record in rp_irwc_tree.get_children():
                 rp_irwc_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            for i in fbcursor:
+
+            var1=cr1
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_ird= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_ird= fbcursor.fetchone()
         
             
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','End of List','','','Invoice Total'))
 
-            rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
+            # rp_irwc_tree.insert('', 'end',text="1",values=('','','','','Summary:',tot_ird))
             
             window = canvas.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -5883,6 +6228,14 @@ def category_or():
     
     
     if rth=="Month to date":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
 
         frame = Frame( 
         reportframe,
@@ -5945,19 +6298,25 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
 
-            for i in fbcursor:
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6136,6 +6495,15 @@ def category_or():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, start)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -6197,18 +6565,25 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
 
-            for i in fbcursor:
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6387,6 +6762,16 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        orto1.delete(0,'end')
+        orto1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -6448,19 +6833,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=end
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
-
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
 
@@ -6637,6 +7027,16 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        orto1.delete(0,'end')
+        orto1.insert(0, nxt_mnth)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -6698,18 +7098,25 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
 
-            for i in fbcursor:
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -6889,6 +7296,14 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        orfrm   .delete(0,'end')
+        orfrm1.insert(0,given_date)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -6950,18 +7365,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=given_date
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7138,6 +7559,15 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -7199,18 +7629,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7390,6 +7826,15 @@ def category_or():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -7451,18 +7896,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7642,6 +8093,15 @@ def category_or():
 
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -7703,18 +8163,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -7892,6 +8358,15 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -7953,18 +8428,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -8142,6 +8623,14 @@ def category_or():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, last_year)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -8203,18 +8692,25 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
 
-            for i in fbcursor:
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -8391,6 +8887,14 @@ def category_or():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        cr1=date.today()
+        orfrm1.delete(0,'end')
+        orfrm1.insert(0, cr1)
+
+        cr=date.today()
+        orto1.delete(0,'end')
+        orto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -8452,18 +8956,24 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+                
                 rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
                 count += 1
-            total_tri='SELECT SUM(sum_subtotal) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(sum_subtotal) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
-            rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total'))
+            # rp_or_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_or_tree)
 
@@ -8653,6 +9163,14 @@ def category_tri():
     company_tri= fbcursor.fetchone()
 
     if rth=="Month to date":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
 
         frame = Frame(
         reportframe,
@@ -8717,33 +9235,39 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
 
-            for i in fbcursor:
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -8923,6 +9447,15 @@ def category_tri():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, start)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -8986,33 +9519,39 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
 
-            for i in fbcursor:
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -9192,6 +9731,16 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        trito1.delete(0,'end')
+        trito1.insert(0, end)
+        
         frame = Frame(
         reportframe,
         width=1500,
@@ -9255,33 +9804,39 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
 
-            for i in fbcursor:
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -9461,6 +10016,16 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        trito1.delete(0,'end')
+        trito1.insert(0, nxt_mnth)
+        
         frame = Frame(
         reportframe,
         width=1500,
@@ -9524,33 +10089,39 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
 
-            for i in fbcursor:
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
             canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -9730,6 +10301,14 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        trifrm   .delete(0,'end')
+        trifrm1.insert(0,given_date)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -9793,33 +10372,39 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
 
-            for i in fbcursor:
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -9999,6 +10584,15 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -10062,33 +10656,40 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+           
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -10270,6 +10871,15 @@ def category_tri():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -10333,33 +10943,38 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -10540,6 +11155,15 @@ def category_tri():
 
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -10603,34 +11227,38 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
-
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
             canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -10809,6 +11437,15 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, in_dat)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -10872,33 +11509,38 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -11077,6 +11719,14 @@ def category_tri():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, last_year)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -11140,33 +11790,38 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -11345,6 +12000,14 @@ def category_tri():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        cr1=date.today()
+        trifrm1.delete(0,'end')
+        trifrm1.insert(0, cr1)
+
+        cr=date.today()
+        trito1.delete(0,'end')
+        trito1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -11408,33 +12071,38 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
+            var1=cr1
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(invoicetot) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from invoice'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from invoice'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()\
+            # total_tax2_tri='SELECT SUM(tax2) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from invoice'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr= fbcursor.fetchone()
 
             
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','',tot_bfr,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
         else:
@@ -11629,6 +12297,15 @@ def category_tro():
     
     if rth=="Month to date":
 
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -11692,31 +12369,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -11897,6 +12580,15 @@ def category_tro():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, start)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -11960,31 +12652,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -12167,6 +12865,16 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        troto1.delete(0,'end')
+        troto1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -12230,31 +12938,38 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
 
-            for i in fbcursor:
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -12435,6 +13150,16 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        troto1.delete(0,'end')
+        troto1.insert(0, nxt_mnth)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -12498,31 +13223,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -12704,6 +13435,14 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0,given_date)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -12767,31 +13506,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -12972,6 +13717,15 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -13035,31 +13789,38 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -13241,6 +14002,15 @@ def category_tro():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -13304,31 +14074,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -13511,6 +14287,15 @@ def category_tro():
 
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -13574,31 +14359,38 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
             
@@ -13778,6 +14570,15 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, in_dat)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -13841,31 +14642,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
             
@@ -14046,6 +14853,14 @@ def category_tro():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, last_year)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -14109,31 +14924,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=last_yearyear
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -14314,6 +15135,14 @@ def category_tro():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        cr1=date.today()
+        trofrm1.delete(0,'end')
+        trofrm1.insert(0, cr1)
+
+        cr=date.today()
+        troto1.delete(0,'end')
+        troto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -14377,31 +15206,37 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from orders')
+            var1=cr1
+            var2=cr
+            sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
+            for i in tre:
+
                 rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
                 count += 1
 
-            total_tri='SELECT SUM(Order_total) from orders'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(Order_total) from orders'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(tax1) from orders'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(tax1) from orders'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(tax2) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_tax2_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(tax2) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_tax2_tri= fbcursor.fetchone()
 
-            total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
-            fbcursor.execute(total_tax2_tri)
-            tot_bfr_tri= fbcursor.fetchone()
+            # total_tax2_tri='SELECT SUM(totalbeforetax) from orders'
+            # fbcursor.execute(total_tax2_tri)
+            # tot_bfr_tri= fbcursor.fetchone()
             
-            rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
-            rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','-End of list-','','Total Before TAX','TAX1','TAX2','Invoice Total'))
+            # rep_tro_tree.insert('', 'end',text="1",values=('','','Summary:',tot_bfr_tri,tot_tax1_tri,tot_tax2_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rep_tro_tree)
 
@@ -15325,6 +16160,15 @@ def category_por():
     fbcursor.execute(or_company)
     company_or= fbcursor.fetchone()
     if rth=="Month to date":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         
         frame = Frame(
         reportframe,
@@ -15575,6 +16419,15 @@ def category_por():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, start)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -15824,6 +16677,16 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        porto1.delete(0,'end')
+        porto1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -16076,6 +16939,16 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        porto1.delete(0,'end')
+        porto1.insert(0, nxt_mnth)
+        
         frame = Frame(
         reportframe,
         width=1500,
@@ -16324,6 +17197,14 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        porfrm   .delete(0,'end')
+        porfrm1.insert(0,given_date)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -16573,6 +17454,15 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -16825,6 +17715,15 @@ def category_por():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -17073,256 +17972,18 @@ def category_por():
 
         canvas.bind("<Button-3>", my_popup)
     #========================================================================================================
-    elif rth=="Last 60 days":
-        frame = Frame(
-        reportframe,
-        width=1500,
-        height=1000,
-        bg="#f8f8f2"
-        )
-        frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
-        frame.place(x=20,y=115)
-        canvas=Canvas(
-            frame,
-            bg='grey',
-            width=1400,
-            height=1200,
-            scrollregion=(0,0,1500, 1500)
-            )
-
-        vertibar=Scrollbar(
-            frame,
-            orient=VERTICAL
-            )
-        vertibar.pack(side=RIGHT,fill=Y)
-        vertibar.config(command=canvas.yview)
-        canvas.config(width=1310,height=600)
-
-        canvas.config(
-            yscrollcommand=vertibar.set
-            )
-        canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
-            canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
-            
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-            # Add a Treeview widge
-                    
-            rp_por_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
-            rp_por_tree.column("# 1", anchor=E, stretch=NO, width=100)
-            rp_por_tree.heading("# 1", text="No")
-            rp_por_tree.column("# 2", anchor=E, stretch=NO, width=90)
-            rp_por_tree.heading("# 2", text="Date")
-            rp_por_tree.column("# 3", anchor=E, stretch=NO, width=150)
-            rp_por_tree.heading("# 3", text="Due Date")
-            rp_por_tree.column("# 4", anchor=E, stretch=NO, width=150)
-            rp_por_tree.heading("# 4", text="Vendor")
-            rp_por_tree.column("# 5", anchor=E, stretch=NO, width=115)
-            rp_por_tree.heading("# 5", text="Status")
-            rp_por_tree.column("# 6", anchor=E, stretch=NO, width=115)
-            rp_por_tree.heading("# 6", text="P.Order Total")
-
-            # Insert the data in Treeview widget
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            
-            for record in rp_por_tree.get_children():
-                rp_por_tree.delete(record)
-            count=0
-            fbcursor.execute('SELECT * from porder')
-
-            for i in fbcursor:
-                
-                rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
-                count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
-            
-            
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
-
-            window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
-
-
-        else:
-            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
-
-            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
-
-            
-            # Create an instance of Style widget
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-            # Add a Treeview widge
-                    
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
-            tree.column("# 1", anchor=E, stretch=NO, width=80)
-            tree.heading("# 1", text="No")
-            tree.column("# 2", anchor=E, stretch=NO, width=70)
-            tree.heading("# 2", text="Date")
-            tree.column("# 3", anchor=E, stretch=NO, width=150)
-            tree.heading("# 3", text="Due Date")
-            tree.column("# 4", anchor=E, stretch=NO, width=150)
-            tree.heading("# 4", text="Vendor")
-            tree.column("# 5", anchor=E, stretch=NO, width=115)
-            tree.heading("# 5", text="Status")
-            tree.column("# 6", anchor=E, stretch=NO, width=115)
-            tree.heading("# 6", text="P.Order Total")
-            # Insert the data in Treeview widget
-            tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-
-            window = canvas.create_window(290, 260, anchor="nw", window=tree)
-
-        canvas.create_text(870,100,text="Purchase Order Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(880,145,text="Date From:"+porfrm.get()+"      Date To:"+porto.get()+"\n Purchase Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
-        def my_popup(event):
-            my_menu.tk_popup(event.x_root, event.y_root)
-            
-        my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
-        my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
-
-        my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
-
-
-        canvas.bind("<Button-3>", my_popup)
+    
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -17578,6 +18239,15 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -17828,6 +18498,14 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, last_year)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -18077,6 +18755,14 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
+        cr=date.today()
+        porfrm1.delete(0,'end')
+        porfrm1.insert(0, cr)
+
+        cr=date.today()
+        porto1.delete(0,'end')
+        porto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -18858,6 +19544,15 @@ def category_pyr():
     company_tri= fbcursor.fetchone()
 
     if rth=="Month to date":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
 
         frame = Frame(
         reportframe,
@@ -19106,6 +19801,15 @@ def category_pyr():
 
     #--------------------------------------------------------------------------------------------------------------
     elif rth=="Year To Date":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, start)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -19311,6 +20015,16 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
         #===============================================================================================
     elif rth=="Current year":
+        test_date=pendulum.today().date()
+        start = test_date.start_of('year')
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, start)
+
+        test_date_end=pendulum.today().date()
+        end = test_date_end.end_of('year')
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, end)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -19516,6 +20230,16 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
     #==============================================================================================================
     elif rth=="Current month":
+        given_date = datetime.today().date()
+        in_dat = given_date.replace(day=1)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        test_date=date.today()
+        nxt_mnth=(test_date+relativedelta(day=31))
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, nxt_mnth)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -19721,6 +20445,14 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
         #=====================================================================================================
     elif rth=="Current days":
+        given_date = date.today()
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0,given_date)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -19925,6 +20657,15 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
         #=================================================================================================
     elif rth=="Last 30 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=30)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -20131,6 +20872,15 @@ def category_pyr():
     
     #=====================================================================================================
     elif rth=="Last 60 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=60)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -20333,211 +21083,19 @@ def category_pyr():
 
 
         canvas.bind("<Button-3>", my_popup)
-    #========================================================================================================
-    elif rth=="Last 60 days":
-        frame = Frame(
-        reportframe,
-        width=1500,
-        height=1000,
-        bg="#f8f8f2"
-        )
-        frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
-        frame.place(x=20,y=115)
-        canvas=Canvas(
-            frame,
-            bg='grey',
-            width=1400,
-            height=1200,
-            scrollregion=(0,0,1500, 1500)
-            )
-
-        vertibar=Scrollbar(
-            frame,
-            orient=VERTICAL
-            )
-        vertibar.pack(side=RIGHT,fill=Y)
-        vertibar.config(command=canvas.yview)
-        canvas.config(width=1310,height=600)
-
-        canvas.config(
-            yscrollcommand=vertibar.set
-            )
-        canvas.pack(expand=True,side=LEFT,fill=BOTH)
-        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
-
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
-
-       
-        
-        ccanvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
-        canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
-
-        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
    
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
-        
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
-        def my_popup(event):
-            my_menu.tk_popup(event.x_root, event.y_root)
-            
-        my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
-        my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
-
-        my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
-
-
-        canvas.bind("<Button-3>", my_popup)
 #================================================================================================================
     elif rth=="Last 90 days":
+        date_filter=date.today()
+        in_dat=date_filter-timedelta(days=90)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -20742,6 +21300,15 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
         #====================================================================================================
     elif rth=="Previous month":
+        last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
+        in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, in_dat)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -20947,6 +21514,14 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
         #===========================================================================================================
     elif rth=="Previous year":
+        last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, last_year)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -21152,6 +21727,14 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
+        cr=date.today()
+        pyrfrm1.delete(0,'end')
+        pyrfrm1.insert(0, cr)
+
+        cr=date.today()
+        pyrto1.delete(0,'end')
+        pyrto1.insert(0, cr)
+
         frame = Frame(
         reportframe,
         width=1500,
@@ -24978,6 +25561,11 @@ pslfilter = StringVar()
 #price list
 prlfilter = StringVar()
 
+#function For chkbox     
+checkvar1 = BooleanVar()
+checkvar2 = BooleanVar()
+checkvar3 = BooleanVar()
+
 #####################################(Drop down Function)##################################################
 def maindropmenu(event):
   menuvar=menu1.get()
@@ -25031,17 +25619,22 @@ def maindropmenu(event):
 
 
         #--------------------------------check box-------------------------------------
-        rpcheckvar1_ir = IntVar()
-        rpchkbtn1_ir= Checkbutton(midFrame, text = "Paid", variable = rpcheckvar1_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
-        rpchkbtn1_ir.place(x=815,y=2)
+        
 
-        rpcheckvar2_ir = IntVar()
-        rpchkbtn1_ir = Checkbutton(midFrame, text = "Void", variable = rpcheckvar2_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
-        rpchkbtn1_ir.place(x=815,y=40)
+        # checkvar1 = BooleanVar()
+        rp_1_chkbtn1 = Checkbutton(midFrame, text = "Invoice", variable = checkvar1, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:chek_function())
+        rp_1_chkbtn1.place(x=815,y=2)
+        rp_1_chkbtn1.select()
 
-        rpcheckvar3_ir = IntVar()
-        rpchkbtn1_ir= Checkbutton(midFrame, text = "Unpaid", variable = rpcheckvar3_ir, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:paidgraph()")
-        rpchkbtn1_ir.place(x=883,y=2)
+        # checkvar2 = BooleanVar()
+        rp_2_chkbtn2 = Checkbutton(midFrame, text = "Outstanding", variable = checkvar2, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:chek_function())
+        rp_2_chkbtn2.place(x=830,y=40)
+        rp_2_chkbtn2.select()
+
+        # checkvar3 = BooleanVar()
+        rp_3_chkbtn3 = Checkbutton(midFrame, text = "Paid", variable = checkvar3, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:chek_function())
+        rp_3_chkbtn3.place(x=883,y=2)
+        rp_3_chkbtn3.select()
 
         mainchartframe2 =Frame(reportframe,height=1500, width=200)
         mainchartframe2.pack(side="top", padx=0, pady=0)
@@ -25061,34 +25654,26 @@ def maindropmenu(event):
 
 
         #########################################(Graph Section)#############################################################
-        #first graph
+        sql_paid = "SELECT SUM(invoicetot)from invoice"
+        fbcursor.execute(sql_paid)
+        invoice= fbcursor.fetchone()
 
-        import matplotlib.pyplot as plt
-        from pylab import plot, show, xlabel, ylabel
-        from matplotlib.widgets import Cursor
+        x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+        fbcursor.execute(x_axis)
+        axis_x= fbcursor.fetchone()
 
-        invoice=StringVar()
-        outstanding=StringVar()
-        paid=StringVar()
 
-        x=0
-        invoice=1200
-        outstanding=22
-        paid=14
 
-        #------------------------------------with cursor----------------
-        # y=float(invoice)
-        # x+=1
-        # fig, ax =plt.subplots()
-        # plt.bar(x,y, label="Invoice", color="orange")
-        # plt.legend()
-        # plt.xlabel("x-axis")
-        # plt.ylabel("y-label")
-        # axes=plt.gca()
-        # axes.yaxis.grid()
-        # cursor=Cursor(ax, horizOn=True, vertOn=True, color='r', linewidth=1)
-        # plt.show()
-        #-------------------------------------------------------------------------------
+        sql_company = "SELECT SUM(totpaid)from invoice"
+        fbcursor.execute(sql_company)
+        paid= fbcursor.fetchone()
+
+
+
+        sql_outstanding = "SELECT SUM(balance)from invoice"
+        fbcursor.execute(sql_outstanding)
+        outstanding= fbcursor.fetchone()
+
 
         frame = Frame(
                 reportframe,
@@ -25101,10 +25686,11 @@ def maindropmenu(event):
         frame.pack()
 
 
+        x=datetime.today()
 
+        y=invoice
 
-        y=float(invoice)
-        x+=1
+        x=axis_x
         figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
         plt.bar(x,y, label="Invoice", color="orange")
         plt.legend()
@@ -25113,11 +25699,17 @@ def maindropmenu(event):
         axes=plt.gca()
         axes.yaxis.grid()
 
-        # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+        # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
-        x=1
-        y=float(outstanding)
-        x+=1
+
+
+
+        #**************add dates********
+
+        dates=axis_x[0]+timedelta(days=2)
+
+        y=outstanding
+        x=dates
         plt.bar(x,y, label="Outstanding", color="blue")
         plt.legend()
         plt.xlabel("x-axis")
@@ -25127,16 +25719,16 @@ def maindropmenu(event):
         # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
 
-        x=100
-        y=float(paid)
-        x+=1
+        dates3=axis_x[0]-timedelta(days=2)
+        y=paid
+        x=dates3
         plt.bar(x,y, label="Paid", color="green") 
         plt.legend()
         plt.xlabel("x-axis")
         plt.ylabel("y-label")
         axes=plt.gca()
         axes.yaxis.grid()
-        # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+        # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
 
         #used to display chart in our frame
         canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
@@ -25145,12 +25737,22 @@ def maindropmenu(event):
 
         #second graph
 
+        sec_paid = "SELECT MAX(invoicetot) from invoice"
+        fbcursor.execute(sec_paid)
+        paid_sec_x= fbcursor.fetchone()
+
+        sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+        fbcursor.execute(sec_paid_y)
+
+        paid_sec_y= fbcursor.fetchone()
+
+
         figsecond = plt.figure(figsize=(9, 4), dpi=80)
 
-        x=2
-        y=float(paid)
-        x+=1
-        plt.barh(x,y, label="Paid", color="orange") 
+        x=paid_sec_y
+        y=paid_sec_x
+        plt.barh(x,y, label="Top Billed Customer", color="orange") 
         plt.legend()
         plt.xlabel("x-axis")
         plt.ylabel("y-label")
@@ -25164,12 +25766,22 @@ def maindropmenu(event):
 
         # #second graph
 
+        thrd_paid = "SELECT MAX(unitprice) from productservice"
+        fbcursor.execute(thrd_paid)
+        paid_thrd_x= fbcursor.fetchone()
+
+
+        thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+        fbcursor.execute(thrd_paid_y)
+
+        paid_thrd_y= fbcursor.fetchone()
+
         figlast = plt.figure(figsize=(9, 4), dpi=80)
 
-        x=2
-        y=float(paid)
-        x+=1
-        plt.barh(x,y, label="Paid", color="blue") 
+        x=paid_thrd_y
+        y=paid_thrd_x   
+        plt.barh(x,y, label="Top Product Sale", color="blue") 
         plt.legend()
         plt.xlabel("x-axis")
         plt.ylabel("y-label")
@@ -25327,14 +25939,16 @@ def maindropmenu(event):
     lbl_irwc =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_irwc.place(x=676,y=10)
 
-    exirwc=DateEntry(midFrame, textvariable=irwcfrm)
-    exirwc.place(x=721,y=10)
+    global irwcfrm1
+    irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm)
+    irwcfrm1.place(x=721,y=10)
 
     lbl_irwc =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_irwc.place(x=690,y=50)
 
-    exirwc=DateEntry(midFrame, textvariable=irwcto)
-    exirwc.place(x=721,y=50)
+    global irwcto1
+    irwcto1=DateEntry(midFrame, textvariable=irwcto)
+    irwcto1.place(x=721,y=50)
 
     lbl_irwc = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_irwc.place(x=470,y=10)
@@ -25441,15 +26055,16 @@ def maindropmenu(event):
 
     lbl_or =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_or.place(x=676,y=10)
-
-    exor=DateEntry(midFrame, textvariable=orfrm)
-    exor.place(x=721,y=10)
+    
+    global orfrm1
+    orfrm1=DateEntry(midFrame, textvariable=orfrm)
+    orfrm1.place(x=721,y=10)
 
     lbl_or =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_or.place(x=690,y=50)
-
-    exor=DateEntry(midFrame, textvariable=orto)
-    exor.place(x=721,y=50)
+    global orto1
+    orto1=DateEntry(midFrame, textvariable=orto)
+    orto1.place(x=721,y=50)
 
     lbl_or = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_or.place(x=470,y=10)
@@ -26136,14 +26751,16 @@ def maindropmenu(event):
     lbl_tri =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_tri.place(x=676,y=10)
 
-    extri=DateEntry(midFrame, textvariable=trifrm)
-    extri.place(x=721,y=10)
+    global trifrm1
+    global trito1
+    trifrm1=DateEntry(midFrame, textvariable=trifrm)
+    trifrm1.place(x=721,y=10)
 
     lbl_tri =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_tri.place(x=690,y=50)
 
-    extri=DateEntry(midFrame, textvariable=trito)
-    extri.place(x=721,y=50)
+    trito1=DateEntry(midFrame, textvariable=trito)
+    trito1.place(x=721,y=50)
 
     lbl_tri = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_tri.place(x=470,y=10)
@@ -26191,7 +26808,7 @@ def maindropmenu(event):
         reportframe,
         width=1500,
         height=1000,
-        bg="#f8f8f2#f8f8f2"
+        bg="#f8f8f2"
         )
     frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
     frame.place(x=20,y=115)
@@ -26248,15 +26865,16 @@ def maindropmenu(event):
 
     lbl_tro =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_tro.place(x=676,y=10)
-
-    extro=DateEntry(midFrame, textvariable=trofrm)
-    extro.place(x=721,y=10)
+    global trofrm1
+    global troto1
+    trofrm1=DateEntry(midFrame, textvariable=trofrm)
+    trofrm1.place(x=721,y=10)
 
     lbl_tro =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_tro.place(x=690,y=50)
 
-    extro=DateEntry(midFrame, textvariable=troto)
-    extro.place(x=721,y=50)
+    troto1=DateEntry(midFrame, textvariable=troto)
+    troto1.place(x=721,y=50)
 
     lbl_tro = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_tro.place(x=470,y=10)
@@ -26623,15 +27241,16 @@ def maindropmenu(event):
 
     lbl_por =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_por.place(x=676,y=10)
-
-    expor=DateEntry(midFrame, textvariable=porfrm)
-    expor.place(x=721,y=10)
+    global profrm1
+    global proto1
+    porfrm1=DateEntry(midFrame, textvariable=porfrm)
+    porfrm1.place(x=721,y=10)
 
     lbl_por =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_por.place(x=690,y=50)
 
-    expor=DateEntry(midFrame, textvariable=porto)
-    expor.place(x=721,y=50)
+    porto1=DateEntry(midFrame, textvariable=porto)
+    porto1.place(x=721,y=50)
 
     lbl_por = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_por.place(x=470,y=10)
@@ -26845,15 +27464,16 @@ def maindropmenu(event):
 
     lbl_pr =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_pr.place(x=725,y=10)
-
-    expr=DateEntry(midFrame, textvariable=pyrfrm)
-    expr.place(x=770,y=10)
+    global pyrfrm1
+    global pyrto1
+    pyrfrm1=DateEntry(midFrame, textvariable=pyrfrm)
+    pyrfrm1.place(x=770,y=10)
 
     lbl_pr =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_pr.place(x=740,y=50)
 
-    expr=DateEntry(midFrame, textvariable=pyrto)
-    expr.place(x=770,y=50)
+    pyrto1=DateEntry(midFrame, textvariable=pyrto)
+    pyrto1.place(x=770,y=50)
 
 
     mainchartframe18 =Frame(reportframe,height=1500, width=200)
@@ -26911,10 +27531,7 @@ def maindropmenu(event):
     pass
 
 #############################################################################################################
-#function For chkbox     
-checkvar1 = BooleanVar()
-checkvar2 = BooleanVar()
-checkvar3 = BooleanVar()
+
 #functions For graph
 
     
