@@ -155,7 +155,7 @@ w.pack(side="left", padx=(5, 2))
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(0, 5))
 
-refreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,)
+refreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=lambda:screen_flt())
 refreshlebel.pack(side="left")
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(5, 2))
@@ -180,13 +180,3289 @@ w.pack(side="left", padx=(0, 5))
 
 lbframe = LabelFrame(midFrame, height=60, width=1500, bg="#f8f8f2")
 lbframe.pack(side="left", padx=10, pady=0)
+import tempfile
+############################################(print function)####################################################
+def printcanvas(txt):
+    # ltx=txt.itemcget(id_inv, 'text')
+    temp_file=tempfile.mktemp('.txt')
+    open(temp_file, 'w').write(txt)
+    os.startfile(temp_file,'print')
 
+def printcanvas_pdf(txt):
+    ltx=txt.itemcget(id_inv, 'text')
+    temp_file=tempfile.mktemp('.pdf')
+    open(temp_file, 'w').write(ltx)
+    os.startfile(temp_file,'print')
+    pass
+
+def printcanvas_excl(txt):
+    ltx=txt.itemcget(id_inv, 'text')
+    temp_file=tempfile.mktemp('.xlsx')
+    open(temp_file, 'w').write(ltx)
+    os.startfile(temp_file,'print')
+    pass
+  
 
 ##################################### (Report Preview) ############################################################# 
 
 
 
 #Filter by category----------------------------------------------------------------------------
+#-----------------------------------------------ScreenChart-------------------------------
+def screen_flt(): 
+    rth=scrfilter.get()
+    
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+
+    if rth=="Last 3 Month":
+        if company is not None:
+            
+            in_dat = (datetime.now()-relativedelta(months=3)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+            print(x)
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+            def my_popup(event):
+                my_menu.tk_popup(event.x_root, event.y_root)
+                
+            my_menu= Menu(canvasbar, tearoff=False)
+            my_menu.add_command(label="Refresh Chart", command="run")
+            my_menu.add_separator()
+            my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+            my_menu.add_separator()
+            my_menu.add_command(label="Save Chart As Image", command='emailrp')
+            my_menu.add_separator()
+            my_menu.add_command(label="Print Chart", command="excel")
+            canvasbar.bind("<Button-3>", my_popup)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+    
+
+    #--------------------------------------------------------------------------------------------------------------
+    elif rth=="Year To Date":
+        
+        
+        if company is not None:
+            test_date=pendulum.today().date()
+            start = test_date.start_of('year')
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, start)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+            
+            lscr=start
+            lscr1=cr
+
+            var_1=start
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+        #===============================================================================================
+    elif rth=="Current year":
+        
+
+        
+        if company is not None:
+            test_date=pendulum.today().date()
+            start = test_date.start_of('year')
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, start)
+
+            test_date_end=pendulum.today().date()
+            end = test_date_end.end_of('year')
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, end)
+
+            lscr=start
+            lscr1=end
+
+            var_1=start
+            var_2=end
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+    #==============================================================================================================
+    elif rth=="Last 6 Month":
+            
+        
+        if company is not None:
+            in_dat = (datetime.now()-relativedelta(months=6)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+        #=====================================================================================================
+    elif rth=="Last 12 Month":
+        
+
+        
+        if company is not None:
+            in_dat = (datetime.now()-relativedelta(months=12)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+        #=================================================================================================
+    elif rth=="Last 18 Month":
+        
+    
+        if company is not None:
+            in_dat = (datetime.now()-relativedelta(months=18)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+    
+    #=====================================================================================================
+    elif rth=="Last 24 Month":
+       
+        
+        if company is not None:
+            in_dat = (datetime.now()-relativedelta(months=6)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+    #========================================================================================================
+#================================================================================================================
+    
+        #====================================================================================================
+    elif rth=="Before Previous Year":
+        
+        if company is not None:
+            in_dat = (datetime.now()-relativedelta(years=2)).strftime("%Y-%m-%d")
+            # given_date = datetime.today().month()
+            # in_dat = given_date.replace(months=3)
+            
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, in_dat)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=in_dat
+            
+            lscr1=cr
+
+            var_1=in_dat
+            var_2=cr
+
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+        #===========================================================================================================
+    elif rth=="Previous year":
+        
+        if company is not None:
+            last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+            rp_scr_frm.delete(0,'end')
+            rp_scr_frm.insert(0, last_year)
+
+            cr=date.today()
+            rp_sc_to.delete(0,'end')
+            rp_sc_to.insert(0, cr)
+
+            lscr=last_year
+            lscr1=cr
+
+            var_1=last_year
+            var_2=cr
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=lscr1
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+    # ------------------------------
+    elif rth=="Custom Range":
+        
+
+        
+        if company is not None:
+            ltt=rp_exir.get_date()
+            ltt1=rp_exir1.get_date()
+
+            cr1=date.today()
+            rp_exir.delete(0,'end')
+            rp_exir.insert(0, cr1)
+
+            cr=date.today()
+            rp_exir1.delete(0,'end')
+            rp_exir1.insert(0, cr)
+
+            var_1=ltt
+            var_2=ltt1
+            
+            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_paid,inv_valuz)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(x_axis, inv_valuz)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_company,inv_valuz)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_outstanding,inv_valuz)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=ltt
+
+            y=invoice
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=outstanding
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=paid
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_sec_y
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=paid_thrd_y
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+
+        else:
+            sql_paid = "SELECT SUM(invoicetot)from invoice"
+            fbcursor.execute(sql_paid)
+            invoice= fbcursor.fetchone()
+
+            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+            fbcursor.execute(x_axis)
+            axis_x= fbcursor.fetchone()
+
+
+
+            sql_company = "SELECT SUM(totpaid)from invoice"
+            fbcursor.execute(sql_company)
+            paid= fbcursor.fetchone()
+
+
+
+            sql_outstanding = "SELECT SUM(balance)from invoice"
+            fbcursor.execute(sql_outstanding)
+            outstanding= fbcursor.fetchone()
+
+
+            frame = Frame(
+                    reportframe,
+                    width=1380,
+                    height=1000,
+                    bg='#b3b3b3',
+                    )
+            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                
+            frame.pack()
+
+
+            x=datetime.today()
+
+            y=0
+
+            x=axis_x
+            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+            plt.bar(x,y, label="Invoice", color="orange")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+            #**************add dates********
+
+            dates=axis_x[0]+timedelta(days=2)
+
+            y=0
+            x=dates
+            plt.bar(x,y, label="Outstanding", color="blue")
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+            dates3=axis_x[0]-timedelta(days=2)
+            y=0
+            x=dates3
+            plt.bar(x,y, label="Paid", color="green") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.yaxis.grid()
+            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+            #used to display chart in our frame
+            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            #second graph
+
+            sec_paid = "SELECT MAX(invoicetot) from invoice"
+            fbcursor.execute(sec_paid)
+            paid_sec_x= fbcursor.fetchone()
+
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+            fbcursor.execute(sec_paid_y)
+
+            paid_sec_y= fbcursor.fetchone()
+
+
+            figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_sec_x
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+
+
+            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=0, y=370)
+
+            # #second graph
+
+            thrd_paid = "SELECT MAX(unitprice) from productservice"
+            fbcursor.execute(thrd_paid)
+            paid_thrd_x= fbcursor.fetchone()
+
+
+            thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+            fbcursor.execute(thrd_paid_y)
+
+            paid_thrd_y= fbcursor.fetchone()
+
+            figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+            x=0
+            y=paid_thrd_x   
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.legend()
+            plt.xlabel("x-axis")
+            plt.ylabel("y-label")
+            axes=plt.gca()
+            axes.xaxis.grid()
+            
+
+            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            canvasbar.draw()
+            canvasbar.get_tk_widget().place(x=650, y=370)
+
+            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+            lbl_invdtt2.place(x=2, y=85)
+        
+            
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvasbar, tearoff=False)
+        my_menu.add_command(label="Refresh Chart", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+        my_menu.add_separator()
+        my_menu.add_command(label="Save Chart As Image", command='emailrp')
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Chart", command="excel")
+        canvasbar.bind("<Button-3>", my_popup)
+
+        #============================================================================================
+    else:
+        pass
+
+
 #---------------------------------------------------INVOICE FILTER-----------------------------------------------
 def category():
   # firtst filter-----------------------------------Month to date
@@ -200,7 +3476,7 @@ def category():
     
     
     if rth=="Month to date":
-        
+        global saiju
         given_date = datetime.today().date()
         in_dat = given_date.replace(day=1)
         rp_exir.delete(0,'end')
@@ -247,10 +3523,12 @@ def category():
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
-            canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
+            saiju=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
             canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+            
             canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
-
+            
+            print(canvas.itemcget(saiju, 'text'))
             # Add a Treeview widge
                 
             rp_inv_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
@@ -2963,6 +6241,8 @@ def category():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
+        ltt=rp_exir.get_date()
+        ltt1=rp_exir1.get_date()
         cr1=date.today()
         rp_exir.delete(0,'end')
         rp_exir.insert(0, cr1)
@@ -3038,8 +6318,8 @@ def category():
                 rp_inv_tree.delete(record)
             count=0
            
-            var1=cr1
-            var2=cr
+            var1=ltt
+            var2=ltt1
             sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
             inv_valuz=(var1,var2)
 
@@ -5945,6 +9225,8 @@ def category_irwc():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        lte=irwcfrm1.get_date()
+        lte1=irwcto1.get_date()
         cr1=date.today()
         irwcfrm1.delete(0,'end')
         irwcfrm1.insert(0, cr1)
@@ -6016,8 +9298,8 @@ def category_irwc():
                 rp_irwc_tree.delete(record)
             count=0
 
-            var1=cr1
-            var2=cr
+            var1=lte
+            var2=lte1
             sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
             inv_valuz=(var1,var2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
@@ -8887,6 +12169,8 @@ def category_or():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        loy=orfrm1.get_date()
+        loy1=orto1.get_date()
         cr1=date.today()
         orfrm1.delete(0,'end')
         orfrm1.insert(0, cr1)
@@ -8956,8 +12240,8 @@ def category_or():
             for record in rp_or_tree.get_children():
                 rp_or_tree.delete(record)
             count=0
-            var1=in_dat
-            var2=cr
+            var1=loy
+            var2=loy1
             sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
             inv_valuz=(var1,var2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
@@ -12000,6 +15284,8 @@ def category_tri():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        mlk=trifrm1.get_date()
+        mlk1=trito1.get_date()
         cr1=date.today()
         trifrm1.delete(0,'end')
         trifrm1.insert(0, cr1)
@@ -12071,8 +15357,8 @@ def category_tri():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            var1=cr1
-            var2=cr
+            var1=mlk
+            var2=mlk1
             sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
             inv_valuz=(var1,var2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
@@ -12412,7 +15698,7 @@ def category_tro():
 
         
 
-            canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
             
             # Create an instance of Style widget
             style=ttk.Style()
@@ -12444,6 +15730,8 @@ def category_tro():
             window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(880,100,text="Tax Report(Orders)",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+trofrm.get()+"      Date To:"+troto.get()+"\n Order Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -15135,6 +18423,8 @@ def category_tro():
 
         canvas.bind("<Button-3>", my_popup)
     elif rth=="Custom Range":
+        cft=trofrm1.get_date()
+        cft1=troto1.get_date()
         cr1=date.today()
         trofrm1.delete(0,'end')
         trofrm1.insert(0, cr1)
@@ -15206,8 +18496,8 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            var1=cr1
-            var2=cr
+            var1=cft
+            var2=cft1
             sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
             inv_valuz=(var1,var2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
@@ -16231,19 +19521,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -16489,19 +19784,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -16748,19 +20048,25 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -17010,19 +20316,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -17266,19 +20577,25 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -17524,20 +20841,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
-
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
 
@@ -17785,19 +21106,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -18045,20 +21371,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
-
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
 
@@ -18309,19 +21639,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -18567,19 +21902,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -18755,6 +22095,8 @@ def category_por():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
+        lhy=porfrm1.get_date()
+        lhy1=porto1.get_date()
         cr=date.today()
         porfrm1.delete(0,'end')
         porfrm1.insert(0, cr)
@@ -18824,19 +22166,24 @@ def category_por():
             for record in rp_por_tree.get_children():
                 rp_por_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from porder')
+            var1=lhy
+            var2=lhy1
+            sql_inv_dt='SELECT * FROM porder WHERE porderdate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
 
-            for i in fbcursor:
-                
+            for i in tre:
+        
                 rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                 count += 1
-            total_tri='SELECT SUM(total) from porder'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(total) from porder'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
             
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
-            rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','','P.Order Total'))
+            # rp_por_tree.insert('', 'end',text="1",values=('','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_por_tree)
 
@@ -19614,17 +22961,24 @@ def category_pyr():
             for record in rp_pr_tree.get_children():
                 rp_pr_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from invoice')
-
-            for i in fbcursor:
-                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[29],i[9]))
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
                 count += 1
 
-            total_tri='SELECT SUM(totpaid) from invoice'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
-            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
         else:
@@ -19839,45 +23193,97 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=start
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -20054,45 +23460,96 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=start
+            var2=end
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -20269,45 +23726,97 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=in_dat
+            var2=nxt_mnth
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -20482,45 +23991,97 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=given_date
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
         
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
         def emailrp():
             rpmailDetail=Toplevel()
@@ -20695,45 +24256,96 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -20910,46 +24522,97 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+            
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
-        
+            
         def emailrp():
             rpmailDetail=Toplevel()
             rpmailDetail.title("E-Mail")
@@ -21125,45 +24788,96 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
         def emailrp():
             rpmailDetail=Toplevel()
@@ -21338,45 +25052,95 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=in_dat
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
-        
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -21551,45 +25315,96 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=last_year
+            var2=cr
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
         
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
-
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
         
         def emailrp():
@@ -21727,9 +25542,11 @@ def category_pyr():
         canvas.bind("<Button-3>", my_popup)
     # ------------------------------
     elif rth=="Custom Range":
-        cr=date.today()
+        ltr=pyrfrm1.get_date()
+        ltr1=pyrto1.get_date()
+        cr1=date.today()
         pyrfrm1.delete(0,'end')
-        pyrfrm1.insert(0, cr)
+        pyrfrm1.insert(0, cr1)
 
         cr=date.today()
         pyrto1.delete(0,'end')
@@ -21764,43 +25581,95 @@ def category_pyr():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company_tri is not None:
+            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            # Add a Treeview widge
+                    
+            rp_pr_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            rp_pr_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 1", text="Invoice No")
+            rp_pr_tree.column("# 2", anchor=E, stretch=NO, width=140)
+            rp_pr_tree.heading("# 2", text="Invoice Issue Date")
+            rp_pr_tree.column("# 3", anchor=E, stretch=NO, width=130)
+            rp_pr_tree.heading("# 3", text="Customer")
+            rp_pr_tree.column("# 4", anchor=E, stretch=NO, width=90)
+            rp_pr_tree.heading("# 4", text="Payment ID")
+            rp_pr_tree.column("# 5", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 5", text="Payment Date")
+            rp_pr_tree.column("# 6", anchor=E, stretch=NO, width=80)
+            rp_pr_tree.heading("# 6", text="Paid By")
+            rp_pr_tree.column("# 7", anchor=E, stretch=NO, width=110)
+            rp_pr_tree.heading("# 7", text="Amount Paid")
+            rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',''))
+            for record in rp_pr_tree.get_children():
+                rp_pr_tree.delete(record)
+            count=0
+            var1=ltr
+            var2=ltr1
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var1,var2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            
+            
+            for i in tre:
+            
+                rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                count += 1
 
-       
+            # total_tri='SELECT SUM(totpaid) from invoice'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
+            
+            # rp_pr_tree.insert('', 'end',text="1",values=('','','','','','',tot_tri))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_pr_tree)
+        else:
+        
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Invoice No")
+            tree.column("# 2", anchor=E, stretch=NO, width=140)
+            tree.heading("# 2", text="Invoice Issue Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=130)
+            tree.heading("# 3", text="Customer")
+            tree.column("# 4", anchor=E, stretch=NO, width=90)
+            tree.heading("# 4", text="Payment ID")
+            tree.column("# 5", anchor=E, stretch=NO, width=110)
+            tree.heading("# 5", text="Payment Date")
+            tree.column("# 6", anchor=E, stretch=NO, width=80)
+            tree.heading("# 6", text="Paid By")
+            tree.column("# 7", anchor=E, stretch=NO, width=110)
+            tree.heading("# 7", text="Amount Paid")
+    
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','',''))
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
         
         canvas.create_text(900,100,text="Payment Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+pyrfrm.get()+"      Date To:"+pyrto.get(),fill='black',font=("Helvetica", 8), justify='right')
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-        # Add a Treeview widge
-                
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=80)
-        tree.heading("# 1", text="Invoice No")
-        tree.column("# 2", anchor=E, stretch=NO, width=140)
-        tree.heading("# 2", text="Invoice Issue Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=130)
-        tree.heading("# 3", text="Customer")
-        tree.column("# 4", anchor=E, stretch=NO, width=90)
-        tree.heading("# 4", text="Payment ID")
-        tree.column("# 5", anchor=E, stretch=NO, width=110)
-        tree.heading("# 5", text="Payment Date")
-        tree.column("# 6", anchor=E, stretch=NO, width=80)
-        tree.heading("# 6", text="Paid By")
-        tree.column("# 7", anchor=E, stretch=NO, width=110)
-        tree.heading("# 7", text="Amount Paid")
-   
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','',''))
 
         
         def emailrp():
@@ -22942,6 +26811,10 @@ def category_cl():
 def category_cld():
   # firtst filter-----------------------------------Month to date
     rth=cldfilter.get()
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+
     if rth=="All Customers ":
         # #for company details
         tro_company = "SELECT * from company"
@@ -22976,8 +26849,8 @@ def category_cld():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        if company_tro is not None:
-            canvas.create_text(320,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')            
+        if company is not None:
+            canvas.create_text(320,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')            
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
             style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
@@ -22986,9 +26859,9 @@ def category_cld():
             # Add a Treeview widge
                     
             rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
-            rp_cld_tree.column("# 1", anchor=E, stretch=NO, width=345)
+            rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
             rp_cld_tree.heading("# 1", text="")
-            rp_cld_tree.column("# 2", anchor=E, stretch=NO, width=345)
+            rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
             rp_cld_tree.heading("# 2", text="")
             
             # Insert the data in Treeview widget
@@ -23000,8 +26873,15 @@ def category_cld():
             count=0
             fbcursor.execute('SELECT * from customer')
             for i in fbcursor:
-                rp_cld_tree.insert(parent='', index='end', iid=i, text='hello', values=("Billing Information:Customer Id:"+i[4],"Shipping Information:Tax exempt No.:"+i[4]))
-                
+                rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
                 
                 count += 1
             window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
@@ -23196,40 +27076,83 @@ def category_cld():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
-        canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+        if company is not None:
+            canvas.create_text(320,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+            # Add a Treeview widge
+                    
+            rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+            rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+            rp_cld_tree.heading("# 1", text="")
+            rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+            rp_cld_tree.heading("# 2", text="")
+            
+            # Insert the data in Treeview widget
+            rp_cld_tree.insert('', 'end',text="1",values=('',''))
 
-        
-        # Create an instance of Style widget
-        style=ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+            # Insert the data in Treeview widget
+            for record in rp_cld_tree.get_children():
+                rp_cld_tree.delete(record)
+            count=0
+            fbcursor.execute('SELECT * from customer WHERE category="Default"')
+            for i in fbcursor:
+                rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
 
-        # Add a Treeview widge
+                rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
                 
-        tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
-        tree.column("# 1", anchor=E, stretch=NO, width=50)
-        tree.heading("# 1", text="No")
-        tree.column("# 2", anchor=E, stretch=NO, width=70)
-        tree.heading("# 2", text="Date")
-        tree.column("# 3", anchor=E, stretch=NO, width=70)
-        tree.heading("# 3", text="Due Date")
-        tree.column("# 4", anchor=E, stretch=NO, width=100)
-        tree.heading("# 4", text="Terms")
-        tree.column("# 5", anchor=E, stretch=NO, width=100)
-        tree.heading("# 5", text="Status")
-        tree.column("# 6", anchor=E, stretch=NO, width=100)
-        tree.heading("# 6", text="Invoice Total")
-        tree.column("# 7", anchor=E, stretch=NO, width=100)
-        tree.heading("# 7", text="Invoice Paid")
-        tree.column("# 8", anchor=E, stretch=NO, width=100)
-        tree.heading("# 8", text="Balance")
-        # Insert the data in Treeview widget
-        tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+                count += 1
+            window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+        
+        
+        else:
 
-        window = canvas.create_window(290, 260, anchor="nw", window=tree)
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=50)
+            tree.heading("# 1", text="No")
+            tree.column("# 2", anchor=E, stretch=NO, width=70)
+            tree.heading("# 2", text="Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=70)
+            tree.heading("# 3", text="Due Date")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Terms")
+            tree.column("# 5", anchor=E, stretch=NO, width=100)
+            tree.heading("# 5", text="Status")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Invoice Total")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Invoice Paid")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(320,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')            
+
 
         
         def emailrp():
@@ -25497,6 +29420,9 @@ def category_plsr():
 
 ######################################################################################################################
 
+scrfilter=StringVar()
+scrfrm=StringVar()
+scrto=StringVar()
 #it is for invoice report
 invfilter = StringVar()# veriable for store category filter
 invfrm=StringVar()
@@ -25566,11 +29492,13 @@ checkvar1 = BooleanVar()
 checkvar2 = BooleanVar()
 checkvar3 = BooleanVar()
 
+rpcheckvar1_por= BooleanVar()
+rpcheckvar2_por= BooleanVar()
 #####################################(Drop down Function)##################################################
 def maindropmenu(event):
   menuvar=menu1.get()
   if menuvar== "Screen Charts":
-        rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=category)
+        rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=screen_flt)
         rprefreshlebel.place(x=22,y=12)
 
 
@@ -25589,16 +29517,21 @@ def maindropmenu(event):
         iruw1.place(x=415,y=9)
         iruw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
         iruw2.place(x=530,y=9)
+
+        global rp_scr_frm
+        global rp_sc_to
+
+
         lbl_ir =Label(midFrame, text="From:" , bg="#f8f8f2")
         lbl_ir.place(x=676,y=10)
 
-        exir=DateEntry(midFrame, textvariable=invfrm)
+        exir=DateEntry(midFrame,textvariable=scrfrm)
         exir.place(x=721,y=10)
 
         lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
         lbl_ir.place(x=690,y=50)
 
-        exir=DateEntry(midFrame,textvariable=invto)
+        exir=DateEntry(midFrame,textvariable=scrto)
         exir.place(x=721,y=50)
 
         lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -25611,10 +29544,10 @@ def maindropmenu(event):
         drop1ir.current(0)
 
         
-        rpdrop2_ir=ttk.Combobox(midFrame, textvariable=invfilter)
-        rpdrop2_ir["values"]=("Month to date","Year To Date","Current year","Current month","Current days", "Last 30 days", "Last 60 days", "Last 90 days","Previous month", "Previous year", "Custom Range")
-        rpdrop2_ir.place(x=530,y=50)
-        rpdrop2_ir.current(0)
+        drop2=ttk.Combobox(midFrame, textvariable=scrfilter)
+        drop2.place(x=530,y=50)
+        drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
+        drop2.current(0)
 
 
 
@@ -25803,15 +29736,15 @@ def maindropmenu(event):
     rprefreshlebel.place(x=22,y=12)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas(canvas('1.0',END)))
     rpprintlabel.place(x=95,y=12)
   
 
 
-    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_excl(canvas))
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_pdf     (canvas))
     rpcopyLabel.place(x=240,y=12)
     
     iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -25904,13 +29837,19 @@ def maindropmenu(event):
         yscrollcommand=vertibar.set
         )
     canvas.pack(expand=True,side=LEFT,fill=BOTH)
+    
+    global id_inv1
+    global id_inv2
+    global id_inv
+    
     canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
     
-    canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+    id_inv=canvas.create_text(620,300,text="No Data To Display",fill='black',font=("arial", 14), justify='center')
+    
 
-    canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
+    id_inv1=canvas.create_text(625,350,text="Please sdelect the report type from the list above\nAfter you can set the date period or other parameters",fill='blue',font=("arial", 12), justify='center')
 
-    canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
+    id_inv2=canvas.create_text(620,400,text="Click on 'Run Report' button for the report result",fill='blue',font=("arial", 12), justify='center')
 
     # midFrame2=LabelFrame(frame, bg="red", width=100, height=60)
     # midFrame2.place(x=20, y=100)
@@ -27241,8 +31180,8 @@ def maindropmenu(event):
 
     lbl_por =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_por.place(x=676,y=10)
-    global profrm1
-    global proto1
+    global porfrm1
+    global porto1
     porfrm1=DateEntry(midFrame, textvariable=porfrm)
     porfrm1.place(x=721,y=10)
 
@@ -27267,13 +31206,13 @@ def maindropmenu(event):
     rpdrop2_por.current(0)
       
 
-    rpcheckvar1_por = IntVar()
-    rpchkbtn1_por= Checkbutton(midFrame, text = "Complete", variable = rpcheckvar1_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    
+    rpchkbtn1_por= Checkbutton(midFrame, text = "Complete", variable = rpcheckvar1_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:check_function_por())
     rpchkbtn1_por.place(x=815,y=2)
 
-    rpcheckvar2_por = IntVar()
-    rpchkbtn1_por = Checkbutton(midFrame, text = "Draft", variable = rpcheckvar2_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
-    rpchkbtn1_por.place(x=815,y=40)
+    
+    rpchkbtn1_por = Checkbutton(midFrame, text = "Draft", variable = rpcheckvar2_por, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:check_function_por())
+    rpchkbtn1_por.place(x=805,y=40)
 
 
     mainchartframe17 =Frame(reportframe,height=1500, width=200)
@@ -28135,6 +32074,16 @@ def chek_function():
         lbl_invdtt2.destroy()
        
 
+def check_function_por():
+    if rpcheckvar1_por.get()==1 and rpcheckvar1_por.get()==0:
+
+    elif rpcheckvar1_por.get()==0 and rpcheckvar1_por.get()==0:
+    elif rpcheckvar1_por.get()==0 and rpcheckvar1_por.get()==1:
+    elif rpcheckvar1_por.get()==1 and rpcheckvar1_por.get()==1:
+    else:
+        pass
+
+
 ############################################################(Screen Chart)###################################
 lbl_invdtt = Label(lbframe, text="Report Type:  ", bg="#f8f8f2")
 lbl_invdtt.place(x=8, y=10)
@@ -28157,8 +32106,8 @@ drop1.grid(row=1, column=3, pady=5, padx=(5, 0))
 drop1["values"]=("Java","Php", "POP")
 drop1.current(0)
 
-menu2 = StringVar()
-drop2=ttk.Combobox(lbframe, textvariable=menu2,)
+
+drop2=ttk.Combobox(lbframe, textvariable=scrfilter)
 drop2.grid(row=2, column=3, pady=5, padx=(5, 0))
 drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
 drop2.current(0)
@@ -28166,14 +32115,16 @@ drop2.current(0)
   
 lbl_invdtt =Label(lbframe, text="From:" , bg="#f8f8f2")
 lbl_invdtt.grid(row=1, column=4, pady=5, padx=(5, 0))
+global rp_scr_frm
+global rp_sc_to
 
-rp_scr_frm=DateEntry(lbframe)
+rp_scr_frm=DateEntry(lbframe,textvariable=scrfrm)
 rp_scr_frm.grid(row=1, column=5)
 
 lbl_invdtt =Label(lbframe, text="To:", bg="#f8f8f2")
 lbl_invdtt.grid(row=2, column=4, pady=5, padx=(5, 0))
 
-rp_sc_to=DateEntry(lbframe)
+rp_sc_to=DateEntry(lbframe,textvariable=scrto)
 rp_sc_to.grid(row=2, column=5)
 
 # checkvar1 = BooleanVar()
