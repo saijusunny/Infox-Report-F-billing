@@ -1,5 +1,6 @@
 from cProfile import label
 from cgitb import text
+import csv
 from enum import auto
 
 from itertools import count
@@ -182,18 +183,46 @@ lbframe = LabelFrame(midFrame, height=60, width=1500, bg="#f8f8f2")
 lbframe.pack(side="left", padx=10, pady=0)
 import tempfile
 ############################################(print function)####################################################
-def printcanvas(txt):
-    # ltx=txt.itemcget(id_inv, 'text')
-    temp_file=tempfile.mktemp('.txt')
-    open(temp_file, 'w').write(txt)
-    os.startfile(temp_file,'print')
+def exportcanvas():
+    cols = ["PRODUCT SERVICE ID","CODE OR SKU","NAME","CATEGORY","DESCRIPTION","QTY UNIT","COST","PRICE","TAX1","TAX2","STOCK","LOW STOCK","LOCATION","ACTIVE","SERVICE"] # Your column headings here
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+    
+    lst = []
+    with open(path, "w", newline='') as myfile:
+        csvwriter = csv.writer(myfile, delimiter=',')
+        sql = 'select Productserviceid,sku,name,category,description,peices,cost,unitprice,taxable,tax2,stock,stocklimit,warehouse,status,serviceornot from Productservice'
+        fbcursor.execute(sql)
+        pandsdata = fbcursor.fetchall()
+        for row_id in pandsdata:
+            row = row_id
+            lst.append(row)
+        lst = list(map(list,lst))
+        lst.insert(0,cols)
+        for row in lst:
+            csvwriter.writerow(row)
+            
+    # # ltx=txt.itemcget(id_inv, 'text')
+    # temp_file=tempfile.mktemp('.txt')
+    # open(temp_file, 'w').write(txt)
+    # os.startfile(temp_file,'print')
 
-def printcanvas_pdf(txt):
-    ltx=txt.itemcget(id_inv, 'text')
-    temp_file=tempfile.mktemp('.pdf')
-    open(temp_file, 'w').write(ltx)
-    os.startfile(temp_file,'print')
-    pass
+def printcanvas_pdf():
+    cols = ["PRODUCT SERVICE ID","CODE OR SKU","NAME","CATEGORY"] # Your column headings here
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('PDF File', '*.pdf',)],defaultextension=".pdf")
+    
+    lst = []
+    with open(path, "w", newline='') as myfile:
+        csvwriter = csv.writer(myfile, delimiter=',')
+        sql = 'select Productserviceid,sku,name,category,description from Productservice'
+        fbcursor.execute(sql)
+        pandsdata = fbcursor.fetchall()
+        for row_id in pandsdata:
+            row = row_id
+            lst.append(row)
+        lst = list(map(list,lst))
+        lst.insert(0,cols)
+        for row in lst:
+            csvwriter.writerow(row)
 
 def printcanvas_excl(txt):
     ltx=txt.itemcget(id_inv, 'text')
@@ -211,6 +240,7 @@ def printcanvas_excl(txt):
 #-----------------------------------------------ScreenChart-------------------------------
 def screen_flt(): 
     rth=scrfilter.get()
+
     
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -324,14 +354,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -647,14 +677,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -971,14 +1001,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            ssec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -1296,14 +1326,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -1439,14 +1469,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -1527,6 +1557,7 @@ def screen_flt():
             cr=date.today()
             rp_sc_to.delete(0,'end')
             rp_sc_to.insert(0, cr)
+            
 
             lscr=in_dat
             
@@ -1622,14 +1653,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -1947,14 +1978,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -2273,14 +2304,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -2600,14 +2631,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -2920,14 +2951,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -3242,14 +3273,14 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT MAX(invoicetot) from invoice"
-            fbcursor.execute(sec_paid)
+            sec_paid = "SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
-
-            fbcursor.execute(sec_paid_y)
-
+            sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sec_paid_y, inv_valuz)
             paid_sec_y= fbcursor.fetchone()
 
 
@@ -10580,7 +10611,7 @@ def category_or():
         #=====================================================================================================
     elif rth=="Current days":
         given_date = date.today()
-        orfrm   .delete(0,'end')
+        orfrm.delete(0,'end')
         orfrm1.insert(0,given_date)
 
         cr=date.today()
@@ -18716,7 +18747,275 @@ def category_tro():
 def category_srgd():
   # firtst filter-----------------------------------Month to date
     rth=srgdfilter.get()
-    if rth=="MiMobile":
+    # #for company details
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
+    lrt1=srgd_frm.get_date()
+    irt2=srgd_to.get_date()
+
+    if rth==rth:
+        lkt=srgdfilter.get()
+        frame = Frame(
+        reportframe,
+        width=1500,
+        height=1000,
+        bg="#f8f8f2"
+        )
+        frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
+        frame.place(x=20,y=115)
+        canvas=Canvas(
+            frame,
+            bg='grey',
+            width=1400,
+            height=1200,
+            scrollregion=(0,0,1500, 1500)
+            )
+
+        vertibar=Scrollbar(
+            frame,
+            orient=VERTICAL
+            )
+        vertibar.pack(side=RIGHT,fill=Y)
+        vertibar.config(command=canvas.yview)
+        canvas.config(width=1310,height=600)
+
+        canvas.config(
+            yscrollcommand=vertibar.set
+            )
+        canvas.pack(expand=True,side=LEFT,fill=BOTH)
+        canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
+        if company_tro is not None:
+            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
+            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=116)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=136)
+            tree.heading("# 2", text="Quantity")
+            tree.column("# 3", anchor=E, stretch=NO, width=136)
+            tree.heading("# 3", text="Cost")
+            tree.column("# 4", anchor=E, stretch=NO, width=150)
+            tree.heading("# 4", text="Income")
+            tree.column("# 5", anchor=E, stretch=NO, width=150)
+            tree.heading("# 5", text="Profit")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','',''))
+            
+            for record in tree.get_children():
+                tree.delete(record)
+            count=0
+
+            # var1=rth
+            # var2=irt2
+            sql_inv_dt='SELECT * FROM productservice Where name=%s'
+            # inv_valuz=(var1,var2)
+            
+            inv_valuz=(lkt,)
+            fbcursor.execute(sql_inv_dt, inv_valuz)
+            tre=fbcursor.fetchall()
+
+
+            sel_inv_dt1='SELECT * FROM invoice Where name=%s'
+            inv_valuz=(lkt,)
+            fbcursor.execute(sql_inv_dt, inv_valuz)
+            tre1=fbcursor.fetchall()
+            
+            for j in tre1:
+                for i in tre:
+                    tree.insert(parent='', index='end', iid=i, text='hello',values=(j[2],j[18],i[3],i[4],i[4]))
+                    count += 1
+
+
+                count +=1
+
+
+            window = canvas.create_window(270, 260, anchor="nw", window=tree)
+        else:
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+
+            canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=50)
+            tree.heading("# 1", text="No")
+            tree.column("# 2", anchor=E, stretch=NO, width=70)
+            tree.heading("# 2", text="Date")
+            tree.column("# 3", anchor=E, stretch=NO, width=70)
+            tree.heading("# 3", text="Due Date")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Terms")
+            tree.column("# 5", anchor=E, stretch=NO, width=100)
+            tree.heading("# 5", text="Status")
+            tree.column("# 6", anchor=E, stretch=NO, width=100)
+            tree.heading("# 6", text="Invoice Total")
+            tree.column("# 7", anchor=E, stretch=NO, width=100)
+            tree.heading("# 7", text="Invoice Paid")
+            tree.column("# 8", anchor=E, stretch=NO, width=100)
+            tree.heading("# 8", text="Balance")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(875,145,text="Date From:"+srgdfrm.get()+"      Date To:"+srgdto.get()+"\nOrder Category: All",fill='black',font=("Helvetica", 8), justify='right')
+        def emailrp():
+            rpmailDetail=Toplevel()
+            rpmailDetail.title("E-Mail")
+            p2 = PhotoImage(file = "images/fbicon.png")
+            rpmailDetail.iconphoto(False, p2)
+            rpmailDetail.geometry("1030x550+150+120")
+            
+            def myrp_SMTP():
+                if True:
+                    em_ser_conbtn.destroy()
+                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
+                    mysmtpservercon.place(x=610, y=110)
+                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
+                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
+                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
+                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
+                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
+                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
+                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
+                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
+                    ssl_chkvar=IntVar()
+                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
+                    ssl_chkbtn.place(x=50, y=110)
+                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
+                else:
+                    pass
+            
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(rpmailDetail)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
+            messagelbframe.place(x=5, y=5)
+            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
+            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
+            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
+            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
+            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
+
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
+            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
+            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
+            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
+            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
+            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
+            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
+            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
+            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
+            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
+            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
+
+            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
+            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
+            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
+            attachlbframe.place(x=740, y=5)
+            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
+            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
+            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
+            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
+            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
+            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
+            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
+            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
+            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
+            confirm_chkvar=IntVar()
+            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
+            confirm_chkbtn.place(x=200, y=215)
+            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
+
+            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
+            sendatalbframe.place(x=610, y=5)
+            servar=IntVar()
+            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
+            SMTP_rbtn.place(x=10, y=10)
+            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
+            MySMTP_rbtn.place(x=10, y=40)
+            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
+            em_ser_conbtn.place(x=710, y=110)
+        
+        def my_popup(event):
+            my_menu.tk_popup(event.x_root, event.y_root)
+            
+        my_menu= Menu(canvas, tearoff=False)
+        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_separator()
+        my_menu.add_command(label="Print Report", command="pr")
+        my_menu.add_command(label="Email Report", command=emailrp)
+
+        my_menu.add_separator()
+        my_menu.add_command(label="Export Report To Excel", command="excel")
+        my_menu.add_command(label="Export Report To PDF", command="pdf")
+
+
+        canvas.bind("<Button-3>", my_popup)
+
+    elif rth=="MiMobile":
 
         frame = Frame(
         reportframe,
@@ -19200,8 +19499,10 @@ def category_dir():
         tro_company = "SELECT * from company"
         fbcursor.execute(tro_company)
         company_tro= fbcursor.fetchone()
-
+        
         ddr=dir_frm.get_date()
+
+        ddr2=date.today()
         
         frame = Frame(
         reportframe,
@@ -19261,19 +19562,20 @@ def category_dir():
             for record in rep_ird_tree.get_children():
                 rep_ird_tree.delete(record)
             count=0
+            rep_ird_tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))
             
-            print(ddr)
-            sql_inv_dt='SELECT * FROM invoice WHERE invodate= %s'
-            inv_valuz=(ddr)
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate between %s and %s'
+        
+            inv_valuz=(ddr, ddr2)
+            
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
+            
 
-
-            rep_ird_tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))
             for i in tre:
                 rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], i[8], i[9], i[10]))
                 count += 1
-            rep_ird_tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))            # total_tri='SELECT SUM(invoicetot) from invoice'
+            # total_tri='SELECT SUM(invoicetot) from invoice'
             # fbcursor.execute(total_tri)
             # tot_ird= fbcursor.fetchone()
             
@@ -22386,6 +22688,16 @@ def category_exp():
     fbcursor.execute(tro_company)
     company_tro= fbcursor.fetchone()
 
+    given_date = datetime.today().date()
+    in_dat = given_date.replace(day=1)
+    exp_frm.delete(0,'end')
+    exp_frm.insert(0, in_dat)
+
+    cr=date.today()
+    exp_to.delete(0,'end')
+    exp_to.insert(0, cr)
+
+    global canvas
     if rth=="All":
 
         frame = Frame(
@@ -22448,24 +22760,30 @@ def category_exp():
             for record in rp_exp_tree.get_children():
                 rp_exp_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from expenses')
+            var_1=exp_frm.get_date()
+            var_2=exp_to.get_date()
 
-            for i in fbcursor:
+            lre='SELECT * from expenses WHERE date BETWEEN %s and %s '
+            sre=(var_1, var_2)
+            fbcursor.execute(lre,sre)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
                 rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
                 count += 1
 
-            total_tri='SELECT SUM(expense_amount) from expenses'
-            fbcursor.execute(total_tri)
-            tot_tri= fbcursor.fetchone()
+            # total_tri='SELECT SUM(expense_amount) from expenses'
+            # fbcursor.execute(total_tri)
+            # tot_tri= fbcursor.fetchone()
             
 
-            total_tax1_tri='SELECT SUM(rebill_amount) from expenses'
-            fbcursor.execute(total_tax1_tri)
-            tot_tax1_tri= fbcursor.fetchone()
+            # total_tax1_tri='SELECT SUM(rebill_amount) from expenses'
+            # fbcursor.execute(total_tax1_tri)
+            # tot_tax1_tri= fbcursor.fetchone()
 
             
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','Summary',tot_tax1_tri,tot_tri))
+            # rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            # rp_exp_tree.insert('', 'end',text="1",values=('','','','Summary',tot_tax1_tri,tot_tri))
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
 
@@ -26354,6 +26672,9 @@ def category_cl():
     fbcursor.execute(tro_company)
     company_tro= fbcursor.fetchone()
 
+    global canvas
+    print(rth)
+
     if rth=="All Customers ":
 
         frame = Frame(
@@ -26831,6 +27152,8 @@ def category_cld():
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
     company= fbcursor.fetchone()
+
+    global canvas
 
     if rth=="All Customers ":
         # #for company details
@@ -29541,6 +29864,15 @@ rpcheckvar2_pl = BooleanVar()
 rpcheckvar1_por= BooleanVar()
 rpcheckvar2_por= BooleanVar()
 
+rpcheckvar1_exp= BooleanVar()
+rpcheckvar2_exp= BooleanVar()
+
+rpcheckvar1_cl= BooleanVar()
+rpcheckvar2_cl= BooleanVar()
+
+rpcheckvar1_cld= BooleanVar()
+rpcheckvar2_cld= BooleanVar()
+
 
 #####################################(Drop down Function)##################################################
 def maindropmenu(event):
@@ -29774,6 +30106,9 @@ def maindropmenu(event):
         canvasbar.draw()
         canvasbar.get_tk_widget().place(x=650, y=370)
 
+        lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+        lbl_ir.place(x=1115,y=85)
+
         lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
         lbl_invdtt2.place(x=2, y=85)
 
@@ -29783,16 +30118,20 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=category)
     rprefreshlebel.place(x=22,y=12)
 
+    
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas(canvas('1.0',END)))
+
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="lambda:printcanvas()")
     rpprintlabel.place(x=95,y=12)
   
 
 
-    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_excl(canvas))
+    rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_pdf     (canvas))
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_pdf())
     rpcopyLabel.place(x=240,y=12)
     
     iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -29821,6 +30160,9 @@ def maindropmenu(event):
     drop1ir.place(x=530,y=10)
     drop1ir["values"]=("Java","Php", "POP")
     drop1ir.current(0)
+
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
 
     
     rpdrop2_ir=ttk.Combobox(midFrame, textvariable=invfilter)
@@ -29862,7 +30204,7 @@ def maindropmenu(event):
     frame = Frame(
         reportframe,
         width=1500,
-        height=1000,
+        height=1200,
         bg="#f8f8f2"
         )
     frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
@@ -29871,7 +30213,7 @@ def maindropmenu(event):
         frame,
         bg='grey',
         width=1400,
-        height=1200,
+        height=1000,
         scrollregion=(0,0,1500, 1500)
         )
 
@@ -29910,8 +30252,8 @@ def maindropmenu(event):
 
     rprefreshlebel_cst = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_irwc)
     rprefreshlebel_cst.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel_cst = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel_cst.place(x=95,y=12)
   
@@ -29927,6 +30269,9 @@ def maindropmenu(event):
     irwcuw2.place(x=530,y=9)
     lbl_irwc =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_irwc.place(x=676,y=10)
+
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
 
     global irwcfrm1
     irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm)
@@ -30026,14 +30371,17 @@ def maindropmenu(event):
 
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_or)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
     rpsaveLabel.place(x=168,y=12)
+
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
 
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
     rpcopyLabel.place(x=240,y=12)
@@ -30126,7 +30474,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_rir)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30199,7 +30550,10 @@ def maindropmenu(event):
     rprefreshlebelpdi = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_pdi)
     rprefreshlebelpdi.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabelpdi = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabelpdi.place(x=95,y=12)
   
@@ -30279,8 +30633,8 @@ def maindropmenu(event):
   elif menuvar=="Customers List":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_cl)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30308,13 +30662,15 @@ def maindropmenu(event):
     drop1cl["values"]=("All Customers ","Default")
     drop1cl.current(0)
 
-    rpcheckvar1_cl = IntVar()
-    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:check_cl())
     rpchkbtn1_cl.place(x=725,y=2)
+    rpchkbtn1_cl.select()
 
-    rpcheckvar2_cl = IntVar()
-    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:check_cl())
     rpchkbtn1_cl.place(x=730,y=40)
+    rpchkbtn1_cl.select()
     
     mainchartframe7 =Frame(reportframe,height=1500, width=200)
     mainchartframe7.pack(side="top", padx=0, pady=0)
@@ -30368,6 +30724,10 @@ def maindropmenu(event):
     #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Customers List(Detailed)":
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_cld)
     rprefreshlebel.place(x=22,y=12)
 
@@ -30395,13 +30755,13 @@ def maindropmenu(event):
     drop1cl["values"]=("All Customers ","Default")
     drop1cl.current(0)
 
-    rpcheckvar1_cl = IntVar()
-    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Active", variable = rpcheckvar1_cld, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
     rpchkbtn1_cl.place(x=725,y=2)
+    rpchkbtn1_cl.select()
 
-    rpcheckvar2_cl = IntVar()
-    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cl, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+    rpchkbtn1_cl = Checkbutton(midFrame, text = "Inactive", variable = rpcheckvar2_cld, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
     rpchkbtn1_cl.place(x=730,y=40)
+    rpchkbtn1_cl.select()
 
     mainchartframe8 =Frame(reportframe,height=1500, width=200)
     mainchartframe8.pack(side="top", padx=0, pady=0)
@@ -30455,10 +30815,13 @@ def maindropmenu(event):
     #----------------------------------------------------------------------------------------------------
   
   elif menuvar=="Product/Service List":
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_psl)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30549,6 +30912,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_prl)
     rprefreshlebel.place(x=22,y=12)
 
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
 
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
@@ -30640,8 +31007,10 @@ def maindropmenu(event):
   elif menuvar=="Products Low Stock Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_plsr)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30723,7 +31092,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_tri)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30838,7 +31210,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_tro)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30939,7 +31314,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_srgd)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -30959,14 +31337,16 @@ def maindropmenu(event):
     lbl_sr =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_sr.place(x=728,y=10)
 
-    exsr=DateEntry(midFrame, textvariable=srgdfrm)
-    exsr.place(x=773,y=10)
+    global srgd_frm
+    global srgd_to
+    srgd_frm=DateEntry(midFrame, textvariable=srgdfrm)
+    srgd_frm.place(x=773,y=10)
 
     lbl_sr =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_sr.place(x=743,y=50)
 
-    exsr=DateEntry(midFrame, textvariable=srgdto)
-    exsr.place(x=773,y=50)
+    srgd_to=DateEntry(midFrame, textvariable=srgdto)
+    srgd_to.place(x=773,y=50)
 
     lbl_sr = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_sr.place(x=470,y=10)
@@ -30974,11 +31354,22 @@ def maindropmenu(event):
     menusr = StringVar()
     drop1sr=ttk.Combobox(midFrame, textvariable=menusr, width=30)
     drop1sr.place(x=530,y=10)
-    drop1sr["values"]=("Java","Php", "POP")
+    drop1sr["values"]=("0")
     drop1sr.current(0)
 
     rpdrop2_sr=ttk.Combobox(midFrame, textvariable=srgdfilter,width=30)
-    rpdrop2_sr["values"]=("MiMobile")
+    
+            
+    sql_inv_dt='SELECT name from productservice'
+    
+    fbcursor.execute(sql_inv_dt)
+    tre=fbcursor.fetchall()
+    
+      
+    
+    rpdrop2_sr["values"]=tre
+        
+
     rpdrop2_sr.place(x=530,y=50)
     rpdrop2_sr.current(0)
 
@@ -31038,7 +31429,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_ird)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -31138,7 +31532,10 @@ def maindropmenu(event):
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_dir)
     rprefreshlebel.place(x=22,y=12)
 
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -31217,8 +31614,10 @@ def maindropmenu(event):
   elif menuvar=="Purchase orders Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_por)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -31326,8 +31725,10 @@ def maindropmenu(event):
   elif menuvar=="Expenses Report":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_exp)
     rprefreshlebel.place(x=22,y=12)
-
-
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -31345,15 +31746,16 @@ def maindropmenu(event):
 
     lbl_er =Label(midFrame, text="From:" , bg="#f8f8f2")
     lbl_er.place(x=728,y=10)
-
-    exer=DateEntry(midFrame, textvariable=expfrm)
-    exer.place(x=773,y=10)
+    global exp_frm
+    global exp_to
+    exp_frm=DateEntry(midFrame, textvariable=expfrm)
+    exp_frm.place(x=773,y=10)
 
     lbl_er =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_er.place(x=743,y=50)
 
-    exer=DateEntry(midFrame, textvariable=expto)
-    exer.place(x=773,y=50)
+    exp_to=DateEntry(midFrame, textvariable=expto)
+    exp_to.place(x=773,y=50)
 
     lbl_er = Label(midFrame, text="Category:", bg="#f8f8f2")
     lbl_er.place(x=470,y=10)
@@ -31361,22 +31763,23 @@ def maindropmenu(event):
     menuer = StringVar()
     drop1er=ttk.Combobox(midFrame, textvariable=menuer, width=30)
     drop1er.place(x=530,y=10)
-    drop1er["values"]=("Java","Php", "POP")
-    drop1er.current(0)
+    drop1er["values"]=("")
+    
 
     rpdrop2_er=ttk.Combobox(midFrame, textvariable=expfilter,width=30)
     rpdrop2_er["values"]=("All","Internal")
     rpdrop2_er.place(x=530,y=50)
     rpdrop2_er.current(0)
 
-    rpcheckvar1_er = IntVar()
-    rpchkbtn1_er= Checkbutton(midFrame, text = "Invoiced", variable = rpcheckvar1_er, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command="lambda:invoicegraph()")
+ 
+    rpchkbtn1_er= Checkbutton(midFrame, text = "Invoiced", variable = rpcheckvar1_exp, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2",command=lambda:check_exp())
     rpchkbtn1_er.place(x=868,y=2)
+    rpchkbtn1_er.select()
 
-    rpcheckvar2_er = IntVar()
-    rpchkbtn1_er = Checkbutton(midFrame, text = "Rebilable", variable = rpcheckvar2_er, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command="lambda:outstandinggraph()")
+   
+    rpchkbtn1_er = Checkbutton(midFrame, text = "Rebilable", variable = rpcheckvar2_exp, onvalue = 1, offvalue = 0, height = 2, width = 8, bg="#f8f8f2", command=lambda:check_exp())
     rpchkbtn1_er.place(x=868,y=40)
-
+    rpchkbtn1_er.select()
 
     mainchartframe19 =Frame(reportframe,height=1500, width=200)
     mainchartframe19.pack(side="top", padx=0, pady=0)
@@ -31432,8 +31835,11 @@ def maindropmenu(event):
   elif menuvar=="Payment Reports":
     rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55,command=category_pyr)
     rprefreshlebel.place(x=22,y=12)
- 
 
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
+    lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
+    lbl_ir.place(x=1110,y=85)
     rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
     rpprintlabel.place(x=95,y=12)
   
@@ -31607,6 +32013,8 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -31681,6 +32089,8 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -31754,6 +32164,9 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -31828,6 +32241,10 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
+
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
     elif checkvar1.get()==1 and checkvar2.get()==0 and checkvar3.get()==1:
@@ -31900,6 +32317,8 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -31973,6 +32392,8 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -32047,6 +32468,8 @@ def chek_function():
             canvasbar_ch = FigureCanvasTkAgg(figfirst, master=reportframe)
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
@@ -32121,14 +32544,16 @@ def chek_function():
             canvasbar_ch.draw()
             canvasbar_ch.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
 
+            lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+            lbl_ir.place(x=1115,y=85)
+
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
 
     else:
         
-        canvasbar_ch.get_tk_widget().destroy()
-        lbl_invdtt2.destroy()
+        pass
        
 
 def check_function_por():
@@ -36068,6 +36493,1116 @@ def check_psl():
                 window = canvas.create_window(170, 150, anchor="nw", window=tree)
     else:
         pass
+
+
+def check_exp():
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+    if rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
+        
+        if company_tro is not None:
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_exp_tree.heading("# 1", text="Date")
+            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 2", text="Customer")
+            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 3", text="Vendor")
+            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_exp_tree.heading("# 4", text="Invoice")
+            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 5", text="Rebill.Amount")
+            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+            
+            for record in rp_exp_tree.get_children():
+                rp_exp_tree.delete(record)
+            count=0
+            var_1=exp_frm.get_date()
+            var_2=exp_to.get_date()
+
+            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and invoiced="Yes")'
+            sre=(var_1, var_2)
+            fbcursor.execute(lre,sre)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                count += 1
+
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+            
+            
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
+    elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==1:
+        if company_tro is not None:
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_exp_tree.heading("# 1", text="Date")
+            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 2", text="Customer")
+            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 3", text="Vendor")
+            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_exp_tree.heading("# 4", text="Invoice")
+            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 5", text="Rebill.Amount")
+            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+            
+            for record in rp_exp_tree.get_children():
+                rp_exp_tree.delete(record)
+            count=0
+            var_1=exp_frm.get_date()
+            var_2=exp_to.get_date()
+
+            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and rebillable="Yes")'
+            sre=(var_1, var_2)
+            fbcursor.execute(lre,sre)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                count += 1
+
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+            
+            
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+    elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1:
+        if company_tro is not None:
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+            rp_exp_tree.heading("# 1", text="Date")
+            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 2", text="Customer")
+            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+            rp_exp_tree.heading("# 3", text="Vendor")
+            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+            rp_exp_tree.heading("# 4", text="Invoice")
+            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 5", text="Rebill.Amount")
+            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+            rp_exp_tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+            
+            for record in rp_exp_tree.get_children():
+                rp_exp_tree.delete(record)
+            count=0
+            var_1=exp_frm.get_date()
+            var_2=exp_to.get_date()
+
+            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s)'
+            sre=(var_1, var_2)
+            fbcursor.execute(lre,sre)
+            tre=fbcursor.fetchall()
+
+            for i in tre:
+                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                count += 1
+
+            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+            
+
+            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+            
+            
+        else:
+
+            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+            
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=80)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
+    elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
+        if company_tro is not None:
+            
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=130)
+            tree.heading("# 1", text="Date")
+            tree.column("# 2", anchor=E, stretch=NO, width=150)
+            tree.heading("# 2", text="Customer")
+            tree.column("# 3", anchor=E, stretch=NO, width=120)
+            tree.heading("# 3", text="Vendor")
+            tree.column("# 4", anchor=E, stretch=NO, width=100)
+            tree.heading("# 4", text="Invoice")
+            tree.column("# 5", anchor=E, stretch=NO, width=115)
+            tree.heading("# 5", text="Rebill.Amount")
+            tree.column("# 6", anchor=E, stretch=NO, width=115)
+            tree.heading("# 6", text="Amount")
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('','','-No Data-','','Rebill.Amount','Amount'))
+
+            window = canvas.create_window(270, 260, anchor="nw", window=tree)
+
+    else:
+        pass
+
+
+def check_cl():
+    
+    rth=clfilter.get()
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
+    if rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        if company_tro is not None:
+
+            if rth=="All Customers":
+                print("haiii all")
+                
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                    count += 1
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree) 
+            
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                if fbcursor is not None:
+                    for i in fbcursor:
+                        rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                        count += 1
+                else:
+                    rp_cl_tree.insert('', 'end',text="1",values=('','','','-No Data-','',''))
+
+
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+
+    elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                    count += 1
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree) 
+            
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                if fbcursor is not None:
+                    for i in fbcursor:
+                        rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                        count += 1
+                else:
+                    rp_cl_tree.insert('', 'end',text="1",values=('','','','-No Data-','',''))
+
+
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                    count += 1
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree) 
+            
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                if fbcursor is not None:
+                    for i in fbcursor:
+                        rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                        count += 1
+                else:
+                    rp_cl_tree.insert('', 'end',text="1",values=('','','','-No Data-','',''))
+
+
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                    count += 1
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree) 
+            
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cl_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cl_tree.column("# 1", anchor=E, stretch=NO, width=100)
+                rp_cl_tree.heading("# 1", text="Customer Id")
+                rp_cl_tree.column("# 2", anchor=E, stretch=NO, width=170)
+                rp_cl_tree.heading("# 2", text="Category")
+                rp_cl_tree.column("# 3", anchor=E, stretch=NO, width=250)
+                rp_cl_tree.heading("# 3", text="Customer Businnes Name")
+                rp_cl_tree.column("# 4", anchor=E, stretch=NO, width=180)
+                rp_cl_tree.heading("# 4", text="Customer Person")
+                rp_cl_tree.column("# 5", anchor=E, stretch=NO, width=140)
+                rp_cl_tree.heading("# 5", text="Tel")
+                rp_cl_tree.column("# 6", anchor=E, stretch=NO, width=130)
+                rp_cl_tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                rp_cl_tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cl_tree.get_children():
+                    rp_cl_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                if fbcursor is not None:
+                    for i in fbcursor:
+                        rp_cl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[4], i[8], i[10], i[11]))
+                        count += 1
+                else:
+                    rp_cl_tree.insert('', 'end',text="1",values=('','','','-No Data-','',''))
+
+
+                window = canvas.create_window(170, 150, anchor="nw",  window=rp_cl_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    else:
+        pass
+
+def check_cld():
+    rth=cldfilter.get()
+    tro_company = "SELECT * from company"
+    fbcursor.execute(tro_company)
+    company_tro= fbcursor.fetchone()
+
+    if rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==0:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+                
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+
+            else:
+                pass
+        else:
+                    
+               
+            # Create an instance of Style widget
+            style=ttk.Style()
+            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+            # Add a Treeview widge
+                    
+            tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+            tree.column("# 1", anchor=E, stretch=NO, width=345)
+            tree.heading("# 1", text="No")
+            tree.column("# 2", anchor=E, stretch=NO, width=345)
+            tree.heading("# 2", text="Date")
+            
+            # Insert the data in Treeview widget
+            tree.insert('', 'end',text="1",values=('',' -No data-'))
+
+            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+                
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    elif rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==1:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+                
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_cld_tree=ttk.Treeview(canvas, column=("c1", "c2"), show='headings', height=100, style='mystyle.Treeview')
+                rp_cld_tree.column("# 1", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 1", text="")
+                rp_cld_tree.column("# 2", anchor="sw", stretch=NO, width=345)
+                rp_cld_tree.heading("# 2", text="")
+                
+                # Insert the data in Treeview widget
+                rp_cld_tree.insert('', 'end',text="1",values=('',''))
+
+                # Insert the data in Treeview widget
+                for record in rp_cld_tree.get_children():
+                    rp_cld_tree.delete(record)
+                count=0
+                fbcursor.execute('SELECT * from customer WHERE category="Default"')
+                for i in fbcursor:
+                    rp_cld_tree.insert("","end", iid=i, text='hello', values=("Billing Information:                      Customer Id:"+str(i[0]),"Shipping Information:                      Tax exempt No.:"+str(i[17])))
+
+                    rp_cld_tree.insert("","end", values=('Name: '+str(i[4]),'Name:'+str(i[6])))
+
+                    rp_cld_tree.insert("","end", values=('Address: '+str(i[5]),'Address:'+str(i[7])))
+                    rp_cld_tree.insert("","end", values=('Contact Person: '+str(i[8]),'Contact Person:'+str(i[13])))
+                    rp_cld_tree.insert("","end", values=('Tel:'+str(i[10])+'          Fax: '+str(i[11]),'Tel:'+str(i[15])+'          Fax: '+str(i[16])))
+                    rp_cld_tree.insert("","end", values=('Email: '+str(i[9]),'Email: '+str(i[14])))
+                    rp_cld_tree.insert('', 'end',text="1",values=('____________________________________________________________','____________________________________________________________'))
+                    
+                    count += 1
+                window = canvas.create_window(290, 130, anchor="nw", window=rp_cld_tree)
+
+            else:
+                pass
+        else:
+                    
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==0:
+        if company_tro is not None:
+            if rth=="All Customers":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+            
+
+            elif rth=="Default":
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+
+            else:
+                pass
+        else:
+                    
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=100, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=100)
+                tree.heading("# 1", text="Customer Id")
+                tree.column("# 2", anchor=E, stretch=NO, width=170)
+                tree.heading("# 2", text="Category")
+                tree.column("# 3", anchor=E, stretch=NO, width=250)
+                tree.heading("# 3", text="Customer Businnes Name")
+                tree.column("# 4", anchor=E, stretch=NO, width=180)
+                tree.heading("# 4", text="Customer Person")
+                tree.column("# 5", anchor=E, stretch=NO, width=130)
+                tree.heading("# 5", text="Tel")
+                tree.column("# 6", anchor=E, stretch=NO, width=130)
+                tree.heading("# 6", text="Fax")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','',''))
+
+                window = canvas.create_window(170, 150, anchor="nw", window=tree)
+    else:
+        pass
 #==============================================================================================================
         
     
@@ -36092,7 +37627,7 @@ lbl_invdtt.grid(row=1, column=0, pady=5, padx=(150, 0))
 menu = StringVar()
 drop1=ttk.Combobox(lbframe, textvariable=menu)
 drop1.grid(row=1, column=3, pady=5, padx=(5, 0))
-drop1["values"]=("Java","Php", "POP")
+drop1["values"]=("0")
 drop1.current(0)
 
 
@@ -36186,6 +37721,7 @@ outstanding= fbcursor.fetchone()
 # plt.show()
 #-------------------------------------------------------------------------------
 
+
 frame = Frame(
         reportframe,
         width=1380,
@@ -36259,6 +37795,8 @@ fbcursor.execute(sec_paid_y)
 paid_sec_y= fbcursor.fetchone()
 
 
+
+
 figsecond = plt.figure(figsize=(9, 4), dpi=80)
 
 x=paid_sec_y
@@ -36303,6 +37841,9 @@ axes.xaxis.grid()
 canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
 canvasbar.draw()
 canvasbar.get_tk_widget().place(x=650, y=370)
+lbl_ir = Label(reportframe, text="Right Click On Each Chart For More Options", bg="white" , font=("arial", 8))
+lbl_ir.place(x=1115,y=85)
+
 
 lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
 lbl_invdtt2.place(x=2, y=85)
