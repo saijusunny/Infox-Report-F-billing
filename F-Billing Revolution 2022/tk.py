@@ -1,39 +1,38 @@
-from datetime import date, datetime
-from tkinter import *
-from matplotlib.pyplot import text
+"""
+Setup for Ghostscript:
+Download it from http://www.ghostscript.com/ and
+add `/path/to/gs9.07/bin/` and `/path/to/gs9.07/lib/` to your path.
+"""
 
-from tkcalendar import DateEntry
+import os
+import subprocess
+import tkinter as tk
 
-root = Tk()
-root.geometry("750x450")
+class App(object):
+    def __init__(self, root):
+        self.line_start = None
+        self.canvas = tk.Canvas(root, width=300, height=300, bg="white")
+        self.canvas.bind("<Button-1>", lambda e: self.draw(e.x, e.y))
+        self.button = tk.Button(root, text="Generate PDF", command=self.generate_pdf)
+        self.canvas.pack()
+        self.button.pack(pady=10)
 
-import datetime
-import calendar
+    def draw(self, x, y):
+        if self.line_start:
+            x_origin, y_origin = self.line_start
+            self.canvas.create_line(x_origin, y_origin, x, y)
+            self.line_start = None
+        else:
+            self.line_start = (x, y)
 
-# def add_months(sourcedate, months):
-#     month = sourcedate.month - 1 + months
-#     year = sourcedate.year + month // 12
-#     month = month % 12 + 1
-#     day = min(sourcedate.day, calendar.monthrange(year,month)[1])
-#     return datetime.date(year, month, day)
-    
-def tak(event):
-   d1=expdt3.get_date()
-   d2=date.today()
-   d3=d1-d2
-   print(d3)
+    def generate_pdf(self):
+        self.canvas.postscript(file="tmp.ps", colormode="color")
+        process = subprocess.Popen(["ps2pdf", "tmp.ps", "result.pdf"], shell=True)
+        process.wait()
+        os.remove("tmp.ps")
 
-   expdt2=DateEntry(root, textvariable=d3)
-   print(type(expdt2))
-   expdt2.pack()
-    
-
-
-
-
-expdt3=DateEntry(root)
-# print(type(expdt3))
-expdt3.bind("<<DateEntrySelected>>",tak)
-expdt3.pack()
-
-root.mainloop()
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title("Canvas2PDF")
+    app = App(root)
+    root.mainloop()
