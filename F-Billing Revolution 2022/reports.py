@@ -38,6 +38,20 @@ from matplotlib.widgets import Cursor
 from dateutil.relativedelta import relativedelta
 import pendulum
 
+from pathlib import Path
+import pandas as pd
+from tkinter import messagebox
+from tkinter import *
+from docx import Document
+from fpdf import FPDF
+import os
+import sys
+from PyPDF2 import PdfFileWriter, PdfFileReader
+import pdfkit
+
+from reportlab.pdfgen import canvas
+
+
 
 
 # ##########################################################################################################
@@ -340,25 +354,24 @@ def exportcanvas6():
             lst.insert(0,cols)
             for row in lst:
                 csvwriter.writerow(row)
-
+#cld
 def exportcanvas7():
-    var_1=rp_exir.get()
-    var_2=rp_exir1.get()
     
-    cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+    cols = [" "," "] # Your column headings here
     path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+
+    
     
     lst = []
     with open(path, "w", newline='') as myfile:
         csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
-        
-        irv=(var_1,var_2)
-        fbcursor.execute(sql,irv)
+        sql = 'select * from customer '
+    
+        fbcursor.execute(sql)
         pandsdata = fbcursor.fetchall()
         for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
+            row = row_id[4]
+            lst.append(row) 
         lst = list(map(list,lst))
         lst.insert(0,cols)
         for row in lst:
@@ -780,29 +793,19 @@ def exportcanvas18():
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PDF++++++++++++++++++++++++
 
 def printcanvas_pdf():
-    cols = ["PRODUCT SERVICE ID","CODE OR SKU","NAME","CATEGORY"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('PDF File', '*.pdf',)],defaultextension=".pdf")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select Productserviceid,sku,name,category,description from Productservice'
-        fbcursor.execute(sql)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+    print("ddd")
+    c=canvas.Canvas("invoiuce.pdf")
+    c.drawString(200, 700, "hello World")
+    c.save()
+    print("Pdf generate")
 
-def printcanvas_excl(txt):
-    ltx=txt.itemcget(id_inv, 'text')
-    temp_file=tempfile.mktemp('.xlsx')
-    open(temp_file, 'w').write(ltx)
-    os.startfile(temp_file,'print')
-    pass
+def show(event):
+    print(canvas)
+    # ltx=txt.itemcget(id_inv, 'text')
+    # temp_file=tempfile.mktemp('.xlsx')
+    # open(temp_file, 'w').write(ltx)
+    # os.startfile(temp_file,'print')
+    # pass
   
 
 ##################################### (Report Preview) ############################################################# 
@@ -927,19 +930,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -960,13 +966,14 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
@@ -976,7 +983,7 @@ def screen_flt():
 
             x=paid_thrd_y
             y=paid_thrd_x   
-            plt.barh(x,y, label="Top Product Sale", color="blue") 
+            plt.barh(x,y, label="Top Product Salesss", color="blue") 
             plt.legend()
             plt.xlabel("x-axis")
             plt.ylabel("y-label")
@@ -1143,19 +1150,15 @@ def screen_flt():
             canvasbar.draw()
             canvasbar.get_tk_widget().place(x=650, y=370)
 
-            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
-            lbl_invdtt2.place(x=2, y=85)
+        lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+        lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
-
+            
         
 
     #--------------------------------------------------------------------------------------------------------------
@@ -1265,19 +1268,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -1298,17 +1304,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -1484,15 +1492,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+           
         #===============================================================================================
     elif rth=="Current year":
         
@@ -1602,19 +1607,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -1635,13 +1643,14 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
@@ -1821,15 +1830,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
     #==============================================================================================================
     elif rth=="Last 6 Month":
             
@@ -1940,19 +1946,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -1973,17 +1982,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -2159,15 +2170,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
         #=====================================================================================================
     elif rth=="Last 12 Month":
         
@@ -2280,19 +2288,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -2313,17 +2324,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -2499,15 +2512,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
         #=================================================================================================
     elif rth=="Last 18 Month":
         
@@ -2618,19 +2628,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -2651,17 +2664,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -2837,15 +2852,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
     
     #=====================================================================================================
     elif rth=="Last 24 Month":
@@ -2957,19 +2969,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -2990,13 +3005,14 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
@@ -3176,15 +3192,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
     #========================================================================================================
 #================================================================================================================
     
@@ -3297,19 +3310,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -3330,17 +3346,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -3516,15 +3534,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        
         #===========================================================================================================
     elif rth=="Previous year":
         
@@ -3630,19 +3645,22 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -3663,17 +3681,19 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
+
 
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
@@ -3849,15 +3869,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+            
     # ------------------------------
     elif rth=="Custom Range":
         
@@ -3877,7 +3894,7 @@ def screen_flt():
 
             ltt=rp_scr_frm.get_date()
             ltt1=rp_sc_to.get_date()
-            print(ltt)
+            
 
             var_1=ltt
             var_2=ltt1
@@ -3969,26 +3986,29 @@ def screen_flt():
 
             #second graph
 
-            sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s "
+            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sec_paid,inv_valuz)
             paid_sec_x= fbcursor.fetchone()
 
-            sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            
+
+
+            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
             inv_valuz=(var_1,var_2)
 
             fbcursor.execute(sec_paid_y,inv_valuz)
 
             paid_sec_y= fbcursor.fetchone()
 
-
+            
 
 
             figsecond = plt.figure(figsize=(9, 4), dpi=80)
 
             x=paid_sec_y
             y=paid_sec_x
-            plt.barh(x,y, label="Top Billed Customerssss", color="orange") 
+            plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
             plt.xlabel("x-axis")
             plt.ylabel("y-label")
@@ -4002,23 +4022,25 @@ def screen_flt():
 
             # #second graph
 
-            thrd_paid = "SELECT invoicetot from invoice where invodate BETWEEN %s and %s GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1 where invodate BETWEEN %s and %s"
+            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid,inv_valuz)
             paid_thrd_x= fbcursor.fetchone()
+            
 
 
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1  where invodate BETWEEN %s and %s)"
+            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
             inv_valuz=(var_1,var_2)
             fbcursor.execute(thrd_paid_y,inv_valuz)
 
             paid_thrd_y= fbcursor.fetchone()
 
+
             figlast = plt.figure(figsize=(9, 4), dpi=80)
 
             x=paid_thrd_y
             y=paid_thrd_x   
-            plt.barh(x,y, label="Top Product Salessss", color="blue") 
+            plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
             plt.xlabel("x-axis")
             plt.ylabel("y-label")
@@ -4188,15 +4210,12 @@ def screen_flt():
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+        irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+        irwcuw1.place(x=1135, y=97)
+        lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+        lbl_invdtt2.place(x=1140, y=97)
 
-            irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-            irwcuw1.place(x=1135, y=97)
-            lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-            lbl_invdtt2.place(x=1140, y=97)
+           
 
         #============================================================================================
     else:
@@ -4289,6 +4308,7 @@ def category():
             rp_inv_tree.heading("# 8", text="Balance")
             # Insert the data in Treeview widget
             
+            global tre
             rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
             
             for record in rp_inv_tree.get_children():
@@ -4332,6 +4352,7 @@ def category():
 
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
+            
 
         else:
             canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -30601,7 +30622,7 @@ def maindropmenu(event):
         rprefreshlebel.place(x=22,y=12)
 
 
-        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=print)
         rpprintlabel.place(x=95,y=12)
     
 
@@ -30645,7 +30666,7 @@ def maindropmenu(event):
         
         drop2=ttk.Combobox(midFrame, textvariable=scrfilter)
         drop2.place(x=530,y=50)
-        drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range")
+        drop2["values"]=("Year To Date","Current year","Last 3 Month","Last 6 Month", "Last 12 Month", "Last 18 Month", "Last 24 Month","Previous Year", "Before Previous Year", "Custom Range" )
         drop2.current(0)
 
 
@@ -30769,17 +30790,15 @@ def maindropmenu(event):
 
         #second graph
 
-        sec_paid = "SELECT invoicetot from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
+        sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
         fbcursor.execute(sec_paid)
         paid_sec_x= fbcursor.fetchone()
 
-        sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
-
+        
+        sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
         fbcursor.execute(sec_paid_y)
 
         paid_sec_y= fbcursor.fetchone()
-
-
 
 
         figsecond = plt.figure(figsize=(9, 4), dpi=80)
@@ -30852,7 +30871,7 @@ def maindropmenu(event):
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas())
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_pdf())
     rpcopyLabel.place(x=240,y=12)
     
     iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -38263,6 +38282,7 @@ def check_cld():
 ############################################################(Screen Chart)###################################
 lbl_invdtt = Label(lbframe, text="Report Type:  ", bg="#f8f8f2")
 lbl_invdtt.place(x=8, y=10)
+global menu1
 menu1 = StringVar()
 drop=ttk.Combobox(lbframe, textvariable=menu1, width=30)
 drop.grid(row=2, column=0, pady=5, padx=(5, 0))
@@ -38436,12 +38456,12 @@ canvasbar.get_tk_widget().place(x=0, y=0) # show the barchart on the ouput windo
 
 #second graph
 
-sec_paid = "SELECT invoicetot from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
+sec_paid = "SELECT invoicetot from invoice  GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
 fbcursor.execute(sec_paid)
 paid_sec_x= fbcursor.fetchone()
 
-sec_paid_y = "SELECT businessname from invoice GROUP BY businessname ORDER by COUNT(businessname) DESC LIMIT 1"
-
+        
+sec_paid_y = "SELECT businessname from invoice  GROUP BY businessname  ORDER by COUNT(businessname) DESC LIMIT 1"
 fbcursor.execute(sec_paid_y)
 
 paid_sec_y= fbcursor.fetchone()
@@ -38468,11 +38488,13 @@ canvasbar.get_tk_widget().place(x=0, y=370)
 # #second graph
 
 thrd_paid = "SELECT invoicetot from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1"
+
 fbcursor.execute(thrd_paid)
 paid_thrd_x= fbcursor.fetchone()
+            
 
 
-thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
+thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from invoice GROUP BY Productserviceid  ORDER by COUNT(Productserviceid) DESC LIMIT 1)"
 
 fbcursor.execute(thrd_paid_y)
 

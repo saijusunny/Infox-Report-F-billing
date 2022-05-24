@@ -1,38 +1,128 @@
-"""
-Setup for Ghostscript:
-Download it from http://www.ghostscript.com/ and
-add `/path/to/gs9.07/bin/` and `/path/to/gs9.07/lib/` to your path.
-"""
-
+from pathlib import Path
+import pandas as pd
+from tkinter import messagebox
+from tkinter import *
+from docx import Document
+from fpdf import FPDF
 import os
-import subprocess
-import tkinter as tk
+import sys
 
-class App(object):
-    def __init__(self, root):
-        self.line_start = None
-        self.canvas = tk.Canvas(root, width=300, height=300, bg="white")
-        self.canvas.bind("<Button-1>", lambda e: self.draw(e.x, e.y))
-        self.button = tk.Button(root, text="Generate PDF", command=self.generate_pdf)
-        self.canvas.pack()
-        self.button.pack(pady=10)
+window =Tk()
+window.geometry("300x400")
+window.title("Export data")
 
-    def draw(self, x, y):
-        if self.line_start:
-            x_origin, y_origin = self.line_start
-            self.canvas.create_line(x_origin, y_origin, x, y)
-            self.line_start = None
-        else:
-            self.line_start = (x, y)
+data = {'Name': ['Sean','Nancy','Mary','Michael','Kevin','Frank','Joe'],
+        'Age' : ['21','22','23','24','25','26','27'],
+        'Gender' :['Male','Female','Female','Male','Male','Male','Male'],
+        'DOB' :['11/12/1998','12/12/1994','18/03/1946','25/07/2001','29/06/1975','01/04/2015','04/11/1982']}
 
-    def generate_pdf(self):
-        self.canvas.postscript(file="tmp.ps", colormode="color")
-        process = subprocess.Popen(["ps2pdf", "tmp.ps", "result.pdf"], shell=True)
-        process.wait()
-        os.remove("tmp.ps")
+#Create the dataframe and tell where to get its values from
+df = pd.DataFrame(data,columns=['Name','Age','Gender','DOB'])
 
-if __name__ == '__main__':
-    root = tk.Tk()
-    root.title("Canvas2PDF")
-    app = App(root)
-    root.mainloop()
+f = open('D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.txt', 'r')
+file_contents = f.read()
+
+for col in file_contents:
+    Label(window, text = file_contents,background='white',fg='black', width=50,anchor='w').grid(row=0, column=5)
+
+
+
+def exportexcel():
+    #Create a Pandas excel writer using XLSXwriter  as the negine
+    excelwriter = pd.ExcelWriter(r"D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.xlsx")
+    ######## excelwriter can only create new files, it cannot read or modify existing files #######
+    ####position the dataframes in the worksheet, and names the sheet analysis ###
+    df.to_excel(excelwriter,sheet_name="Analysis")
+    #close the pandas excel writer and output the excel file
+    excelwriter.save()
+    excelwriter.close()
+
+    messagebox.showinfo("Excel Export","Export completed")
+
+def exporttxt():
+    txtfile = open("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.xlsx",'w') # (w = write)
+    txtfile.write(str(df))
+    txtfile.close()
+    messagebox.showinfo("TXT Export","Export Completed")
+
+def exportdocx():
+    document = Document()
+    wordfile = open("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.xlsx",'r')
+    for xword in wordfile:
+        document.add_paragraph(xword)
+    document.save("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/docxexport.docx")
+    messagebox.showinfo("DOCX Export","Export completed")
+
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font('arial','B',13.0)
+
+def exportpdf():
+    my_file1 = Path("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.txt")
+    #Check no 1 verifying the file exists
+    if my_file1.is_file():
+        messagebox.showinfo("PDF Export","Txt file exists")
+    else:
+        messagebox.showinfo("PDF Export","Txt file does not exist, please check")
+
+    #Check no 2, verifying the files are not empty
+
+    if os.path.getsize(my_file1) > 0:
+        messagebox.showinfo("PDf Export", "TXT File populated")
+    else:
+        print("The txt file is empty,please check abd retry")
+        sys.exit()
+
+    ## put in the code to see if the file exists already
+    txtfile = open("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.txt", 'w') # w= write
+    txtfile.write(str(df))
+    txtfile.close()
+    ##Opens the txt file and reads its contents to a variable and then  populates to a PDF file
+    txtfile = open("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/excelexport.txt",'r')
+    for x in txtfile:
+        pdf.cell(200,10,txt=x,ln=1,align='c')
+    pdf.output("D:/Python Training/Infox Tkinter/F-Billing Revolution 2022/pdfexport.pdf")
+    messagebox.showinfo("PDF Export","Export Completed")
+
+def closescreen():
+    window.destroy()
+
+## Create button position and assign function to them
+
+excelexp = Button(window,text="Export to excel", command=exportexcel)
+excelexp.place(relx=0.2,rely=0.5,anchor=CENTER)
+
+pdfexp = Button(window,text="Export to PDF", command=exportpdf)
+pdfexp.place(relx=0.2,rely=0.6,anchor=CENTER)
+
+exceltxt = Button(window,text="Export to txt", command=exporttxt)
+exceltxt.place(relx=0.2,rely=0.7,anchor=CENTER)
+
+exceldocx = Button(window,text="Export to docx", command=exportdocx)
+exceldocx.place(relx=0.2,rely=0.8,anchor=CENTER)
+
+closescr = Button(window, text="Close window", command=closescreen)
+closescr.place(relx=0.5,rely=0.9,anchor=CENTER,width="200")
+
+t1 = Text(window,fg='black',height=8.5,width=45)
+t1.pack
+
+class PrintTOT1(object):
+    def write(self,s):
+        t1.insert(END,s)
+
+sys.stdout = PrintTOT1()
+
+print(df)
+
+window.mainloop()
+
+
+
+
+
+
+
+
+
+
