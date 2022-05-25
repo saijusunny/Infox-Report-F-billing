@@ -11,6 +11,7 @@ from tkinter import messagebox
 from tkinter import ttk
 
 from turtle import clear, color, width
+from unittest.util import _count_diff_all_purpose
 from PIL import ImageTk, Image
 import pandas as pd
 from tkinter.messagebox import showinfo
@@ -49,7 +50,7 @@ import sys
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import pdfkit
 
-from reportlab.pdfgen import canvas
+
 
 
 
@@ -181,7 +182,7 @@ w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(5, 2))
 
 
-saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
 saveLabel.pack(side="left",)
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(0, 5))
@@ -792,20 +793,59 @@ def exportcanvas18():
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PDF++++++++++++++++++++++++
 
-def printcanvas_pdf():
-    print("ddd")
-    c=canvas.Canvas("invoiuce.pdf")
-    c.drawString(200, 700, "hello World")
-    c.save()
-    print("Pdf generate")
+def pdf_exp(txts): 
+    
+    white = (255, 255, 255)
+    black = (0, 0, 0)
+    blue = (0, 0, 255)
+    red = (255, 0, 0)
+    green = (0,128,0)
+    import tkinter as tk
+    import math
+    import os
+    # needs Python Image Library (PIL)
+    from PIL import Image, ImageDraw
+    width = 1400
+    height = 2000
+    cv = tk.Canvas(width=width, height=height, bg='white')
+    cv.pack()
+    image1 = Image.new("RGB", (width, height), white)
+    draw = ImageDraw.Draw(image1)
+    draw.text((10, 20), txts)
+   
+    cv.postscript(file="my_drawing.ps", colormode='color')
+    filename = "my_drawing.jpg"
+    image1.save(filename)
 
-def show(event):
-    print(canvas)
-    # ltx=txt.itemcget(id_inv, 'text')
-    # temp_file=tempfile.mktemp('.xlsx')
-    # open(temp_file, 'w').write(ltx)
-    # os.startfile(temp_file,'print')
-    # pass
+    # to test, view the saved file, works with Windows only
+    # behaves like double-clicking on the saved file
+    os.startfile(filename)
+
+
+    # import pdb;pdb.set_trace()
+    # from reportlab.pdfgen import canvas
+    # exprt=canvas.Canvas("invoiuce.pdf")
+    # exprt.drawString(200, 700, txts)
+    # exprt.save()
+    # print("Pdf generate")
+
+ 
+def  cn_pr(canvas):
+    print(str(canvas))
+
+    filename=tempfile.mktemp(".txt")
+    open(filename,'w').write(str(canvas))
+    os.startfile(filename,"print")
+# def show(event):
+#     os.startfile(file, "print")
+#     # ltx=txt.itemcget(id_inv, 'text')
+#     # temp_file=tempfile.mktemp('.xlsx')
+#     # open(temp_file, 'w').write(ltx)
+#     # os.startfile(temp_file,'print')
+#     # pass
+
+def image():
+    pass
   
 
 ##################################### (Report Preview) ############################################################# 
@@ -4223,6 +4263,8 @@ def screen_flt():
     
 
 #---------------------------------------------------INVOICE FILTER-----------------------------------------------
+
+
 def category():
   # firtst filter-----------------------------------Month to date
     rth=invfilter.get()
@@ -4230,12 +4272,12 @@ def category():
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
     company= fbcursor.fetchone()
-    global canvas
+    
     #-------------------------
     
-    
+    global c
     if rth=="Month to date":
-        global saiju
+        
         given_date = datetime.today().date()
         in_dat = given_date.replace(day=1)
         rp_exir.delete(0,'end')
@@ -4282,8 +4324,11 @@ def category():
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
-            saiju=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+       
+            sk=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
+            
+
+            c=canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
             
             canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
             
@@ -4308,7 +4353,7 @@ def category():
             rp_inv_tree.heading("# 8", text="Balance")
             # Insert the data in Treeview widget
             
-            global tre
+            global window
             rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
             
             for record in rp_inv_tree.get_children():
@@ -4352,6 +4397,7 @@ def category():
 
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
+            
             
 
         else:
@@ -30504,6 +30550,8 @@ def category_plsr():
 
 ######################################################################################################################
 
+
+canvas=StringVar()
 scrfilter=StringVar()
 scrfrm=StringVar()
 scrto=StringVar()
@@ -30627,10 +30675,10 @@ def maindropmenu(event):
     
 
 
-        rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="dele")
+        rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
         rpsaveLabel.place(x=168,y=12)
 
-        rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+        rpcopyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
         rpcopyLabel.place(x=240,y=12)
         
         iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -30863,7 +30911,7 @@ def maindropmenu(event):
     lbl_ir.place(x=1110,y=85)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="lambda:printcanvas()")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:cn_pr(canvas))
     rpprintlabel.place(x=95,y=12)
   
 
@@ -30871,7 +30919,7 @@ def maindropmenu(event):
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:printcanvas_pdf())
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp(canvas))
     rpcopyLabel.place(x=240,y=12)
     
     iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -38482,7 +38530,7 @@ axes.xaxis.grid()
 
 
 canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
-canvasbar.draw()
+canvasbar.draw() 
 canvasbar.get_tk_widget().place(x=0, y=370)
 
 # #second graph
