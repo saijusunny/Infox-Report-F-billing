@@ -55,6 +55,8 @@ import pdfkit
 
 
 
+
+
 # ##########################################################################################################
 fbilldb = mysql.connector.connect(
     host="localhost", user="root", password="", database="fbillingsintgrtd", port="3306"
@@ -182,7 +184,7 @@ w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(5, 2))
 
 
-saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
+saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image(reportframe))
 saveLabel.pack(side="left",)
 w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
 w.pack(side="left", padx=(0, 5))
@@ -202,49 +204,385 @@ def exportcanvas():
 
     var_1=rp_exir.get()
     var_2=rp_exir1.get()
-    
-    cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
+    if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
-        irv=(var_1,var_2)
-        fbcursor.execute(sql,irv)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and 	invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid="0" or balance="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid != "0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid="0" or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid is not null or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s and totpaid="0" or balance!="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+
+        cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    else:
+        pass
 
 def exportcanvas2():
     var_1=irwcfrm1.get()
     var_2=irwcto1.get()
-    
-    cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s'
+    if rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
-        irv=(var_1,var_2)
-        print(var_1)
-        fbcursor.execute(sql,irv)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and 	invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid="0" or balance="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid != "0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid="0" or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
+    
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid is not null or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,businessname,status,invoicetot from invoice where invodate between %s and %s and totpaid="0" or balance!="0"'
+            
+            irv=(var_1,var_2)
+            print(var_1)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    else:
+        pass
 
 def exportcanvas3():
     var_1=orfrm1.get()
@@ -311,6 +649,7 @@ def exportcanvas5():
         for row in lst:
             csvwriter.writerow(row)
 
+#cl
 def exportcanvas6():
     
     rth=clfilter.get()
@@ -355,6 +694,8 @@ def exportcanvas6():
             lst.insert(0,cols)
             for row in lst:
                 csvwriter.writerow(row)
+    else:
+        pass
 #cld
 def exportcanvas7():
     
@@ -380,177 +721,551 @@ def exportcanvas7():
 
 def exportcanvas8():
     rth=pslfilter.get()
-    print(rth)
-    if rth=="All product and Services ":
-        cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice'
+    if rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==0:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
 
-    elif rth=="All products":
-        cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Products"'
+        elif rth=="All products":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
-    elif rth=="All Service":
-        cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Service"'
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Products" and stock>stocklimit'
+                
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Service" and stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
 
-    elif rth=="Default":
-        cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Default"'
+        elif rth=="Default":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
-    else:
-        pass
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Default" and stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==1:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where stock<stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="All products":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Products and stock<stocklimit"'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Service"and stock<stocklimi '
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="Default":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Default" and stock<stocklimi'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==1:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="All products":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Products"'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Service"'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="Default":
+            cols = ["Product ID","Category","Product/ Service Name","Description","Warehouse","Stock", "Cost","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid  ,	category,name,description,warehouse,stock,cost,unitprice from productservice where category="Default" '
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+
     
 #--------------------------------Price list--------------------------
 
 def exportcanvas9():
     rth=prlfilter.get()
+    if rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==1:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where '
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
 
-    if rth=="All product and Services ":
-        cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid,name,description,unitprice from productservice'
+        elif rth=="All products":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Products"'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Service"'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
 
-    elif rth=="All products":
-        cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid,name,description,unitprice from productservice where category="Products"'
+        elif rth=="Default":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
-    elif rth=="All Service":
-        cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid,name,description,unitprice from productservice where category="Service"'
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Default"'
+                
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
 
-    elif rth=="Default":
-        cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select Productserviceid,name,description,unitprice from productservice where category="Default"'
+    elif rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==0:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
-        
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="All products":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Products" and stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Service" and stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="Default":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Default" and stock>stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+
+    elif rpcheckvar1_pl.get()==0 and rpcheckvar2_pl.get()==1:
+        if rth=="All product and Services ":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice stock<stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="All products":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Products" and stock<stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="All Service":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Service" and stock<stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+
+        elif rth=="Default":
+            cols = ["Product ID","Product/ Service Name","Description","Price"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select Productserviceid,name,description,unitprice from productservice where category="Default" and stock<stocklimit'
+                
+            
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
     else:
         pass
 
+
+        
+
 #-----------------product low stock
 def exportcanvas10():
+    if rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==1:
+        cols = ["Product ID","Category","Product Name","Warehouse","Low Stock Limit","Stock"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select orderid,category,name,warehouse,stocklimit,stock from storingproduct'
+            
+        
+            fbcursor.execute(sql)
+            pandsdata = fbcursor.fetchall()
+            
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
 
+    elif rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
+        cols = ["Product ID","Category","Product Name","Warehouse","Low Stock Limit","Stock"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select orderid,category,name,warehouse,stocklimit,stock from storingproduct WHERE stock > stocklimit'
+            
+        
+            fbcursor.execute(sql)
+            pandsdata = fbcursor.fetchall()
+            
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+
+    elif rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
         cols = ["Product ID","Category","Product Name","Warehouse","Low Stock Limit","Stock"] # Your column headings here
         path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
@@ -571,32 +1286,173 @@ def exportcanvas10():
             for row in lst:
                 csvwriter.writerow(row)
 
+    else:
+        pass
 
 #=====tax Invoice========
 def exportcanvas11():
     var_1=trifrm1.get()
     var_2=trito1.get()
-    
 
-    
-    cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s'
+    if rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
+        pass
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
-        irv=(var_1,var_2)
-        fbcursor.execute(sql,irv)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and AND 	invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid="0" or balance="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid != "0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid="0" or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid is not null or invoicetot="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+        cols = ["Invoice No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Invoice Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and totpaid="0" or balance!="0"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+
+    else:
+        pass
+    
 #tax order
 def exportcanvas12():
     var_1=trofrm1.get()
@@ -697,25 +1553,88 @@ def exportcanvas16():
     var_1=porfrm1.get()
     var_2=porto1.get()
     
-   
-    cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s'
+
+    if rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==0:
+        cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
-        irv=(var_1,var_2)
-        fbcursor.execute(sql,irv)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s and status="Complete"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_por.get()==0 and rpcheckvar2_por.get()==1:
+        cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s and AND status="Draft"'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+
+    elif rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==1:
+        cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    elif rpcheckvar1_por.get()==0 and rpcheckvar2_por.get()==0:
+    
+   
+        cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+        
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s'
+            
+            irv=(var_1,var_2)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
+    else:
+                    pass
 
 
 #exp
@@ -724,45 +1643,137 @@ def exportcanvas17():
     var_2=exp_to.get_date()
 
     rth=expfilter.get()
+    if rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1:
+        if rth=="All":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="Internal":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and customer="Internal"'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
+        if rth=="All":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and invoiced="Yes"'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="Internal":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and customer="Internal" and invoiced="Yes"'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==1:
+        if rth=="All":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and rebillable="Yes"'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="Internal":
+            cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and customer="Internal" and rebillable="Yes"'
+                
+                irv=(var_1,var_2)
+                fbcursor.execute(sql,irv)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
+        pass
+
+    else:
+        pass
+
     
-    if rth=="All":
-        cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s'
-            
-            irv=(var_1,var_2)
-            fbcursor.execute(sql,irv)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
-    if rth=="Internal":
-        cols = ["Date","Customer","Vendor","Invoice","Rebill.Amount","Amount"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select date,	customer,vendor,invoiced,	rebill_amount,expense_amount from expenses where date between %s and %s and customer="Internal"'
-            
-            irv=(var_1,var_2)
-            fbcursor.execute(sql,irv)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+    
 
 #pyr
 def exportcanvas18():
@@ -793,34 +1804,97 @@ def exportcanvas18():
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PDF++++++++++++++++++++++++
 
-def pdf_exp(txts): 
+def pdf_exp(tx):
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+
+
+    fileName = 'previewpdf.pdf'
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,800, company[1])
+    pdf.drawString(30,780, company[2])
+    pdf.drawString(30,740, "Sales tax reg No:"+company[4])
+    pdf.drawString(490,800, "Invoice Report")
+    pdf.drawString(335,780, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+    pdf.drawString(460,760,"Invoice Category: All")
     
-    white = (255, 255, 255)
-    black = (0, 0, 0)
-    blue = (0, 0, 255)
-    red = (255, 0, 0)
-    green = (0,128,0)
-    import tkinter as tk
-    import math
-    import os
-    # needs Python Image Library (PIL)
-    from PIL import Image, ImageDraw
-    width = 1400
-    height = 2000
-    cv = tk.Canvas(width=width, height=height, bg='white')
-    cv.pack()
-    image1 = Image.new("RGB", (width, height), white)
-    draw = ImageDraw.Draw(image1)
-    draw.text((10, 20), txts)
+    
+    pdf.save()
+    print("Pdf generate")
+
+    
+    
+    # #it is working--------------------- 
+    # from PIL import ImageGrab
+    # x=root.winfo_rootx()+widget.winfo_x()
+    # y=root.winfo_rooty()+widget.winfo_y()
+    # x1=x+widget.winfo_width()
+    # y1=y+widget.winfo_height()
+    # ImageGrab.grab().crop((x,170,x1,1800)).save("mydr.jpg")
+
+    #------------------------------------
+#    canvas_width=1200
+#    canvas_height=2000
+#    white= (255, 255, 255) 
+
+#    form = "Saving {0}%"
+#    img = PhotoImage(width = canvas_width, height = canvas_height)
+#    perc = -1
+#    for y in range(canvas_height):
+#       perc1 = (100*y) // canvas_height
+#       if perc1 != perc:
+#          perc = perc1
+         
+#       row = "{"
+#       for x in range(canvas_width):
+#          ids = txts.find_overlapping(x, y, x, y)
+#          print(ids)
+#          color = txts.itemcget(ids[-1], "fill") if ids else white
+#          row += str(color)+ ""
+        
+#       img.put(row + "}", (0, y))
+#    img.write("kritzel.ppm", format="ppm")
+ 
+ #------------------------------------------------
+    # import pdb;pdb.set_trace()
+    # white = (255, 255, 255) 
+    # black = (0, 0, 0)
+    # import tkinter as tk
+    # import math
+    # import os
+    # # needs Python Image Library (PIL)
+    # from PIL import Image, ImageDraw 
+    # width = 1400
+    # height = 2000
+    # cv = tk.Canvas(width=width, height=height, bg='white')
+    # cv.pack()
+    # image1 = Image.new("RGB", (width, height), white)
+    # draw = ImageDraw.Draw(image1)
+    # draw.text((10, 20), str(txts), black)
    
-    cv.postscript(file="my_drawing.ps", colormode='color')
-    filename = "my_drawing.jpg"
-    image1.save(filename)
+    # cv.postscript(file="my_drawing.ps", colormode='color')
+    # filename = "my_drawing.jpg"
+    # image1.save(filename)
 
-    # to test, view the saved file, works with Windows only
-    # behaves like double-clicking on the saved file
-    os.startfile(filename)
-
+    # # to test, view the saved file, works with Windows only
+    # # behaves like double-clicking on the saved file
+    # os.startfile(filename)
+#------------------------------------------
 
     # import pdb;pdb.set_trace()
     # from reportlab.pdfgen import canvas
@@ -844,8 +1918,24 @@ def  cn_pr(canvas):
 #     # os.startfile(temp_file,'print')
 #     # pass
 
-def image():
+
+def image_print(txt):
     pass
+
+def image(widget):
+    from PIL import ImageGrab
+    x=root.winfo_rootx()+widget.winfo_x()
+    y=root.winfo_rooty()+widget.winfo_y()
+    x1=x+widget.winfo_width()
+    y1=y+widget.winfo_height()
+    thr=ImageGrab.grab().crop((x,182,x1,760)).save("mydfr.png")
+   
+
+    # from PIL import ImageGrab
+    # self.file= filedialog.askopenfilename(initialdir="c:/", filetypes=(('PNG File', '.PNG'), ('PNG File')))
+    # self.file=self.file+".PNG"
+    # ImageGrab.grab().crop((100,100,100,100)).save(self.file)
+    
   
 
 ##################################### (Report Preview) ############################################################# 
@@ -4275,7 +5365,7 @@ def category():
     
     #-------------------------
     
-    global c
+    global canvas
     if rth=="Month to date":
         
         given_date = datetime.today().date()
@@ -4325,12 +5415,13 @@ def category():
         
         if company is not None:
        
-            sk=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
+            k=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
             
 
-            c=canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+            canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
             
-            canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
+            lk=canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
+            
             
             # Add a Treeview widge
                 
@@ -33589,14 +34680,16 @@ def check_function_por():
     else:
         pass
 
-def check_inv():
+def check_inv():  
     in_dat=invfrm.get()
     cr=invto.get()
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
     company= fbcursor.fetchone()
-
+    
+    
     if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
+           
 
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
@@ -37287,245 +38380,489 @@ def check_exp():
     tro_company = "SELECT * from company"
     fbcursor.execute(tro_company)
     company_tro= fbcursor.fetchone()
+    rth=expfilter.get()
     if rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
-        
-        if company_tro is not None:
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+        if rth=="All":
+            if company_tro is not None:
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            # Add a Treeview widge
-                    
-            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
-            rp_exp_tree.heading("# 1", text="Date")
-            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 2", text="Customer")
-            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 3", text="Vendor")
-            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
-            rp_exp_tree.heading("# 4", text="Invoice")
-            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 5", text="Rebill.Amount")
-            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
-            
-            for record in rp_exp_tree.get_children():
-                rp_exp_tree.delete(record)
-            count=0
-            var_1=exp_frm.get_date()
-            var_2=exp_to.get_date()
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
 
-            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and invoiced="Yes")'
-            sre=(var_1, var_2)
-            fbcursor.execute(lre,sre)
-            tre=fbcursor.fetchall()
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and invoiced="Yes")'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
 
-            for i in tre:
-                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                count += 1
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
 
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
-            
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
 
-            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
 
-            
-            
-        else:
+                
+                
+            else:
 
-            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
-            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
 
-            
-            # Create an instance of Style widget
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            # Add a Treeview widge
-                    
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            tree.column("# 1", anchor=E, stretch=NO, width=80)
-            tree.heading("# 1", text="Date")
-            tree.column("# 2", anchor=E, stretch=NO, width=150)
-            tree.heading("# 2", text="Customer")
-            tree.column("# 3", anchor=E, stretch=NO, width=120)
-            tree.heading("# 3", text="Vendor")
-            tree.column("# 4", anchor=E, stretch=NO, width=100)
-            tree.heading("# 4", text="Invoice")
-            tree.column("# 5", anchor=E, stretch=NO, width=115)
-            tree.heading("# 5", text="Rebill.Amount")
-            tree.column("# 6", anchor=E, stretch=NO, width=115)
-            tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
 
-            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        elif rth=="Internal":
+            if company_tro is not None:
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
+
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and customer="Internal" and invoiced="Yes")'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
+
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
+
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
+
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+                
+                
+            else:
+
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
 
     elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==1:
-        if company_tro is not None:
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-            # Add a Treeview widge
-                    
-            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
-            rp_exp_tree.heading("# 1", text="Date")
-            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 2", text="Customer")
-            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 3", text="Vendor")
-            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
-            rp_exp_tree.heading("# 4", text="Invoice")
-            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 5", text="Rebill.Amount")
-            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+        if rth=="All":
+            if company_tro is not None:
             
-            for record in rp_exp_tree.get_children():
-                rp_exp_tree.delete(record)
-            count=0
-            var_1=exp_frm.get_date()
-            var_2=exp_to.get_date()
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and rebillable="Yes")'
-            sre=(var_1, var_2)
-            fbcursor.execute(lre,sre)
-            tre=fbcursor.fetchall()
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
 
-            for i in tre:
-                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                count += 1
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and rebillable="Yes")'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
 
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
+
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
+
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+                
+                
+            else:
+
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        elif rth=="Internal":
+            if company_tro is not None:
             
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
 
-            
-            
-        else:
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and customer="Internal" and rebillable="Yes")'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
 
-            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
 
-            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
 
-            
-            # Create an instance of Style widget
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
 
-            # Add a Treeview widge
-                    
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            tree.column("# 1", anchor=E, stretch=NO, width=80)
-            tree.heading("# 1", text="Date")
-            tree.column("# 2", anchor=E, stretch=NO, width=150)
-            tree.heading("# 2", text="Customer")
-            tree.column("# 3", anchor=E, stretch=NO, width=120)
-            tree.heading("# 3", text="Vendor")
-            tree.column("# 4", anchor=E, stretch=NO, width=100)
-            tree.heading("# 4", text="Invoice")
-            tree.column("# 5", anchor=E, stretch=NO, width=115)
-            tree.heading("# 5", text="Rebill.Amount")
-            tree.column("# 6", anchor=E, stretch=NO, width=115)
-            tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                
+            else:
 
-            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
+
     elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1:
-        if company_tro is not None:
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+        if rth=="All":
+            if company_tro is not None:
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            # Add a Treeview widge
-                    
-            rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
-            rp_exp_tree.heading("# 1", text="Date")
-            rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 2", text="Customer")
-            rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
-            rp_exp_tree.heading("# 3", text="Vendor")
-            rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
-            rp_exp_tree.heading("# 4", text="Invoice")
-            rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 5", text="Rebill.Amount")
-            rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
-            rp_exp_tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
-            
-            for record in rp_exp_tree.get_children():
-                rp_exp_tree.delete(record)
-            count=0
-            var_1=exp_frm.get_date()
-            var_2=exp_to.get_date()
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
 
-            lre='SELECT * from expenses WHERE(date BETWEEN %s and %s)'
-            sre=(var_1, var_2)
-            fbcursor.execute(lre,sre)
-            tre=fbcursor.fetchall()
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s)'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
 
-            for i in tre:
-                rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                count += 1
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
 
-            rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
-            
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
 
-            window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
 
-            
-            
-        else:
+                
+                
+            else:
 
-            canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
 
-            canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
 
-            
-            # Create an instance of Style widget
-            style=ttk.Style()
-            style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
-            style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
-            # Add a Treeview widge
-                    
-            tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
-            tree.column("# 1", anchor=E, stretch=NO, width=80)
-            tree.heading("# 1", text="Date")
-            tree.column("# 2", anchor=E, stretch=NO, width=150)
-            tree.heading("# 2", text="Customer")
-            tree.column("# 3", anchor=E, stretch=NO, width=120)
-            tree.heading("# 3", text="Vendor")
-            tree.column("# 4", anchor=E, stretch=NO, width=100)
-            tree.heading("# 4", text="Invoice")
-            tree.column("# 5", anchor=E, stretch=NO, width=115)
-            tree.heading("# 5", text="Rebill.Amount")
-            tree.column("# 6", anchor=E, stretch=NO, width=115)
-            tree.heading("# 6", text="Amount")
-            # Insert the data in Treeview widget
-            tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
 
-            window = canvas.create_window(290, 260, anchor="nw", window=tree)
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
+        elif rth=="Internal":
+            if company_tro is not None:
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                rp_exp_tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                rp_exp_tree.column("# 1", anchor=E, stretch=NO, width=80)
+                rp_exp_tree.heading("# 1", text="Date")
+                rp_exp_tree.column("# 2", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 2", text="Customer")
+                rp_exp_tree.column("# 3", anchor=E, stretch=NO, width=160)
+                rp_exp_tree.heading("# 3", text="Vendor")
+                rp_exp_tree.column("# 4", anchor=E, stretch=NO, width=100)
+                rp_exp_tree.heading("# 4", text="Invoice")
+                rp_exp_tree.column("# 5", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 5", text="Rebill.Amount")
+                rp_exp_tree.column("# 6", anchor=E, stretch=NO, width=115)
+                rp_exp_tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+                
+                for record in rp_exp_tree.get_children():
+                    rp_exp_tree.delete(record)
+                count=0
+                var_1=exp_frm.get_date()
+                var_2=exp_to.get_date()
+
+                lre='SELECT * from expenses WHERE(date BETWEEN %s and %s and customer="Internal")'
+                sre=(var_1, var_2)
+                fbcursor.execute(lre,sre)
+                tre=fbcursor.fetchall()
+
+                for i in tre:
+                    rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                    count += 1
+
+                rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
+                
+
+                window = canvas.create_window(270, 260, anchor="nw", window=rp_exp_tree)
+
+                
+                
+            else:
+
+                canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
+
+                canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
+
+                
+                # Create an instance of Style widget
+                style=ttk.Style()
+                style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+                style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+                style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+                # Add a Treeview widge
+                        
+                tree=ttk.Treeview(canvas, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=55, style='mystyle.Treeview')
+                tree.column("# 1", anchor=E, stretch=NO, width=80)
+                tree.heading("# 1", text="Date")
+                tree.column("# 2", anchor=E, stretch=NO, width=150)
+                tree.heading("# 2", text="Customer")
+                tree.column("# 3", anchor=E, stretch=NO, width=120)
+                tree.heading("# 3", text="Vendor")
+                tree.column("# 4", anchor=E, stretch=NO, width=100)
+                tree.heading("# 4", text="Invoice")
+                tree.column("# 5", anchor=E, stretch=NO, width=115)
+                tree.heading("# 5", text="Rebill.Amount")
+                tree.column("# 6", anchor=E, stretch=NO, width=115)
+                tree.heading("# 6", text="Amount")
+                # Insert the data in Treeview widget
+                tree.insert('', 'end',text="1",values=('','','','','Rebill.Amount','Amount'))
+
+                window = canvas.create_window(290, 260, anchor="nw", window=tree)
 
     elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
         if company_tro is not None:
@@ -37557,6 +38894,7 @@ def check_exp():
 
     else:
         pass
+    
 
 
 def check_cl():
