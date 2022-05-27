@@ -1804,7 +1804,7 @@ def exportcanvas18():
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PDF++++++++++++++++++++++++
 
-def pdf_exp(tx):
+def pdf_exp():
     from reportlab.pdfgen import canvas
     # from tkdocviewer import *
     from reportlab.lib import colors
@@ -1813,9 +1813,10 @@ def pdf_exp(tx):
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
 
-
-    fileName = 'previewpdf.pdf'
+    fileName = path
     documentTitle = 'Document title!'
     title = 'Invoices List'
     pdf = canvas.Canvas(fileName, pagesize=letter)
@@ -1824,92 +1825,438 @@ def pdf_exp(tx):
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
     company= fbcursor.fetchone()
-
+    
     pdf.setFont('Helvetica',12)
-    pdf.drawString(30,800, company[1])
-    pdf.drawString(30,780, company[2])
-    pdf.drawString(30,740, "Sales tax reg No:"+company[4])
-    pdf.drawString(490,800, "Invoice Report")
-    pdf.drawString(335,780, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
-    pdf.drawString(460,760,"Invoice Category: All")
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(490,760, "Invoice Report")
+    pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
     
     
+    in_dat=rp_exir.get()
+    cr=rp_exir1.get()
+    var_1=in_dat
+    var_2=cr
+  
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(88,x,str(i[2]))
+                pdf.drawString(158,x,str(i[3]))
+                pdf.drawString(231,x,str(i[35]))
+                pdf.drawString(300,x,str(i[4])) 
+                pdf.drawString(360,x,str(i[8]))
+                pdf.drawString(450,x,str(i[9]))
+                pdf.drawString(525,x,str(i[10]))
+                count += 1
+                x-=15
+
+
     pdf.save()
-    print("Pdf generate")
 
+#==========irwc
+def pdf_exp_irwc():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
     
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(490,760, "Invoice Report")
     
-    # #it is working--------------------- 
-    # from PIL import ImageGrab
-    # x=root.winfo_rootx()+widget.winfo_x()
-    # y=root.winfo_rooty()+widget.winfo_y()
-    # x1=x+widget.winfo_width()
-    # y1=y+widget.winfo_height()
-    # ImageGrab.grab().crop((x,170,x1,1800)).save("mydr.jpg")
-
-    #------------------------------------
-#    canvas_width=1200
-#    canvas_height=2000
-#    white= (255, 255, 255) 
-
-#    form = "Saving {0}%"
-#    img = PhotoImage(width = canvas_width, height = canvas_height)
-#    perc = -1
-#    for y in range(canvas_height):
-#       perc1 = (100*y) // canvas_height
-#       if perc1 != perc:
-#          perc = perc1
-         
-#       row = "{"
-#       for x in range(canvas_width):
-#          ids = txts.find_overlapping(x, y, x, y)
-#          print(ids)
-#          color = txts.itemcget(ids[-1], "fill") if ids else white
-#          row += str(color)+ ""
-        
-#       img.put(row + "}", (0, y))
-#    img.write("kritzel.ppm", format="ppm")
- 
- #------------------------------------------------
-    # import pdb;pdb.set_trace()
-    # white = (255, 255, 255) 
-    # black = (0, 0, 0)
-    # import tkinter as tk
-    # import math
-    # import os
-    # # needs Python Image Library (PIL)
-    # from PIL import Image, ImageDraw 
-    # width = 1400
-    # height = 2000
-    # cv = tk.Canvas(width=width, height=height, bg='white')
-    # cv.pack()
-    # image1 = Image.new("RGB", (width, height), white)
-    # draw = ImageDraw.Draw(image1)
-    # draw.text((10, 20), str(txts), black)
+    pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+    
+    in_dat=irwcfrm1.get()
+    cr=irwcto1.get()
+    var_1=in_dat
+    var_2=cr
    
-    # cv.postscript(file="my_drawing.ps", colormode='color')
-    # filename = "my_drawing.jpg"
-    # image1.save(filename)
+   
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(88,x,str(i[2]))
+                pdf.drawString(158,x,str(i[3]))
+                pdf.drawString(235,x,str(i[18]))
+                pdf.drawString(405,x,str(i[4])) 
+                pdf.drawString(490,x,str(i[8]))
+               
+                count += 1
+                x-=15
 
-    # # to test, view the saved file, works with Windows only
-    # # behaves like double-clicking on the saved file
-    # os.startfile(filename)
-#------------------------------------------
 
-    # import pdb;pdb.set_trace()
-    # from reportlab.pdfgen import canvas
-    # exprt=canvas.Canvas("invoiuce.pdf")
-    # exprt.drawString(200, 700, txts)
-    # exprt.save()
-    # print("Pdf generate")
+    pdf.save()
+    
+def pdf_exp_or():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
 
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(495,760, "Order Report")
+    
+   
+
+    pdf.drawString(335,740, "Date From:"+orfrm.get()+"  Date To:"+orto.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+    
+    in_dat=orfrm1.get()
+    cr=orto1.get()
+    var_1=in_dat
+    var_2=cr
+   
+   
+    count=0
+    sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[0]))
+                
+                pdf.drawString(88,x,str(i[1]))
+                pdf.drawString(158,x,str(i[2]))
+                pdf.drawString(235,x,str(i[3]))
+                pdf.drawString(405,x,str(i[4])) 
+                pdf.drawString(490,x,str(i[26]))
+               
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+def pdf_exp_rir():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(445,760, "Recurring Invoice Report")
+    "Invoice No","Customer","Next Invoice","Recurring Interval","Stop After","Invoice Total"
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"Invoice No          Customer                   Next Invoice    Recurring Interval     Stop After       Invoice Total    ")
+    
+    count=0
+    sql_inv_dt='SELECT * FROM invoice'
  
-def  cn_pr(canvas):
-    print(str(canvas))
+    fbcursor.execute(sql_inv_dt)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(115,x,str(i[18]))
+                pdf.drawString(250,x,str(i[26]))
+                pdf.drawString(335,x,str(i[24]))
+                pdf.drawString(430,x,str(i[27])) 
+                pdf.drawString(505,x,str(i[8]))
+               
+                count += 1
+                x-=15
 
-    filename=tempfile.mktemp(".txt")
-    open(filename,'w').write(str(canvas))
-    os.startfile(filename,"print")
+
+    pdf.save()
+
+def pdf_exp_pdi():   
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(450,760, "Past Due Invoice Report")
+
+    pdf.drawString(460,720,"Invoice Category: All")
+    
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+    
+    
+
+    count=0
+    sql_inv_dt='SELECT * FROM invoice where invodate<duedate'
+    
+    fbcursor.execute(sql_inv_dt)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(88,x,str(i[2]))
+                pdf.drawString(158,x,str(i[3]))
+                pdf.drawString(234,x,str(i[35]))
+                pdf.drawString(300,x,str(i[4])) 
+                pdf.drawString(365,x,str(i[8]))
+                pdf.drawString(455,x,str(i[9]))
+                pdf.drawString(530,x,str(i[10]))
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+
+def pdf_exp_pym():   
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',10)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(500,760, "Pyment Report")
+    pdf.drawString(370,740, "Date From:"+pyrfrm.get()+"  Date To:"+pyrto.get())
+    pdf.drawString(470,720,"Invoice Category: All")
+    pdf.drawString(28,695,"_________________________________________________________________________________________________")
+    pdf.drawString(28,675,"_________________________________________________________________________________________________")
+    pdf.drawString(28,678,"Invoice No          Invoice Issue Date  Customer                      Payment ID   Payment Date     Paid By               Amount Paid       ")
+    
+    in_dat=pyrfrm1.get()
+    cr=pyrto1.get()
+    var_1=in_dat
+    var_2=cr
+  
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(110,x,str(i[2]))
+                pdf.drawString(190,x,str(i[18]))
+                pdf.drawString(298,x,str(i[34]))
+                pdf.drawString(358,x,str(i[2])) 
+                pdf.drawString(425,x,str(i[18]))
+                pdf.drawString(515,x,str(i[9]))
+                
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+
+def pdf_exp_cl():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(495,760, "Customer List")
+    
+
+    pdf.drawString(28,750,"__________________________________________________________________________________")
+    pdf.drawString(28,730,"__________________________________________________________________________________")
+
+    
+    
+    pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
+    rth=clfilter.get()
+    
+    if rth=="All Customers ":
+    
+        count=0
+        sql_inv_dt='SELECT * FROM customer'
+        
+        fbcursor.execute(sql_inv_dt)
+        tre=fbcursor.fetchall()
+        x=705
+        for i in tre:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(110,x,str(i[2]))
+                    pdf.drawString(168,x,str(i[4]))
+                    pdf.drawString(335,x,str(i[8]))
+                    pdf.drawString(440,x,str(i[10])) 
+                    pdf.drawString(512,x,str(i[11]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rth=="Default":
+        count=0
+        sql_inv_dt='SELECT * FROM customer where category="Default"'
+        
+        fbcursor.execute(sql_inv_dt)
+        tre=fbcursor.fetchall()
+        x=705
+        for i in tre:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(110,x,str(i[2]))
+                    pdf.drawString(168,x,str(i[4]))
+                    pdf.drawString(335,x,str(i[8]))
+                    pdf.drawString(440,x,str(i[10])) 
+                    pdf.drawString(512,x,str(i[11]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+
+
+
+
+# def  cn_pr(canvas):
+#     print(str(canvas))
+
+#     filename=tempfile.mktemp(".txt")
+#     open(filename,'w').write(str(canvas))
+#     os.startfile(filename,"print")
 # def show(event):
 #     os.startfile(file, "print")
 #     # ltx=txt.itemcget(id_inv, 'text')
@@ -5485,12 +5832,11 @@ def category():
             
             # rp_inv_tree.insert('', 'end',text="1",values=('','','-End Of List- ','','','Invoice Total','Total Paid','Balance'))
             # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_inv_bal))
-
+            global window
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
             
             
-
         else:
             canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
             canvas.create_text(335,165,text="Address line1\nAddress line2\nAddress line3\nAddress line3\nAddress line4\nPhone 555-5555",fill='black',font=("Helvetica", 10), justify='left')
@@ -11453,7 +11799,7 @@ def category_or():
             
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+            style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
             style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
             # Add a Treeview widge
@@ -32002,7 +32348,7 @@ def maindropmenu(event):
     lbl_ir.place(x=1110,y=85)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:cn_pr(canvas))
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp())
     rpprintlabel.place(x=95,y=12)
   
 
@@ -32010,7 +32356,7 @@ def maindropmenu(event):
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp(canvas))
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp())
     rpcopyLabel.place(x=240,y=12)
     
     iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -32133,13 +32479,13 @@ def maindropmenu(event):
     rprefreshlebel_cst.place(x=22,y=12)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel_cst = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel_cst = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_or())
     rpprintlabel_cst.place(x=95,y=12)
   
     rpsaveLabel_cst = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas2())
     rpsaveLabel_cst.place(x=168,y=12)
 
-    rpcopyLabel_cst = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel_cst = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_irwc())
     rpcopyLabel_cst.place(x=240,y=12)
 
     irwcuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -32252,7 +32598,7 @@ def maindropmenu(event):
     rprefreshlebel.place(x=22,y=12)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_or())
     rpprintlabel.place(x=95,y=12)
   
 
@@ -32262,7 +32608,7 @@ def maindropmenu(event):
     lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
     lbl_ir.place(x=0,y=500)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_or())
     rpcopyLabel.place(x=240,y=12)
     
     oruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -32357,14 +32703,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_rir())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas4())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_rir())
     rpcopyLabel.place(x=240,y=12)
 
     
@@ -32433,14 +32779,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabelpdi = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabelpdi = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_pdi())
     rpprintlabelpdi.place(x=95,y=12)
   
 
     rpsaveLabelpdi = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas5())
     rpsaveLabelpdi.place(x=168,y=12)
 
-    rpcopyLabelpdi = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabelpdi = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_pdi())
     rpcopyLabelpdi.place(x=240,y=12)
     
     pdiuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -32514,14 +32860,14 @@ def maindropmenu(event):
     rprefreshlebel.place(x=22,y=12)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_cl())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas6())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_cl())
     rpcopyLabel.place(x=240,y=12)
 
 
@@ -33719,14 +34065,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_pym())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas18())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_pym())
     rpcopyLabel.place(x=240,y=12)
 
     pruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
