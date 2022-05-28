@@ -964,7 +964,8 @@ def exportcanvas8():
                     csvwriter.writerow(row)
         else:
             pass
-
+    else:
+        pass
     
 #--------------------------------Price list--------------------------
 
@@ -978,7 +979,7 @@ def exportcanvas9():
             lst = []
             with open(path, "w", newline='') as myfile:
                 csvwriter = csv.writer(myfile, delimiter=',')
-                sql = 'select Productserviceid,name,description,unitprice from productservice where '
+                sql = 'select Productserviceid,name,description,unitprice from productservice '
                 
             
                 fbcursor.execute(sql)
@@ -1060,7 +1061,7 @@ def exportcanvas9():
             lst = []
             with open(path, "w", newline='') as myfile:
                 csvwriter = csv.writer(myfile, delimiter=',')
-                sql = 'select Productserviceid,name,description,unitprice from productservice stock>stocklimit'
+                sql = 'select Productserviceid,name,description,unitprice from productservice where stock>stocklimit'
                 
             
                 fbcursor.execute(sql)
@@ -1142,7 +1143,7 @@ def exportcanvas9():
             lst = []
             with open(path, "w", newline='') as myfile:
                 csvwriter = csv.writer(myfile, delimiter=',')
-                sql = 'select Productserviceid,name,description,unitprice from productservice stock<stocklimit'
+                sql = 'select Productserviceid,name,description,unitprice from productservice where stock<stocklimit'
                 
             
                 fbcursor.execute(sql)
@@ -1772,8 +1773,6 @@ def exportcanvas17():
     else:
         pass
 
-    
-    
 
 #pyr
 def exportcanvas18():
@@ -1812,58 +1811,428 @@ def pdf_exp():
     from reportlab.pdfbase import pdfmetrics
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
+        pass
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
 
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
-
-    sql_company = "SELECT * from company"
-    fbcursor.execute(sql_company)
-    company= fbcursor.fetchone()
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
     
-    pdf.setFont('Helvetica',12)
-    pdf.drawString(30,760, company[1])
-    pdf.drawString(30,740, company[2])
-    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-    pdf.drawString(490,760, "Invoice Report")
-    pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
-    pdf.drawString(460,720,"Invoice Category: All")
-    pdf.drawString(28,695,"__________________________________________________________________________________")
-    pdf.drawString(28,675,"__________________________________________________________________________________")
-    pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
-    
-    
-    in_dat=rp_exir.get()
-    cr=rp_exir1.get()
-    var_1=in_dat
-    var_2=cr
-  
-    count=0
-    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
-    inv_valuz=(var_1,var_2)
-    fbcursor.execute(sql_inv_dt,inv_valuz)
-    tre=fbcursor.fetchall()
-    x=655
-    for i in tre:
-                pdf.drawString(28,x,str(i[1]))
-                
-                pdf.drawString(88,x,str(i[2]))
-                pdf.drawString(158,x,str(i[3]))
-                pdf.drawString(231,x,str(i[35]))
-                pdf.drawString(300,x,str(i[4])) 
-                pdf.drawString(360,x,str(i[8]))
-                pdf.drawString(450,x,str(i[9]))
-                pdf.drawString(525,x,str(i[10]))
-                count += 1
-                x-=15
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and 	invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
-    pdf.save()
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid != "0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid is not null or invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
+        
+        
+        in_dat=rp_exir.get()
+        cr=rp_exir1.get()
+        var_1=in_dat
+        var_2=cr
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance!="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(231,x,str(i[35]))
+                    pdf.drawString(300,x,str(i[4])) 
+                    pdf.drawString(360,x,str(i[8]))
+                    pdf.drawString(450,x,str(i[9]))
+                    pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    else:
+        pass
+    
+    
 
 #==========irwc
 def pdf_exp_irwc():
@@ -1875,58 +2244,438 @@ def pdf_exp_irwc():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
+    if rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
+        pass
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
 
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
 
-    sql_company = "SELECT * from company"
-    fbcursor.execute(sql_company)
-    company= fbcursor.fetchone()
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
     
-    pdf.setFont('Helvetica',12)
-    pdf.drawString(30,760, company[1])
-    pdf.drawString(30,740, company[2])
-    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-    pdf.drawString(490,760, "Invoice Report")
     
-    pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
-    pdf.drawString(460,720,"Invoice Category: All")
-    pdf.drawString(28,695,"__________________________________________________________________________________")
-    pdf.drawString(28,675,"__________________________________________________________________________________")
-    
-    pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
-    
-    in_dat=irwcfrm1.get()
-    cr=irwcto1.get()
-    var_1=in_dat
-    var_2=cr
-   
-   
-    count=0
-    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
-    inv_valuz=(var_1,var_2)
-    fbcursor.execute(sql_inv_dt,inv_valuz)
-    tre=fbcursor.fetchall()
-    x=655
-    for i in tre:
-                pdf.drawString(28,x,str(i[1]))
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and 	invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
                 
-                pdf.drawString(88,x,str(i[2]))
-                pdf.drawString(158,x,str(i[3]))
-                pdf.drawString(235,x,str(i[18]))
-                pdf.drawString(405,x,str(i[4])) 
-                pdf.drawString(490,x,str(i[8]))
-               
-                count += 1
-                x-=15
+                    count += 1
+                    x-=15
 
 
-    pdf.save()
+        pdf.save()
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid != "0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid is not null or invoicetot="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(490,760, "Invoice Report")
+        
+        pdf.drawString(335,740, "Date From:"+irwcfrm.get()+"  Date To:"+irwcto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
+        
+        in_dat=irwcfrm1.get()
+        cr=irwcto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance!="0"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[1]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(158,x,str(i[3]))
+                    pdf.drawString(235,x,str(i[18]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[8]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    else:
+        pass
+    
+
+    
     
 def pdf_exp_or():
     from reportlab.pdfgen import canvas
@@ -2177,6 +2926,1683 @@ def pdf_exp_cl():
     from reportlab.pdfbase import pdfmetrics
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(495,760, "Customer List")
+        
+
+        pdf.drawString(28,750,"__________________________________________________________________________________")
+        pdf.drawString(28,730,"__________________________________________________________________________________")
+
+        
+        
+        pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
+        rth=clfilter.get()
+        
+        if rth=="All Customers ":
+        
+            count=0
+            sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+            
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                trf='select * from customer where businessname=%s'
+                vs=(str(i[18]),)
+                    
+                fbcursor.execute(trf, vs)
+                thg=fbcursor.fetchall()
+                for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+
+
+                pdf.save()
+        elif rth=="Default":
+            count=0
+            sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1 '
+            
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                trf='select * from customer where businessname=%s and category="Default"'
+                vs=(str(i[18]),)
+                    
+                fbcursor.execute(trf, vs)
+                thg=fbcursor.fetchall()
+                for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+    elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(495,760, "Customer List")
+        
+
+        pdf.drawString(28,750,"__________________________________________________________________________________")
+        pdf.drawString(28,730,"__________________________________________________________________________________")
+
+        
+        
+        pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
+        rth=clfilter.get()
+        
+        if rth=="All Customers ":
+        
+            count=0
+            sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                trf='select * from customer where businessname=%s'
+                vs=(str(i[18]),)
+                    
+                fbcursor.execute(trf, vs)
+                thg=fbcursor.fetchall()
+                for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+
+
+                pdf.save()
+        elif rth=="Default":
+            count=0
+            sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1 '
+            
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                trf='select * from customer where businessname=%s and category="Default"'
+                vs=(str(i[18]),)
+                    
+                fbcursor.execute(trf, vs)
+                thg=fbcursor.fetchall()
+                for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+                pdf.save()
+    elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(495,760, "Customer List")
+        
+
+        pdf.drawString(28,750,"__________________________________________________________________________________")
+        pdf.drawString(28,730,"__________________________________________________________________________________")
+
+        
+        
+        pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
+        rth=clfilter.get()
+        
+        if rth=="All Customers ":
+        
+            count=0
+            
+            x=705
+           
+            trf='select * from customer '
+                
+                    
+            fbcursor.execute(trf)
+            thg=fbcursor.fetchall()
+            for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+            pdf.save()
+        elif rth=="Default":
+            count=0
+            trf='select * from customer where category="Default" '
+                
+            fbcursor.execute(trf)
+            thg=fbcursor.fetchall()
+            for i in thg:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(110,x,str(i[2]))
+                            pdf.drawString(168,x,str(i[4]))
+                            pdf.drawString(335,x,str(i[8]))
+                            pdf.drawString(440,x,str(i[10])) 
+                            pdf.drawString(512,x,str(i[11]))
+                        
+                            count += 1
+                            x-=15
+            pdf.save()
+    elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==0:
+        pass
+    else:
+        pass
+    
+
+def pdf_exp_cld():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s '
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                
+                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            
+                                count += 1
+                                x-=105
+
+
+                    pdf.save()
+            elif rth=="Default":
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s and category="Default"'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                    pdf.save()
+            else:
+                pass
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                
+                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            
+                                count += 1
+                                x-=105
+
+
+                    pdf.save()
+            elif rth=="Default":
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s and category="Default"'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                    pdf.save()
+            else:
+                pass
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==0:
+        pass
+    elif rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * FROM customer'
+                
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                
+                for i in tre:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                pdf.save()
+            elif rth=="Default":
+                count=0
+                sql_inv_dt='SELECT * FROM customer where category="Default"'
+                
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+
+                
+                        for i in tre:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                pdf.save()
+            else:
+                pass
+    
+
+def pdf_exp_psl():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    rth=pslfilter.get()
+    if rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==0:
+        if rth=="All product and Services ":
+                path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+                defaultextension=".pdf")
+
+                fileName = path
+                documentTitle = 'Document title!'
+                title = 'Invoices List'
+                pdf = canvas.Canvas(fileName, pagesize=letter)
+                pdf.setTitle(documentTitle)
+
+                sql_company = "SELECT * from company"
+                fbcursor.execute(sql_company)
+                company= fbcursor.fetchone()
+                
+                pdf.setFont('Helvetica',12)
+                pdf.drawString(30,760, company[1])
+                pdf.drawString(415,760, "Product And Services Report")
+                
+
+                pdf.drawString(28,750,"__________________________________________________________________________________")
+                pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+                pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+                count=0
+                sql_inv_dt='SELECT * FROM productservice where stock>stocklimit'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
+                            count += 1
+                            x-=15
+
+
+                pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products" and where stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service" and where stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default" and where stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==1:
+        if rth=="All product and Services ":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==1:
+        if rth=="All product and Services ":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(95,x,str(i[3]))
+                        pdf.drawString(165,x,str(i[4]))
+                        pdf.drawString(295,x,str(i[5]))
+                        pdf.drawString(380,x,str(i[15])) 
+                        pdf.drawString(475,x,str(i[13]))
+                        pdf.drawString(510,x,str(i[9]))
+                        pdf.drawString(545,x,str(i[11]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==0:
+        pass
+    
+
+def pdf_exp_prl():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    rth=prlfilter.get()
+    if rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==1:
+        if rth=="All product and Services ":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default"'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==0:
+        if rth=="All product and Services ":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products" and stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service" and stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default" and stock>stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_pl.get()==0 and rpcheckvar2_pl.get()==1:
+        if rth=="All product and Services ":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All products":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Products" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="All Service":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Service" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        elif rth=="Default":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product And Services Report")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+
+            pdf.drawString(28,733,"Product ID               Product/ Service Name                                  Description                        Unit Price          ")
+
+            count=0
+            sql_inv_dt='SELECT * FROM productservice where category="Default" and stock<stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        
+                        pdf.drawString(145,x,str(i[4]))
+                        pdf.drawString(373,x,str(i[5]))
+                        
+                        pdf.drawString(515,x,str(i[7]))
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_pl.get()==0 and rpcheckvar2_pl.get()==0:
+        pass
+    else:
+        pass
+    
+    
+
+
+def pdf_exp_plsr():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
 
     path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
     defaultextension=".pdf")
@@ -2193,63 +4619,558 @@ def pdf_exp_cl():
     
     pdf.setFont('Helvetica',12)
     pdf.drawString(30,760, company[1])
-    pdf.drawString(495,760, "Customer List")
-    
+    pdf.drawString(415,760, "Product Low Stock Report")
+        
 
     pdf.drawString(28,750,"__________________________________________________________________________________")
     pdf.drawString(28,730,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,733,"Product ID            Category           Product Name       Warehouse        Low Stock Limit        Stock    ")
+    
+   
+   
+    count=0
+    sql_inv_dt='SELECT * FROM storingproduct WHERE stock > stocklimit'
+   
+    fbcursor.execute(sql_inv_dt)
+    tre=fbcursor.fetchall()
+    x=705
+    for i in tre:
+                pdf.drawString(28,x,str(i[0]))
+                
+                pdf.drawString(128,x,str(i[5]))
+                pdf.drawString(215,x,str(i[6]))
+                pdf.drawString(315,x,str(i[17]))
+                pdf.drawString(405,x,str(i[16])) 
+                pdf.drawString(515,x,str(i[15]))
+               
+                count += 1
+                x-=15
 
+
+    pdf.save()
+
+def pdf_exp_tri():   
     
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
     
-    pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
-    rth=clfilter.get()
+    pdf.setFont('Helvetica',10)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(485,760, "Tax report(Invoice)")
+    pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+    pdf.drawString(470,720,"Invoice Category: All")
+    pdf.drawString(28,695,"_________________________________________________________________________________________________")
+    pdf.drawString(28,675,"_________________________________________________________________________________________________")
+    pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
     
-    if rth=="All Customers ":
+
+    in_dat=trifrm1.get()
+    cr=trito1.get()
+    var_1=in_dat
+    var_2=cr
+  
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(95,x,str(i[2]))
+                pdf.drawString(150,x,str(i[3]))
+                pdf.drawString(268,x,str(i[37]))
+                pdf.drawString(348,x,str(i[16])) 
+                pdf.drawString(400,x,str(i[36]))
+                pdf.drawString(465,x,str(i[8]))
+                
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+def pdf_exp_tro():   
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',10)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(488,760, "Tax report(Orders)")
+    pdf.drawString(370,740, "Date From:"+trofrm.get()+"  Date To:"+troto.get())
+    pdf.drawString(470,720,"Invoice Category: All")
+    pdf.drawString(28,695,"_________________________________________________________________________________________________")
+    pdf.drawString(28,675,"_________________________________________________________________________________________________")
+    pdf.drawString(28,678,"Order No         Issue Date     Due Date                      Total Before TAX   TAX1         TAX2                Order Total       ")
+    
+
+    in_dat=trofrm1.get()
+    cr=troto1.get()
+    var_1=in_dat
+    var_2=cr
+  
+    count=0
+    sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[0]))
+                
+                pdf.drawString(95,x,str(i[1]))
+                pdf.drawString(150,x,str(i[2]))
+                pdf.drawString(268,x,str(i[28]))
+                pdf.drawString(348,x,str(i[14])) 
+                pdf.drawString(400,x,str(i[29]))
+                pdf.drawString(465,x,str(i[8]))
+                
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+
+def pdf_exp_srgd():   
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    rth=srgdfilter.get()
+   
+    if rth==rth:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',10)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(442,760, "Sales Report(Group By Date)")
+        pdf.drawString(415,740, "Date From:"+srgdfrm.get()+"  Date To:"+srgdto.get())
+        pdf.drawString(470,720,"Invoice Category: All")
+        pdf.drawString(28,695,"_________________________________________________________________________________________________")
+        pdf.drawString(28,675,"_________________________________________________________________________________________________")
+        pdf.drawString(28,678,"Date                              Quantity                          Cost                                            Income                         profit                ")
+    
+        lkts=srgdfilter.get()
+    
+        in_dat=srgd_frm.get_date()
+        cr=srgd_to.get_date()
+        var_1=in_dat
+        var_2=cr
     
         count=0
-        sql_inv_dt='SELECT * FROM customer'
-        
-        fbcursor.execute(sql_inv_dt)
+        sql_inv='SELECT * FROM productservice Where name=%s'
+                # inv_valuz=(var1,var2)
+                
+        inv=(lkts,)
+        fbcursor.execute(sql_inv, inv)
         tre=fbcursor.fetchall()
-        x=705
-        for i in tre:
-                    pdf.drawString(28,x,str(i[0]))
+        
+        lkt=srgdfilter.get()
+        sel_inv_dt1='SELECT * FROM invoice Where invodate between %s and %s and Productserviceid=(SELECT Productserviceid from productservice Where name=%s)'
+        inv_valuz=(var_1, var_2,lkt,)
+        fbcursor.execute(sel_inv_dt1, inv_valuz)
+        tre1=fbcursor.fetchall()
+
+        
+        x=655
+        for i in tre1:
+            for j in tre:
+                    k=int(j[9]*int(i[38]))
+                    l=int(i[8])-int(j[9])
+                    pdf.drawString(28,x,str(i[2]))
                     
-                    pdf.drawString(110,x,str(i[2]))
-                    pdf.drawString(168,x,str(i[4]))
-                    pdf.drawString(335,x,str(i[8]))
-                    pdf.drawString(440,x,str(i[10])) 
-                    pdf.drawString(512,x,str(i[11]))
+                    pdf.drawString(138,x,str(i[38]))
+                    pdf.drawString(245,x,str(k))
+                    pdf.drawString(385,x,str(i[8]))
+                    pdf.drawString(485,x,str(l)) 
+                
+                    count += 1
+                    x-=15
+
+       
+        pdf.save()
+    else:
+        pass
+
+def pdf_exp_ird():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(450,760, "Invoice Report(Detailed)")
+    
+    pdf.drawString(385,740, "Date From:"+irdfrm.get()+"  Date To:"+irdto.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"Invoice No          Date           Customer                  Invoice Total                       Paid                 Balance      ")
+    
+    
+    in_dat=irdfrm1.get_date()
+    cr=irdfrm2.get_date()
+    var_1=in_dat
+    var_2=cr
+   
+   
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(108,x,str(i[2]))
+                pdf.drawString(180,x,str(i[29]))
+                pdf.drawString(300,x,str(i[8]))
+                pdf.drawString(435,x,str(i[9])) 
+                pdf.drawString(520,x,str(i[10]))
+               
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+
+def pdf_exp_dir():
+
+
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(460,760, "Daily Invoice Report")
+    
+    pdf.drawString(475,740, "Date From:"+dirdate.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"Invoice No          Date           Customer                  Invoice Total                       Paid                 Balance      ")
+    
+    
+    in_dat=dir_frm.get_date()
+   
+    var_1=in_dat
+   
+   
+   
+    count=0
+    sql_inv_dt='SELECT * FROM invoice WHERE invodate=%s'
+    inv_valuz=(str(var_1),)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(100,x,str(i[2]))
+                pdf.drawString(178,x,str(i[29]))
+                pdf.drawString(295,x,str(i[8]))
+                pdf.drawString(428,x,str(i[9])) 
+                pdf.drawString(515,x,str(i[10]))
+               
+                count += 1
+                x-=15
+    
+
+
+    pdf.save()
+
+
+def pdf_exp_por():
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    defaultextension=".pdf")
+
+    fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas(fileName, pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(450,760, "Parchase Order Report")
+    
+    pdf.drawString(345,740, "Date From:"+porfrm.get()+"  Date To:"+porto.get())
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"No                  Date           Due Date                  Vendor                       Status                    P.Order Total        ")
+    
+
+    
+    in_dat=porfrm1.get()
+    cr=porto1.get()
+    var_1=in_dat
+    var_2=cr
+   
+   
+    count=0
+    sql_inv_dt='SELECT * FROM porder where porderdate between %s and %s'
+    inv_valuz=(var_1,var_2)
+    fbcursor.execute(sql_inv_dt,inv_valuz)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[0]))
+                
+                pdf.drawString(88,x,str(i[2]))
+                pdf.drawString(160,x,str(i[3]))
+                pdf.drawString(280,x,str(i[26]))
+                pdf.drawString(395,x,str(i[5])) 
+                pdf.drawString(495,x,str(i[10]))
+               
+                count += 1
+                x-=15
+
+
+    pdf.save()
+
+def pdf_exp_exp():
+    rth=expfilter.get()
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    if rth=="All":
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(475,760, "Expenses Report")
+        
+        pdf.drawString(385,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+        
+
+        
+        in_dat=exp_frm.get_date()
+        cr=exp_to.get_date()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM expenses where date between %s and %s'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[4]))
+                    
+                    pdf.drawString(105,x,str(i[10]))
+                    pdf.drawString(220,x,str(i[5]))
+                    pdf.drawString(330,x,str(i[14]))
+                    pdf.drawString(405,x,str(i[16])) 
+                    pdf.drawString(520,x,str(i[3]))
                 
                     count += 1
                     x-=15
 
 
         pdf.save()
-    elif rth=="Default":
-        count=0
-        sql_inv_dt='SELECT * FROM customer where category="Default"'
+
+    elif rth=="Internal":
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
         
-        fbcursor.execute(sql_inv_dt)
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(475,760, "Expenses Report")
+        
+        pdf.drawString(385,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+        
+
+        
+        in_dat=exp_frm.get_date()
+        cr=exp_to.get_date()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM expenses where date between %s and %s and customer="Internal"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=705
+        x=655
         for i in tre:
-                    pdf.drawString(28,x,str(i[0]))
+                    pdf.drawString(28,x,str(i[4]))
                     
-                    pdf.drawString(110,x,str(i[2]))
-                    pdf.drawString(168,x,str(i[4]))
-                    pdf.drawString(335,x,str(i[8]))
-                    pdf.drawString(440,x,str(i[10])) 
-                    pdf.drawString(512,x,str(i[11]))
+                    pdf.drawString(105,x,str(i[10]))
+                    pdf.drawString(220,x,str(i[5]))
+                    pdf.drawString(330,x,str(i[14]))
+                    pdf.drawString(405,x,str(i[16])) 
+                    pdf.drawString(520,x,str(i[3]))
                 
                     count += 1
                     x-=15
 
 
         pdf.save()
-
-
-
+    else:
+        pass
 
 # def  cn_pr(canvas):
 #     print(str(canvas))
@@ -2271,11 +5192,13 @@ def image_print(txt):
 
 def image(widget):
     from PIL import ImageGrab
+    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('PNG File', '*.png',)],
+    defaultextension=".png")
     x=root.winfo_rootx()+widget.winfo_x()
     y=root.winfo_rooty()+widget.winfo_y()
     x1=x+widget.winfo_width()
     y1=y+widget.winfo_height()
-    thr=ImageGrab.grab().crop((x,182,x1,760)).save("mydfr.png")
+    thr=ImageGrab.grab().crop((x,182,x1,760)).save(path)
    
 
     # from PIL import ImageGrab
@@ -5360,14 +8283,6 @@ def screen_flt():
         if company is not None:
             
 
-            cr1=date.today()
-            rp_scr_frm.delete(0,'end')
-            rp_scr_frm.insert(0, cr1)
-
-            cr=date.today()
-            rp_sc_to.delete(0,'end')
-            rp_sc_to.insert(0, cr)
-
 
             ltt=rp_scr_frm.get_date()
             ltt1=rp_sc_to.get_date()
@@ -5412,7 +8327,7 @@ def screen_flt():
             frame.pack()
 
 
-            x=cr
+            x=ltt1
            
             y=invoice
 
@@ -8486,13 +11401,7 @@ def category():
     elif rth=="Custom Range":
         ltt=rp_exir.get_date()
         ltt1=rp_exir1.get_date()
-        cr1=date.today()
-        rp_exir.delete(0,'end')
-        rp_exir.insert(0, cr1)
-
-        cr=date.today()
-        rp_exir1.delete(0,'end')
-        rp_exir1.insert(0, cr)
+        
 
         frame = Frame(
         reportframe,
@@ -11471,13 +14380,7 @@ def category_irwc():
     elif rth=="Custom Range":
         lte=irwcfrm1.get_date()
         lte1=irwcto1.get_date()
-        cr1=date.today()
-        irwcfrm1.delete(0,'end')
-        irwcfrm1.insert(0, cr1)
-
-        cr=date.today()
-        irwcto1.delete(0,'end')
-        irwcto1.insert(0, cr)
+       
 
         frame = Frame(
         reportframe,
@@ -14415,13 +17318,7 @@ def category_or():
     elif rth=="Custom Range":
         loy=orfrm1.get_date()
         loy1=orto1.get_date()
-        cr1=date.today()
-        orfrm1.delete(0,'end')
-        orfrm1.insert(0, cr1)
-
-        cr=date.today()
-        orto1.delete(0,'end')
-        orto1.insert(0, cr)
+        
 
         frame = Frame(
         reportframe,
@@ -17531,13 +20428,7 @@ def category_tri():
     elif rth=="Custom Range":
         mlk=trifrm1.get_date()
         mlk1=trito1.get_date()
-        cr1=date.today()
-        trifrm1.delete(0,'end')
-        trifrm1.insert(0, cr1)
-
-        cr=date.today()
-        trito1.delete(0,'end')
-        trito1.insert(0, cr)
+        
 
         frame = Frame(
         reportframe,
@@ -20457,7 +23348,7 @@ def category_tro():
             for record in rep_tro_tree.get_children():
                 rep_tro_tree.delete(record)
             count=0
-            var1=last_yearyear
+            var1=last_year
             var2=cr
             sql_inv_dt='SELECT * FROM orders WHERE order_date BETWEEN %s and %s'
             inv_valuz=(var1,var2)
@@ -20670,13 +23561,7 @@ def category_tro():
     elif rth=="Custom Range":
         cft=trofrm1.get_date()
         cft1=troto1.get_date()
-        cr1=date.today()
-        trofrm1.delete(0,'end')
-        trofrm1.insert(0, cr1)
-
-        cr=date.today()
-        troto1.delete(0,'end')
-        troto1.insert(0, cr)
+        
 
         frame = Frame(
         reportframe,
@@ -21041,8 +23926,8 @@ def category_srgd():
             tre=fbcursor.fetchall()
             
 
-            sel_inv_dt1='SELECT * FROM invoice Where Productserviceid=(SELECT Productserviceid from productservice Where name=%s and invodate between %s and %s)'
-            inv_valuz=(lkt,var_1, var_2)
+            sel_inv_dt1='SELECT * FROM invoice Where invodate between %s and %s and Productserviceid=(SELECT Productserviceid from productservice Where name=%s)'
+            inv_valuz=(var_1, var_2,lkt)
             fbcursor.execute(sel_inv_dt1, inv_valuz)
             tre1=fbcursor.fetchall()
 
@@ -24632,13 +27517,7 @@ def category_por():
     elif rth=="Custom Range":
         lhy=porfrm1.get_date()
         lhy1=porto1.get_date()
-        cr=date.today()
-        porfrm1.delete(0,'end')
-        porfrm1.insert(0, cr)
-
-        cr=date.today()
-        porto1.delete(0,'end')
-        porto1.insert(0, cr)
+        
 
         frame = Frame(
         reportframe,
@@ -28102,13 +30981,8 @@ def category_pyr():
     elif rth=="Custom Range":
         ltr=pyrfrm1.get_date()
         ltr1=pyrto1.get_date()
-        cr1=date.today()
-        pyrfrm1.delete(0,'end')
-        pyrfrm1.insert(0, cr1)
-
-        cr=date.today()
-        pyrto1.delete(0,'end')
-        pyrto1.insert(0, cr)
+        
+        
 
         frame = Frame(
         reportframe,
@@ -29472,7 +32346,7 @@ def category_cld():
             tree.insert('', 'end',text="1",values=('',''))
 
             window = canvas.create_window(290, 260, anchor="nw", window=tree)
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right') 
+        canvas.create_text(900,100,text="Customer List",fill='black',font=("Helvetica", 16), justify='right') 
 
         def emailrp():
             rpmailDetail=Toplevel()
@@ -29713,7 +32587,7 @@ def category_cld():
             tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
 
             window = canvas.create_window(290, 260, anchor="nw", window=tree)
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(900,100,text="Customer List",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(320,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')            
 
 
@@ -32112,7 +34986,7 @@ def maindropmenu(event):
     
 
 
-        rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
+        rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image(reportframe))
         rpsaveLabel.place(x=168,y=12)
 
         rpcopyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
@@ -32130,13 +35004,13 @@ def maindropmenu(event):
         lbl_ir =Label(midFrame, text="From:" , bg="#f8f8f2")
         lbl_ir.place(x=676,y=10)
 
-        exir=DateEntry(midFrame,textvariable=scrfrm)
+        exir=DateEntry(midFrame,textvariable=scrfrm, date_pattern='y-mm-dd')
         exir.place(x=721,y=10)
 
         lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
         lbl_ir.place(x=690,y=50)
 
-        exir=DateEntry(midFrame,textvariable=scrto)
+        exir=DateEntry(midFrame,textvariable=scrto, date_pattern='y-mm-dd')
         exir.place(x=721,y=50)
 
         lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -32367,14 +35241,14 @@ def maindropmenu(event):
     lbl_ir.place(x=676,y=10)
 
     global rp_exir
-    rp_exir=DateEntry(midFrame, textvariable=invfrm)
+    rp_exir=DateEntry(midFrame, textvariable=invfrm,  date_pattern='y-mm-dd')
     rp_exir.place(x=721,y=10)
 
     lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_ir.place(x=690,y=50)
 
     global rp_exir1
-    rp_exir1=DateEntry(midFrame,textvariable=invto)
+    rp_exir1=DateEntry(midFrame,textvariable=invto, date_pattern='y-mm-dd')
     rp_exir1.place(x=721,y=50)
 
     lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -32499,14 +35373,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
 
     global irwcfrm1
-    irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm)
+    irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm,date_pattern='y-mm-dd')
     irwcfrm1.place(x=721,y=10)
 
     lbl_irwc =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_irwc.place(x=690,y=50)
 
     global irwcto1
-    irwcto1=DateEntry(midFrame, textvariable=irwcto)
+    irwcto1=DateEntry(midFrame, textvariable=irwcto, date_pattern='y-mm-dd')
     irwcto1.place(x=721,y=50)
 
     lbl_irwc = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -32620,13 +35494,13 @@ def maindropmenu(event):
     lbl_or.place(x=676,y=10)
     
     global orfrm1
-    orfrm1=DateEntry(midFrame, textvariable=orfrm)
+    orfrm1=DateEntry(midFrame, textvariable=orfrm, date_pattern='y-mm-dd')
     orfrm1.place(x=721,y=10)
 
     lbl_or =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_or.place(x=690,y=50)
     global orto1
-    orto1=DateEntry(midFrame, textvariable=orto)
+    orto1=DateEntry(midFrame, textvariable=orto, date_pattern='y-mm-dd')
     orto1.place(x=721,y=50)
 
     lbl_or = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -32957,14 +35831,14 @@ def maindropmenu(event):
     rprefreshlebel.place(x=22,y=12)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_cld())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas7())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_cld())
     rpcopyLabel.place(x=240,y=12)
 
     cluw2 = Label(midFrame,text="                                                                                                             \n                                                                                                                                                  \n                                                              \n                                                            ", bg="#f8f8f2")
@@ -33047,14 +35921,14 @@ def maindropmenu(event):
     rprefreshlebel.place(x=22,y=12)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_psl())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas8())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_psl())
     rpcopyLabel.place(x=240,y=12) 
 
     psluw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33142,14 +36016,14 @@ def maindropmenu(event):
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_prl())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas9())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_prl())
     rpcopyLabel.place(x=240,y=12)
 
     pluw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33236,14 +36110,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_plsr())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas10())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_plsr())
     rpcopyLabel.place(x=240,y=12)
 
     plruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33321,14 +36195,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_tri())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas11())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_tri())
     rpcopyLabel.place(x=240,y=12)
 
     triuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33342,13 +36216,13 @@ def maindropmenu(event):
 
     global trifrm1
     global trito1
-    trifrm1=DateEntry(midFrame, textvariable=trifrm)
+    trifrm1=DateEntry(midFrame, textvariable=trifrm, date_pattern='y-mm-dd')
     trifrm1.place(x=721,y=10)
 
     lbl_tri =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_tri.place(x=690,y=50)
 
-    trito1=DateEntry(midFrame, textvariable=trito)
+    trito1=DateEntry(midFrame, textvariable=trito, date_pattern='y-mm-dd')
     trito1.place(x=721,y=50)
 
     lbl_tri = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33439,14 +36313,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_tro())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas12())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_tro())
     rpcopyLabel.place(x=240,y=12)
 
 
@@ -33460,13 +36334,13 @@ def maindropmenu(event):
     lbl_tro.place(x=676,y=10)
     global trofrm1
     global troto1
-    trofrm1=DateEntry(midFrame, textvariable=trofrm)
+    trofrm1=DateEntry(midFrame, textvariable=trofrm, date_pattern='y-mm-dd')
     trofrm1.place(x=721,y=10)
 
     lbl_tro =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_tro.place(x=690,y=50)
 
-    troto1=DateEntry(midFrame, textvariable=troto)
+    troto1=DateEntry(midFrame, textvariable=troto, date_pattern='y-mm-dd')
     troto1.place(x=721,y=50)
 
     lbl_tro = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33543,14 +36417,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_srgd())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas13())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_srgd())
     rpcopyLabel.place(x=240,y=12)
 
     sruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33564,13 +36438,13 @@ def maindropmenu(event):
 
     global srgd_frm
     global srgd_to
-    srgd_frm=DateEntry(midFrame, textvariable=srgdfrm)
+    srgd_frm=DateEntry(midFrame, textvariable=srgdfrm, date_pattern='y-mm-dd')
     srgd_frm.place(x=773,y=10)
 
     lbl_sr =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_sr.place(x=743,y=50)
 
-    srgd_to=DateEntry(midFrame, textvariable=srgdto)
+    srgd_to=DateEntry(midFrame, textvariable=srgdto, date_pattern='y-mm-dd')
     srgd_to.place(x=773,y=50)
 
     lbl_sr = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33658,14 +36532,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_ird())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas14())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_ird())
     rpcopyLabel.place(x=240,y=12)
     plruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
     plruw1.place(x=415,y=9)
@@ -33678,13 +36552,13 @@ def maindropmenu(event):
      
     global irdfrm1
     global irdfrm2 
-    irdfrm1=DateEntry(midFrame, textvariable=irdfrm)
+    irdfrm1=DateEntry(midFrame, textvariable=irdfrm, date_pattern='y-mm-dd')
     irdfrm1.place(x=773,y=10)
 
     lbl_ird =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_ird.place(x=743,y=50)
 
-    irdfrm2=DateEntry(midFrame, textvariable=irdto)
+    irdfrm2=DateEntry(midFrame, textvariable=irdto, date_pattern='y-mm-dd')
     irdfrm2.place(x=773,y=50)
 
     lbl_ird = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33761,14 +36635,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_dir())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas15())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_dir())
     rpcopyLabel.place(x=240,y=12)\
 
     diruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33782,7 +36656,7 @@ def maindropmenu(event):
     lbl_dir.place(x=526,y=9)
     
     global dir_frm
-    dir_frm=DateEntry(midFrame, textvariable=dirdate)
+    dir_frm=DateEntry(midFrame, textvariable=dirdate, date_pattern='y-mm-dd')
     dir_frm.place(x=530,y=50)
 
    
@@ -33843,14 +36717,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_por())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas16())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_por())
     rpcopyLabel.place(x=240,y=12)
 
     poruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33863,13 +36737,13 @@ def maindropmenu(event):
     lbl_por.place(x=676,y=10)
     global porfrm1
     global porto1
-    porfrm1=DateEntry(midFrame, textvariable=porfrm)
+    porfrm1=DateEntry(midFrame, textvariable=porfrm, date_pattern='y-mm-dd')
     porfrm1.place(x=721,y=10)
 
     lbl_por =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_por.place(x=690,y=50)
 
-    porto1=DateEntry(midFrame, textvariable=porto)
+    porto1=DateEntry(midFrame, textvariable=porto, date_pattern='y-mm-dd')
     porto1.place(x=721,y=50)
 
     lbl_por = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33954,14 +36828,14 @@ def maindropmenu(event):
     lbl_ir.place(x=0,y=500)
     lbl_ir = Label(reportframe, text="                                                                                     ", bg="white" , font=("arial", 8))
     lbl_ir.place(x=1110,y=85)
-    rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="create")
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_exp())
     rpprintlabel.place(x=95,y=12)
   
 
     rpsaveLabel = Button(midFrame,compound="top", text="Export Report\n to Excel",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:exportcanvas17())
     rpsaveLabel.place(x=168,y=12)
 
-    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+    rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_exp())
     rpcopyLabel.place(x=240,y=12)
     sruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
     sruw1.place(x=415,y=9)
@@ -33973,13 +36847,13 @@ def maindropmenu(event):
     lbl_er.place(x=728,y=10)
     global exp_frm
     global exp_to
-    exp_frm=DateEntry(midFrame, textvariable=expfrm)
+    exp_frm=DateEntry(midFrame, textvariable=expfrm, date_pattern='y-mm-dd')
     exp_frm.place(x=773,y=10)
 
     lbl_er =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_er.place(x=743,y=50)
 
-    exp_to=DateEntry(midFrame, textvariable=expto)
+    exp_to=DateEntry(midFrame, textvariable=expto, date_pattern='y-mm-dd')
     exp_to.place(x=773,y=50)
 
     lbl_er = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -34094,13 +36968,13 @@ def maindropmenu(event):
     lbl_pr.place(x=725,y=10)
     global pyrfrm1
     global pyrto1
-    pyrfrm1=DateEntry(midFrame, textvariable=pyrfrm)
+    pyrfrm1=DateEntry(midFrame, textvariable=pyrfrm, date_pattern='y-mm-dd')
     pyrfrm1.place(x=770,y=10)
 
     lbl_pr =Label(midFrame, text="To:", bg="#f8f8f2")
     lbl_pr.place(x=740,y=50)
 
-    pyrto1=DateEntry(midFrame, textvariable=pyrto)
+    pyrto1=DateEntry(midFrame, textvariable=pyrto, date_pattern='y-mm-dd')
     pyrto1.place(x=770,y=50)
 
 
@@ -39409,7 +42283,7 @@ def check_cl():
                 for record in rp_cl_tree.get_children():
                     rp_cl_tree.delete(record)
                 count=0
-                trs='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+                trs='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
                 fbcursor.execute(trs)
                 thj=fbcursor.fetchall()
                 for i in thj:
@@ -40046,13 +42920,13 @@ lbl_invdtt.grid(row=1, column=4, pady=5, padx=(5, 0))
 global rp_scr_frm
 global rp_sc_to
 
-rp_scr_frm=DateEntry(lbframe,textvariable=scrfrm)
+rp_scr_frm=DateEntry(lbframe,textvariable=scrfrm, date_pattern='y-mm-dd')
 rp_scr_frm.grid(row=1, column=5)
 
 lbl_invdtt =Label(lbframe, text="To:", bg="#f8f8f2")
 lbl_invdtt.grid(row=2, column=4, pady=5, padx=(5, 0))
 
-rp_sc_to=DateEntry(lbframe,textvariable=scrto)
+rp_sc_to=DateEntry(lbframe,textvariable=scrto, date_pattern='y-mm-dd')
 rp_sc_to.grid(row=2, column=5)
 
 # checkvar1 = BooleanVar()
