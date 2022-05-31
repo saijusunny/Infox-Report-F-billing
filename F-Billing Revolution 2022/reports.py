@@ -5,6 +5,7 @@ from enum import auto
 
 from itertools import count
 from pydoc import describe
+import shutil
 from sqlite3 import Cursor
 from tkinter import *
 from tkinter import messagebox
@@ -49,9 +50,18 @@ import os
 import sys
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import pdfkit
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+from email import encoders
 
-
-
+import win32api
+import win32print
+from tkinter import filedialog
+from pyautogui import alert
+import os
 
 
 
@@ -143,7 +153,7 @@ right = PhotoImage(file="images/right.png")
 center = PhotoImage(file="images/center.png")
 hyperlink = PhotoImage(file="images/hyperlink.png")
 remove = PhotoImage(file="images/eraser.png")
-
+color = PhotoImage(file="images/font_color.png")
 
 photo = PhotoImage(file = "images/plus.png")
 photo1 = PhotoImage(file = "images/edit.png")
@@ -653,71 +663,470 @@ def exportcanvas5():
 def exportcanvas6():
     
     rth=clfilter.get()
-    
-    if rth=="All Customers ":
-    
-        cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+    if rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
+        if rth=="All Customers ":
         
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer'
+            cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
-    elif rth=="Default":
-    
-        cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+                fbcursor.execute(sql_inv_dt)
+                the=fbcursor.fetchall()
+                for i in the:
+                    sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where businessname=%s'
+                    
+                    vs=(str(i[18]),)
+                    fbcursor.execute(sql,vs)
+                    pandsdata = fbcursor.fetchall()
+                    for row_id in pandsdata:
+                        row = row_id
+                        lst.append(row)
+                    lst = list(map(list,lst))
+                    lst.insert(0,cols)
+                    for row in lst:
+                        csvwriter.writerow(row)
+        elif rth=="Default":
         
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where category="Default"'
+            cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
             
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
-            fbcursor.execute(sql)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+                fbcursor.execute(sql_inv_dt)
+                the=fbcursor.fetchall()
+                for i in the:
+                    sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where category="Default" and businessname=%s'
+                    
+                    vs=(str(i[18]),)
+                    fbcursor.execute(sql,vs)
+                    pandsdata = fbcursor.fetchall()
+                    for row_id in pandsdata:
+                        row = row_id
+                        lst.append(row)
+                    lst = list(map(list,lst))
+                    lst.insert(0,cols)
+                    for row in lst:
+                        csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==1:
+        if rth=="All Customers ":
+        
+            cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer'
+                
+                
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        elif rth=="Default":
+        
+            cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where category="Default"'
+                
+                
+                fbcursor.execute(sql)
+                pandsdata = fbcursor.fetchall()
+                for row_id in pandsdata:
+                    row = row_id
+                    lst.append(row)
+                lst = list(map(list,lst))
+                lst.insert(0,cols)
+                for row in lst:
+                    csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==1:
+        if rth=="All Customers ":
+        
+                cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+                path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+                
+                lst = []
+                with open(path, "w", newline='') as myfile:
+                    csvwriter = csv.writer(myfile, delimiter=',')
+                    sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+                
+                    fbcursor.execute(sql_inv_dt)
+                    tre=fbcursor.fetchall()
+                    for i in tre:
+                        sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where businessname=%s'
+                        vs=(str(i[18]),)
+                        
+                        
+                        fbcursor.execute(sql,vs)
+                        pandsdata = fbcursor.fetchall()
+                        for row_id in pandsdata:
+                            row = row_id
+                            lst.append(row)
+                        lst = list(map(list,lst))
+                        lst.insert(0,cols)
+                        for row in lst:
+                            csvwriter.writerow(row)
+        elif rth=="Default":
+        
+            cols = ["Customer Id","Category","Customer Businnes Name","Customer Person","Tel","Fax"] # Your column headings here
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+            
+            lst = []
+            with open(path, "w", newline='') as myfile:
+                csvwriter = csv.writer(myfile, delimiter=',')
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                if i in tre:
+
+                    sql = 'select customerid ,		category,businessname,contactperson,cptelno,cpfax from customer where category="Default" and  businessname=%s'
+                    vs=(str(i[18]),)
+                    
+                    fbcursor.execute(sql,vs)
+                    pandsdata = fbcursor.fetchall()
+                    for row_id in pandsdata:
+                        row = row_id
+                        lst.append(row)
+                    lst = list(map(list,lst))
+                    lst.insert(0,cols)
+                    for row in lst:
+                        csvwriter.writerow(row)
+        else:
+            pass
+    elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==0:
+        pass
     else:
         pass
+    
 #cld
 def exportcanvas7():
     
-    cols = [" "," "] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
 
-    
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select * from customer '
-    
-        fbcursor.execute(sql)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id[4]
-            lst.append(row) 
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s '
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                
+                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            
+                                count += 1
+                                x-=105
+
+
+                    pdf.save()
+            elif rth=="Default":
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s and category="Default"'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                    pdf.save()
+            else:
+                pass
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                
+                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            
+                                count += 1
+                                x-=105
+
+
+                    pdf.save()
+            elif rth=="Default":
+                sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
+            
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+                    trf='select * from customer where businessname=%s and category="Default"'
+                    vs=(str(i[18]),)
+                            
+                    fbcursor.execute(trf, vs)
+                    thg=fbcursor.fetchall()
+                    for i in thg:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                    pdf.save()
+            else:
+                pass
+    elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==0:
+        pass
+    elif rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(495,760, "Customer List")
+            
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+
+            
+            
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
+            rth=cldfilter.get()
+            
+            if rth=="All Customers ":
+            
+                count=0
+                sql_inv_dt='SELECT * FROM customer'
+                
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                
+                for i in tre:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                pdf.save()
+            elif rth=="Default":
+                count=0
+                sql_inv_dt='SELECT * FROM customer where category="Default"'
+                
+                fbcursor.execute(sql_inv_dt)
+                tre=fbcursor.fetchall()
+                x=705
+                for i in tre:
+
+                
+                        for i in tre:
+                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                            
+                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                        
+                            count += 1
+                            x-=105
+
+
+                pdf.save()
+            else:
+                pass
 
 def exportcanvas8():
     rth=pslfilter.get()
@@ -1266,7 +1675,7 @@ def exportcanvas10():
             for row in lst:
                 csvwriter.writerow(row)
 
-    elif rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
+    elif rpcheckvar1_plr.get()==0 and rpcheckvar2_plr.get()==1:
         cols = ["Product ID","Category","Product Name","Warehouse","Low Stock Limit","Stock"] # Your column headings here
         path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
@@ -1304,7 +1713,7 @@ def exportcanvas11():
         lst = []
         with open(path, "w", newline='') as myfile:
             csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and AND 	invoicetot="0"'
+            sql = 'select invoice_number,	invodate,duedate,totalbeforetax,tax1,tax2,invoicetot from invoice where invodate between %s and %s and 	invoicetot="0"'
             
             irv=(var_1,var_2)
             fbcursor.execute(sql,irv)
@@ -1581,7 +1990,7 @@ def exportcanvas16():
         lst = []
         with open(path, "w", newline='') as myfile:
             csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s and AND status="Draft"'
+            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s and status="Draft"'
             
             irv=(var_1,var_2)
             fbcursor.execute(sql,irv)
@@ -1614,26 +2023,7 @@ def exportcanvas16():
             for row in lst:
                 csvwriter.writerow(row)
     elif rpcheckvar1_por.get()==0 and rpcheckvar2_por.get()==0:
-    
-   
-        cols = ["No","Date","Due Date","Vendor","Status","P.Order Total"] # Your column headings here
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-        
-        lst = []
-        with open(path, "w", newline='') as myfile:
-            csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select porderid,	porderdate,duedate,vendor,status,ordertot from  porder where porderdate between %s and %s'
-            
-            irv=(var_1,var_2)
-            fbcursor.execute(sql,irv)
-            pandsdata = fbcursor.fetchall()
-            for row_id in pandsdata:
-                row = row_id
-                lst.append(row)
-            lst = list(map(list,lst))
-            lst.insert(0,cols)
-            for row in lst:
-                csvwriter.writerow(row)
+            pass
     else:
                     pass
 
@@ -3175,13 +3565,14 @@ def pdf_exp_cld():
             documentTitle = 'Document title!'
             title = 'Invoices List'
             pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf.setTitle(documentTitle) 
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
             company= fbcursor.fetchone()
-            
+            defgonpg()
             pdf.setFont('Helvetica',12)
+            
             pdf.drawString(30,760, company[1])
             pdf.drawString(495,760, "Customer List")
             
@@ -3193,7 +3584,7 @@ def pdf_exp_cld():
             
             pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
             rth=cldfilter.get()
-            
+            story=[]
             if rth=="All Customers ":
             
                 count=0
@@ -4604,51 +4995,149 @@ def pdf_exp_plsr():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
 
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    if rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
 
-    sql_company = "SELECT * from company"
-    fbcursor.execute(sql_company)
-    company= fbcursor.fetchone()
-    
-    pdf.setFont('Helvetica',12)
-    pdf.drawString(30,760, company[1])
-    pdf.drawString(415,760, "Product Low Stock Report")
-        
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
 
-    pdf.drawString(28,750,"__________________________________________________________________________________")
-    pdf.drawString(28,730,"__________________________________________________________________________________")
-    
-    pdf.drawString(28,733,"Product ID            Category           Product Name       Warehouse        Low Stock Limit        Stock    ")
-    
-   
-   
-    count=0
-    sql_inv_dt='SELECT * FROM storingproduct WHERE stock > stocklimit'
-   
-    fbcursor.execute(sql_inv_dt)
-    tre=fbcursor.fetchall()
-    x=705
-    for i in tre:
-                pdf.drawString(28,x,str(i[0]))
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product Low Stock Report")
                 
-                pdf.drawString(128,x,str(i[5]))
-                pdf.drawString(215,x,str(i[6]))
-                pdf.drawString(315,x,str(i[17]))
-                pdf.drawString(405,x,str(i[16])) 
-                pdf.drawString(515,x,str(i[15]))
-               
-                count += 1
-                x-=15
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,733,"Product ID            Category           Product Name       Warehouse        Low Stock Limit        Stock    ")
+            
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM storingproduct'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(128,x,str(i[5]))
+                        pdf.drawString(215,x,str(i[6]))
+                        pdf.drawString(315,x,str(i[17]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(515,x,str(i[15]))
+                    
+                        count += 1
+                        x-=15
 
 
-    pdf.save()
+            pdf.save()
+    elif rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product Low Stock Report")
+                
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,733,"Product ID            Category           Product Name       Warehouse        Low Stock Limit        Stock    ")
+            
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM storingproduct WHERE stock > stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(128,x,str(i[5]))
+                        pdf.drawString(215,x,str(i[6]))
+                        pdf.drawString(315,x,str(i[17]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(515,x,str(i[15]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_plr.get()==0 and rpcheckvar2_plr.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(415,760, "Product Low Stock Report")
+                
+
+            pdf.drawString(28,750,"__________________________________________________________________________________")
+            pdf.drawString(28,730,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,733,"Product ID            Category           Product Name       Warehouse        Low Stock Limit        Stock    ")
+            
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM storingproduct WHERE stock < stocklimit'
+        
+            fbcursor.execute(sql_inv_dt)
+            tre=fbcursor.fetchall()
+            x=705
+            for i in tre:
+                        pdf.drawString(28,x,str(i[0]))
+                        
+                        pdf.drawString(128,x,str(i[5]))
+                        pdf.drawString(215,x,str(i[6]))
+                        pdf.drawString(315,x,str(i[17]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(515,x,str(i[15]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    else:
+            pass
+
+    
 
 def pdf_exp_tri():   
     
@@ -4659,58 +5148,427 @@ def pdf_exp_tri():
     from reportlab.pdfbase import pdfmetrics
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
+        pass
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
 
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
 
-    sql_company = "SELECT * from company"
-    fbcursor.execute(sql_company)
-    company= fbcursor.fetchone()
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and 	invoicetot="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid != "0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or invoicetot="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid is not null or invoicetot="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',10)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(485,760, "Tax report(Invoice)")
+            pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
+            pdf.drawString(470,720,"Invoice Category: All")
+            pdf.drawString(28,695,"_________________________________________________________________________________________________")
+            pdf.drawString(28,675,"_________________________________________________________________________________________________")
+            pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
+            
+
+            in_dat=trifrm1.get()
+            cr=trito1.get()
+            var_1=in_dat
+            var_2=cr
+        
+            count=0
+            sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and totpaid="0" or balance!="0"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[1]))
+                        
+                        pdf.drawString(95,x,str(i[2]))
+                        pdf.drawString(150,x,str(i[3]))
+                        pdf.drawString(268,x,str(i[37]))
+                        pdf.drawString(348,x,str(i[16])) 
+                        pdf.drawString(400,x,str(i[36]))
+                        pdf.drawString(465,x,str(i[8]))
+                        
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+    else:
+        pass
     
-    pdf.setFont('Helvetica',10)
-    pdf.drawString(30,760, company[1])
-    pdf.drawString(30,740, company[2])
-    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-    pdf.drawString(485,760, "Tax report(Invoice)")
-    pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
-    pdf.drawString(470,720,"Invoice Category: All")
-    pdf.drawString(28,695,"_________________________________________________________________________________________________")
-    pdf.drawString(28,675,"_________________________________________________________________________________________________")
-    pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
-    
-
-    in_dat=trifrm1.get()
-    cr=trito1.get()
-    var_1=in_dat
-    var_2=cr
-  
-    count=0
-    sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
-    inv_valuz=(var_1,var_2)
-    fbcursor.execute(sql_inv_dt,inv_valuz)
-    tre=fbcursor.fetchall()
-    x=655
-    for i in tre:
-                pdf.drawString(28,x,str(i[1]))
-                
-                pdf.drawString(95,x,str(i[2]))
-                pdf.drawString(150,x,str(i[3]))
-                pdf.drawString(268,x,str(i[37]))
-                pdf.drawString(348,x,str(i[16])) 
-                pdf.drawString(400,x,str(i[36]))
-                pdf.drawString(465,x,str(i[8]))
-                
-                count += 1
-                x-=15
-
-
-    pdf.save()
 
 def pdf_exp_tro():   
     
@@ -4805,7 +5663,7 @@ def pdf_exp_srgd():
         pdf.drawString(30,740, company[2])
         pdf.drawString(30,700, "Sales tax reg No:"+company[4])
         pdf.drawString(442,760, "Sales Report(Group By Date)")
-        pdf.drawString(415,740, "Date From:"+srgdfrm.get()+"  Date To:"+srgdto.get())
+        pdf.drawString(365,740, "Date From:"+srgdfrm.get()+"  Date To:"+srgdto.get())
         pdf.drawString(470,720,"Invoice Category: All")
         pdf.drawString(28,695,"_________________________________________________________________________________________________")
         pdf.drawString(28,675,"_________________________________________________________________________________________________")
@@ -4881,7 +5739,7 @@ def pdf_exp_ird():
     pdf.drawString(30,700, "Sales tax reg No:"+company[4])
     pdf.drawString(450,760, "Invoice Report(Detailed)")
     
-    pdf.drawString(385,740, "Date From:"+irdfrm.get()+"  Date To:"+irdto.get())
+    pdf.drawString(335,740, "Date From:"+irdfrm.get()+"  Date To:"+irdto.get())
     pdf.drawString(460,720,"Invoice Category: All")
     pdf.drawString(28,695,"__________________________________________________________________________________")
     pdf.drawString(28,675,"__________________________________________________________________________________")
@@ -4947,7 +5805,7 @@ def pdf_exp_dir():
     pdf.drawString(30,700, "Sales tax reg No:"+company[4])
     pdf.drawString(460,760, "Daily Invoice Report")
     
-    pdf.drawString(475,740, "Date From:"+dirdate.get())
+    pdf.drawString(445,740, "Date From:"+dirdate.get())
     pdf.drawString(460,720,"Invoice Category: All")
     pdf.drawString(28,695,"__________________________________________________________________________________")
     pdf.drawString(28,675,"__________________________________________________________________________________")
@@ -4992,61 +5850,172 @@ def pdf_exp_por():
     from reportlab.pdfbase import pdfmetrics
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
+    if rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==0:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
 
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(450,760, "Parchase Order Report")
+        
+        pdf.drawString(345,740, "Date From:"+porfrm.get()+"  Date To:"+porto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                  Date           Due Date                  Vendor                       Status                    P.Order Total        ")
+        
 
-    sql_company = "SELECT * from company"
-    fbcursor.execute(sql_company)
-    company= fbcursor.fetchone()
+        
+        in_dat=porfrm1.get()
+        cr=porto1.get()
+        var_1=in_dat
+        var_2=cr
     
-    pdf.setFont('Helvetica',12)
-    pdf.drawString(30,760, company[1])
-    pdf.drawString(30,740, company[2])
-    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-    pdf.drawString(450,760, "Parchase Order Report")
     
-    pdf.drawString(345,740, "Date From:"+porfrm.get()+"  Date To:"+porto.get())
-    pdf.drawString(460,720,"Invoice Category: All")
-    pdf.drawString(28,695,"__________________________________________________________________________________")
-    pdf.drawString(28,675,"__________________________________________________________________________________")
-    
-    pdf.drawString(28,678,"No                  Date           Due Date                  Vendor                       Status                    P.Order Total        ")
-    
-
-    
-    in_dat=porfrm1.get()
-    cr=porto1.get()
-    var_1=in_dat
-    var_2=cr
-   
-   
-    count=0
-    sql_inv_dt='SELECT * FROM porder where porderdate between %s and %s'
-    inv_valuz=(var_1,var_2)
-    fbcursor.execute(sql_inv_dt,inv_valuz)
-    tre=fbcursor.fetchall()
-    x=655
-    for i in tre:
-                pdf.drawString(28,x,str(i[0]))
+        count=0
+        sql_inv_dt='SELECT * FROM porder where porderdate between %s and %s and status="Complete"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(160,x,str(i[3]))
+                    pdf.drawString(280,x,str(i[26]))
+                    pdf.drawString(395,x,str(i[5])) 
+                    pdf.drawString(495,x,str(i[10]))
                 
-                pdf.drawString(88,x,str(i[2]))
-                pdf.drawString(160,x,str(i[3]))
-                pdf.drawString(280,x,str(i[26]))
-                pdf.drawString(395,x,str(i[5])) 
-                pdf.drawString(495,x,str(i[10]))
-               
-                count += 1
-                x-=15
+                    count += 1
+                    x-=15
 
 
-    pdf.save()
+        pdf.save()
+    elif rpcheckvar1_por.get()==0 and rpcheckvar2_por.get()==1:
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(450,760, "Parchase Order Report")
+        
+        pdf.drawString(345,740, "Date From:"+porfrm.get()+"  Date To:"+porto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                  Date           Due Date                  Vendor                       Status                    P.Order Total        ")
+        
+
+        
+        in_dat=porfrm1.get()
+        cr=porto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM porder where porderdate between %s and %s and status="Draft"'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(160,x,str(i[3]))
+                    pdf.drawString(280,x,str(i[26]))
+                    pdf.drawString(395,x,str(i[5])) 
+                    pdf.drawString(495,x,str(i[10]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
+    elif rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==1:
+    
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+        defaultextension=".pdf")
+
+        fileName = path
+        documentTitle = 'Document title!'
+        title = 'Invoices List'
+        pdf = canvas.Canvas(fileName, pagesize=letter)
+        pdf.setTitle(documentTitle)
+
+        sql_company = "SELECT * from company"
+        fbcursor.execute(sql_company)
+        company= fbcursor.fetchone()
+        
+        pdf.setFont('Helvetica',12)
+        pdf.drawString(30,760, company[1])
+        pdf.drawString(30,740, company[2])
+        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+        pdf.drawString(450,760, "Parchase Order Report")
+        
+        pdf.drawString(345,740, "Date From:"+porfrm.get()+"  Date To:"+porto.get())
+        pdf.drawString(460,720,"Invoice Category: All")
+        pdf.drawString(28,695,"__________________________________________________________________________________")
+        pdf.drawString(28,675,"__________________________________________________________________________________")
+        
+        pdf.drawString(28,678,"No                  Date           Due Date                  Vendor                       Status                    P.Order Total        ")
+        
+
+        
+        in_dat=porfrm1.get()
+        cr=porto1.get()
+        var_1=in_dat
+        var_2=cr
+    
+    
+        count=0
+        sql_inv_dt='SELECT * FROM porder where porderdate between %s and %s'
+        inv_valuz=(var_1,var_2)
+        fbcursor.execute(sql_inv_dt,inv_valuz)
+        tre=fbcursor.fetchall()
+        x=655
+        for i in tre:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(88,x,str(i[2]))
+                    pdf.drawString(160,x,str(i[3]))
+                    pdf.drawString(280,x,str(i[26]))
+                    pdf.drawString(395,x,str(i[5])) 
+                    pdf.drawString(495,x,str(i[10]))
+                
+                    count += 1
+                    x-=15
+
+
+        pdf.save()
 
 def pdf_exp_exp():
     rth=expfilter.get()
@@ -5058,137 +6027,448 @@ def pdf_exp_exp():
     from reportlab.pdfbase import pdfmetrics
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
-    if rth=="All":
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
 
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+    if rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==1:
+        if rth=="All":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
 
-        sql_company = "SELECT * from company"
-        fbcursor.execute(sql_company)
-        company= fbcursor.fetchone()
-        
-        pdf.setFont('Helvetica',12)
-        pdf.drawString(30,760, company[1])
-        pdf.drawString(30,740, company[2])
-        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-        pdf.drawString(475,760, "Expenses Report")
-        
-        pdf.drawString(385,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
-        pdf.drawString(460,720,"Invoice Category: All")
-        pdf.drawString(28,695,"__________________________________________________________________________________")
-        pdf.drawString(28,675,"__________________________________________________________________________________")
-        
-        pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
-        
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
 
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
         
-        in_dat=exp_frm.get_date()
-        cr=exp_to.get_date()
-        var_1=in_dat
-        var_2=cr
-    
-    
-        count=0
-        sql_inv_dt='SELECT * FROM expenses where date between %s and %s'
-        inv_valuz=(var_1,var_2)
-        fbcursor.execute(sql_inv_dt,inv_valuz)
-        tre=fbcursor.fetchall()
-        x=655
-        for i in tre:
-                    pdf.drawString(28,x,str(i[4]))
+        
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s and rebillable="Yes"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
                     
-                    pdf.drawString(105,x,str(i[10]))
-                    pdf.drawString(220,x,str(i[5]))
-                    pdf.drawString(330,x,str(i[14]))
-                    pdf.drawString(405,x,str(i[16])) 
-                    pdf.drawString(520,x,str(i[3]))
-                
-                    count += 1
-                    x-=15
+                        count += 1
+                        x-=15
 
 
-        pdf.save()
+            pdf.save()
 
-    elif rth=="Internal":
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
+        elif rth=="Internal":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
 
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
 
-        sql_company = "SELECT * from company"
-        fbcursor.execute(sql_company)
-        company= fbcursor.fetchone()
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
         
-        pdf.setFont('Helvetica',12)
-        pdf.drawString(30,760, company[1])
-        pdf.drawString(30,740, company[2])
-        pdf.drawString(30,700, "Sales tax reg No:"+company[4])
-        pdf.drawString(475,760, "Expenses Report")
         
-        pdf.drawString(385,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
-        pdf.drawString(460,720,"Invoice Category: All")
-        pdf.drawString(28,695,"__________________________________________________________________________________")
-        pdf.drawString(28,675,"__________________________________________________________________________________")
-        
-        pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
-        
-
-        
-        in_dat=exp_frm.get_date()
-        cr=exp_to.get_date()
-        var_1=in_dat
-        var_2=cr
-    
-    
-        count=0
-        sql_inv_dt='SELECT * FROM expenses where date between %s and %s and customer="Internal"'
-        inv_valuz=(var_1,var_2)
-        fbcursor.execute(sql_inv_dt,inv_valuz)
-        tre=fbcursor.fetchall()
-        x=655
-        for i in tre:
-                    pdf.drawString(28,x,str(i[4]))
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s and customer="Internal" and rebillable="Yes"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
                     
-                    pdf.drawString(105,x,str(i[10]))
-                    pdf.drawString(220,x,str(i[5]))
-                    pdf.drawString(330,x,str(i[14]))
-                    pdf.drawString(405,x,str(i[16])) 
-                    pdf.drawString(520,x,str(i[3]))
-                
-                    count += 1
-                    x-=15
+                        count += 1
+                        x-=15
 
 
-        pdf.save()
-    else:
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
+        if rth=="All":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s and invoiced="Yes"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+
+        elif rth=="Internal":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s and customer="Internal" and invoiced="Yes"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
+    elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
         pass
+    elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1:
+    
+
+        if rth=="All":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+
+        elif rth=="Internal":
+            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+            defaultextension=".pdf")
+
+            fileName = path
+            documentTitle = 'Document title!'
+            title = 'Invoices List'
+            pdf = canvas.Canvas(fileName, pagesize=letter)
+            pdf.setTitle(documentTitle)
+
+            sql_company = "SELECT * from company"
+            fbcursor.execute(sql_company)
+            company= fbcursor.fetchone()
+            
+            pdf.setFont('Helvetica',12)
+            pdf.drawString(30,760, company[1])
+            pdf.drawString(30,740, company[2])
+            pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+            pdf.drawString(475,760, "Expenses Report")
+            
+            pdf.drawString(335,740, "Date From:"+expfrm.get()+"  Date To:"+expto.get())
+            pdf.drawString(460,720,"Invoice Category: All")
+            pdf.drawString(28,695,"__________________________________________________________________________________")
+            pdf.drawString(28,675,"__________________________________________________________________________________")
+            
+            pdf.drawString(28,678,"Date            Customer                        Vendor                  Invoice           Rebill.Amount              Amount        ")
+            
+
+            
+            in_dat=exp_frm.get_date()
+            cr=exp_to.get_date()
+            var_1=in_dat
+            var_2=cr
+        
+        
+            count=0
+            sql_inv_dt='SELECT * FROM expenses where date between %s and %s and customer="Internal"'
+            inv_valuz=(var_1,var_2)
+            fbcursor.execute(sql_inv_dt,inv_valuz)
+            tre=fbcursor.fetchall()
+            x=655
+            for i in tre:
+                        pdf.drawString(28,x,str(i[4]))
+                        
+                        pdf.drawString(105,x,str(i[10]))
+                        pdf.drawString(220,x,str(i[5]))
+                        pdf.drawString(330,x,str(i[14]))
+                        pdf.drawString(405,x,str(i[16])) 
+                        pdf.drawString(520,x,str(i[3]))
+                    
+                        count += 1
+                        x-=15
+
+
+            pdf.save()
+        else:
+            pass
 
 # def  cn_pr(canvas):
 #     print(str(canvas))
-
 #     filename=tempfile.mktemp(".txt")
 #     open(filename,'w').write(str(canvas))
 #     os.startfile(filename,"print")
+
 # def show(event):
 #     os.startfile(file, "print")
-#     # ltx=txt.itemcget(id_inv, 'text')
-#     # temp_file=tempfile.mktemp('.xlsx')
-#     # open(temp_file, 'w').write(ltx)
-#     # os.startfile(temp_file,'print')
-#     # pass
+    # ltx=txt.itemcget(id_inv, 'text')
+    # temp_file=tempfile.mktemp('.xlsx')
+    # open(temp_file, 'w').write(ltx)
+    # os.startfile(temp_file,'print')
+    # pass
+def print_inr():
+    
+    from reportlab.pdfgen import canvas
+    # from tkdocviewer import *
+    from reportlab.lib import colors
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib.pagesizes import letter, inch
+
+    # path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
+    # defaultextension=".pdf")
+     
+    # fileName = path
+    documentTitle = 'Document title!'
+    title = 'Invoices List'
+    pdf = canvas.Canvas("Reports.pdf", pagesize=letter)
+    pdf.setTitle(documentTitle)
+
+    sql_company = "SELECT * from company"
+    fbcursor.execute(sql_company)
+    company= fbcursor.fetchone()
+    
+    pdf.setFont('Helvetica',12)
+    pdf.drawString(30,760, company[1])
+    pdf.drawString(30,740, company[2])
+    pdf.drawString(30,700, "Sales tax reg No:"+company[4])
+    pdf.drawString(445,760, "Recurring Invoice Report")
+    "Invoice No","Customer","Next Invoice","Recurring Interval","Stop After","Invoice Total"
+    pdf.drawString(460,720,"Invoice Category: All")
+    pdf.drawString(28,695,"__________________________________________________________________________________")
+    pdf.drawString(28,675,"__________________________________________________________________________________")
+    
+    pdf.drawString(28,678,"Invoice No          Customer                   Next Invoice    Recurring Interval     Stop After       Invoice Total    ")
+    
+    count=0
+    sql_inv_dt='SELECT * FROM invoice'
+ 
+    fbcursor.execute(sql_inv_dt)
+    tre=fbcursor.fetchall()
+    x=655
+    for i in tre:
+                pdf.drawString(28,x,str(i[1]))
+                
+                pdf.drawString(115,x,str(i[18]))
+                pdf.drawString(250,x,str(i[26]))
+                pdf.drawString(335,x,str(i[24]))
+                pdf.drawString(430,x,str(i[27])) 
+                pdf.drawString(505,x,str(i[8]))
+               
+                count += 1
+                x-=15
+ 
+    pdf.save()
+    p = win32print.OpenPrinter (printer_name)
+    job = win32print.StartDocPrinter (p, 1, ("test of raw data", None, "RAW")) 
+    win32print.StartPagePrinter (p) 
+    win32print.WritePrinter (p, "Reports.pdf") 
+    win32print.EndPagePrinter (p)  
+
+    print("successful1")                
+    alert(text="Print Successful",title="Success",button='ok')
+    
+
+    
 
 
-def image_print(txt):
-    pass
+def image_print(widget):
+    from PIL import ImageGrab
+
+    x=root.winfo_rootx()+widget.winfo_x()
+    y=root.winfo_rooty()+widget.winfo_y()
+    x1=x+widget.winfo_width()
+    y1=y+widget.winfo_height()
+    thr=ImageGrab.grab().crop((x,182,x1,760))
+
+
+    ltx=thr.itemget(thr, 'text')
+    temp_file=tempfile.mktemp(thr)
+    open(temp_file, 'w').write(ltx)
+    os.startfile(temp_file,'print')
 
 def image(widget):
     from PIL import ImageGrab
@@ -5200,17 +6480,294 @@ def image(widget):
     y1=y+widget.winfo_height()
     thr=ImageGrab.grab().crop((x,182,x1,760)).save(path)
    
-
-    # from PIL import ImageGrab
-    # self.file= filedialog.askopenfilename(initialdir="c:/", filetypes=(('PNG File', '.PNG'), ('PNG File')))
-    # self.file=self.file+".PNG"
-    # ImageGrab.grab().crop((100,100,100,100)).save(self.file)
+   
     
   
 
 ##################################### (Report Preview) ############################################################# 
 
 
+# emails ---------------------
+
+def rp_send_mails():
+
+    rp_sender_email = "saijuinfox@gmail.com"    
+    rp_sender_password = "8848937577" 
+
+    rp_server = smtplib.SMTP('smtp.gmail.com', 587)
+   
+    rp_server.starttls()
+
+    rp_server.login(rp_sender_email, rp_sender_password)
+
+   
+    rp_carbcopy_info = "saijusunny1301@gmail.com"
+
+  
+    rp_msg = MIMEMultipart()
+    rp_msg['Subject'] = rp_email_subject.get() 
+  
+    rp_mail_content  = rp_mframe.get('1.0','end-1c') 
+    rp_msg['From'] = rp_email_from.get()
+    rp_msg['To'] = rp_email_address.get()
+   
+      
+    rp_gettingimg=rp_lstfrm.get()
+    rp_lst_data = rp_gettingimg[1:-1].split(',')
+
+
+    rp_msg.attach(MIMEText(rp_mail_content, 'plain'))
+
+    for i in rp_lst_data:
+        if len(i.strip()[1:-1])>1:
+
+            with open('images/'+ i.strip()[1:-1], "rb") as attachment:
+   
+                rp_part = MIMEBase("application", "octet-stream")
+                rp_part.set_payload(attachment.read())
+
+                encoders.encode_base64(rp_part)
+                rp_part.add_header('Content-Disposition', "attachment; filename= %s" % 'images/'+ i.strip()[1:-1]) 
+
+    
+                rp_msg.attach(rp_part)
+       
+
+    rp_server.sendmail(rp_email_from.get(),rp_email_address.get(),rp_msg.as_string())
+    rp_server.sendmail(rp_email_from.get(), rp_carbcopy_info,rp_msg.as_string()) 
+
+def rp_empsfile_image(event):
+          global rp_yawn
+          for i in htcodeframe.curselection():
+            print("hloo",htcodeframe.get(i))
+            rp_yawn=htcodeframe.get(i)        
+            edit_window_img = Toplevel()
+            edit_window_img.title("View Image")
+            edit_window_img.geometry("700x500")
+            image = Image.open("images/"+rp_yawn)
+            resize_image = image.resize((700, 500))
+            image = ImageTk.PhotoImage(resize_image)
+            rp_psimage = Label(edit_window_img,image=image)
+            rp_psimage.photo = image
+            rp_psimage.pack()
+
+def rp_UploadAction(event=None):
+      global rp_filenamez
+      rp_filenamez = askopenfilename(filetypes=(("png file ",'.png'),("jpg file", ".jpg"), ('PDF', '*.pdf',), ("All files", "*.*"),))
+      shutil.copyfile(rp_filenamez, os.getcwd()+'/images/'+rp_filenamez.split('/')[-1])
+      rp_htcodeframe.insert(0, rp_filenamez.split('/')[-1])
+
+    
+def rp_addemail_order():
+
+        rp_emailnow = fbcursor.fetchone()
+        rp_mailDetail=Toplevel()
+        rp_mailDetail.title("Send E-mail")
+        rp_mailDetail.geometry("1080x550")
+        rp_mailDetail.resizable(False, False)
+
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('TNotebook.Tab', background="#999999", padding=5)
+        rp_email_Notebook = ttk.Notebook(rp_mailDetail)
+        rp_email_Frame = Frame(rp_email_Notebook, height=500, width=1080)
+        rp_account_Frame = Frame(rp_email_Notebook, height=550, width=1080)
+        rp_email_Notebook.add(rp_email_Frame, text="E-mail")
+        rp_email_Notebook.add(rp_account_Frame, text="Account")
+        rp_email_Notebook.place(x=0, y=0)
+
+        rp_messagelbframe=LabelFrame(rp_email_Frame,text="Message", height=500, width=730)
+        rp_messagelbframe.place(x=5, y=5)
+        global rp_email_address, rp_email_subject, rp_email_from,rp_email_pswrd,rp_carcopyem_address,rp_mframe,rp_htcodeframe,rp_lstfrm,rp_langs
+        rp_email_address = StringVar() 
+        rp_email_subject = StringVar()
+
+        rp_email_from = StringVar()
+        rp_email_pswrd = StringVar()
+        rp_carcopyem_address = StringVar()
+
+        rp_lbl_emailtoaddr=Label(rp_messagelbframe, text="Email to address").place(x=5, y=5)
+        rp_emailtoent=Entry(rp_messagelbframe, width=50,textvariable=rp_email_address)
+        rp_emailtoent.place(x=120, y=5)
+      
+        rp_sendemail_btn=Button(rp_messagelbframe, text="Send Email", width=10, height=1, command=rp_send_mails).place(x=600, y=10)
+
+        rp_lbl_carcopyto=Label(rp_messagelbframe, text="Carbon copy to").place(x=5, y=32)
+        rp_carcopyent=Entry(rp_messagelbframe, width=50,textvariable=rp_carcopyem_address)
+        rp_carcopyent.place(x=120, y=32)
+
+        rp_lbl_subject=Label(rp_messagelbframe, text="Subject").place(x=5, y=59)
+        rp_subent=Entry(rp_messagelbframe, width=50, textvariable=rp_email_subject)
+        rp_subent.place(x=120, y=59)
+        rp_subjectinsrt='ORD_'+str("")
+        rp_subent.delete(0,'end')
+        rp_subent.insert(0, rp_subjectinsrt)
+
+        
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+        rp_mess_Notebook = ttk.Notebook(rp_messagelbframe)
+        rp_emailmessage_Frame =Frame(rp_mess_Notebook, height=350, width=710)
+        rp_htmlsourse_Frame = Frame(rp_mess_Notebook, height=350, width=710)
+        rp_mess_Notebook.add(rp_emailmessage_Frame, text="E-mail message")
+
+        rp_mess_Notebook.add(rp_htmlsourse_Frame, )
+        rp_mess_Notebook.place(x=5, y=90)
+        
+
+        
+
+        from tkinter import font,colorchooser
+        fontSize=12
+        fontStyle='Arial'
+        
+        def rp_font_style(event):
+            global fontStyle
+            fontStyle=font_family_variable.get()
+            rp_mframe.config(font=(fontStyle,fontSize))
+
+        def rp_font_size(event):
+            global fontSize
+            fontSize=size_variable.get()
+            rp_mframe.config(font=(fontStyle,fontSize))
+
+        def rp_bold_text():
+            text_property=font.Font(font=rp_mframe['font']).actual()
+            if text_property['weight']=='normal':
+                rp_mframe.config(font=(fontStyle,fontSize,'bold'))
+
+            if text_property['weight']=='bold':
+                rp_mframe.config(font=(fontStyle,fontSize,'normal'))    
+        
+        def rp_italic_text():
+            text_property=font.Font(font=rp_mframe['font']).actual()
+            if text_property['slant']=='roman':
+                rp_mframe.config(font=(fontStyle,fontSize,'italic'))
+
+            if text_property['slant']=='italic':
+                rp_mframe.config(font=(fontStyle,fontSize,'roman'))
+
+        def rp_underline_text():
+            text_property=font.Font(font=rp_mframe['font']).actual()
+            if text_property['underline']==0:
+                rp_mframe.config(font=(fontStyle,fontSize,'underline'))
+
+                if text_property['underline']==1:
+                    rp_mframe.config(font=(fontStyle,fontSize))
+
+        def rp_color_select():
+            color=colorchooser.askcolor()
+            rp_mframe.config(fg=color[1])
+
+        def rp_align_right():
+            data=rp_mframe.get(0.0,END)
+            rp_mframe.tag_config('right',justify=RIGHT)
+            rp_mframe.delete(0.0,END)
+            rp_mframe.insert(INSERT,data,'right')
+
+        def rp_align_left():
+            data=rp_mframe.get(0.0,END)
+            rp_mframe.tag_config('left',justify=LEFT)
+            rp_mframe.delete(0.0,END)
+            rp_mframe.insert(INSERT,data,'left')
+
+        def rp_align_center():
+            data=rp_mframe.get(0.0,END)
+            rp_mframe.tag_config('center',justify=CENTER)
+            rp_mframe.delete(0.0,END)
+            rp_mframe.insert(INSERT,data,'center')
+
+        rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=88, bg="white", height=22)
+        rp_mframe.place(x=0, y=30)
+
+        rp_btn1=Button(rp_emailmessage_Frame,width=20,height=20,compound = LEFT,image=selectall,command=lambda :rp_mframe.event_generate('<Control a>'))
+        rp_btn1.place(x=0, y=1)
+
+                
+        rp_btn2=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut,command=lambda :rp_mframe.event_generate('<Control x>'))
+        rp_btn2.place(x=36, y=1)
+
+        rp_btn3=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy,command=lambda :rp_mframe.event_generate('<Control c>'))
+        rp_btn3.place(x=73, y=1)
+
+        rp_btn4=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste,command=lambda :rp_mframe.event_generate('<Control v>'))
+        rp_btn4.place(x=105, y=1)
+        rp_btn5=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo, command=lambda:rp_mframe.event_generate("<<Undo>>")).place(x=140, y=1)
+
+        rp_btn6=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo, command=lambda:rp_mframe.event_generate("<<Redo>>")).place(x=175, y=1)
+
+        rp_btn7=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold,command=rp_bold_text)
+        rp_btn7.place(x=210, y=1)
+
+        rp_btn8=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics,command=rp_italic_text)
+        rp_btn8.place(x=245, y=1)
+
+        rp_btn9=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline,command=rp_underline_text)
+        rp_btn9.place(x=280, y=1)
+
+        rp_btn10=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=left,command=rp_align_left)
+        rp_btn10.place(x=315, y=1)
+
+        rp_btn11=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=right,command=rp_align_right)
+        rp_btn11.place(x=350, y=1)
+
+        rp_btn12=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=center,command=rp_align_center)
+        rp_btn12.place(x=385, y=1)
+
+        rp_btn14=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove,command=lambda :rp_mframe.delete(0.0,END))
+        rp_btn14.place(x=455, y=1)
+        
+        rp_btn15=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=rp_color_select)
+        rp_btn15.place(x=420, y=1)
+        rp_btn16=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink)
+        rp_btn16.place(x=491, y=1)
+
+        size_variable=IntVar()
+        dropcomp11 = ttk.Combobox(rp_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,100)))
+        dropcomp11.place(x=530, y=5)
+        
+        font_family_variable=StringVar()
+        font_familyes=font.families()
+        dropcompo147 = ttk.Combobox(rp_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
+        dropcompo147.place(x=600, y=5)
+        dropcompo147.current(font_familyes.index('Arial'))
+        dropcompo147.bind('<<ComboboxSelected>>', rp_font_style)
+        dropcomp11.bind('<<ComboboxSelected>>', rp_font_size)
+        
+        rp_attachlbframe=LabelFrame(rp_email_Frame,text="Attachment(s)", height=350, width=280)
+        rp_attachlbframe.place(x=740, y=5)
+
+        rp_lstfrm=StringVar()  
+        rp_htcodeframe=Listbox(rp_attachlbframe, height=13, width=43,listvariable=rp_lstfrm, bg="white")
+        rp_htcodeframe.place(x=5, y=5)
+        rp_htcodeframe.bind('<Double-Button-1>' , rp_empsfile_image)
+
+        def rp_deslist():
+            rp_laa=rp_htcodeframe.curselection()
+            print("hloo",rp_htcodeframe.get(rp_laa))
+            rp_yawn=rp_htcodeframe.get(rp_laa)        
+            rp_htcodeframe.delete(ACTIVE)
+
+        rp_lbl_btn_info=Label(rp_attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+        rp_btn17=Button(rp_attachlbframe, width=20, text="Add attachment file...", command=rp_UploadAction).place(x=60, y=260)
+        rp_btn18=Button(rp_attachlbframe, width=20, text="Remove attachment",command=rp_deslist).place(x=60, y=295)
+        rp_lbl_tt_info=Label(rp_email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+        rp_lbl_tt_info.place(x=740, y=370)
+
+        rp_ready_frame=Frame(rp_mailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+        
+        rp_sendatalbframe=LabelFrame(rp_account_Frame,text="E-Mail(Sender data)",height=140, width=600)
+        rp_sendatalbframe.place(x=5, y=5)
+        rp_lbl_sendermail=Label(rp_sendatalbframe, text="Company email address").place(x=5, y=10)
+        rp_sentent=Entry(rp_sendatalbframe, width=40, textvariable=rp_email_from)
+        rp_sentent.place(x=195, y=10)
+
+        rp_lbl_senderpswrd=Label(rp_sendatalbframe, text="Email Password").place(x=5, y=40)
+        rp_pswrdent=Entry(rp_sendatalbframe, width=40, textvariable=rp_email_pswrd,show="*")
+        rp_pswrdent.place(x=195, y=40)
+
+        
 
 #Filter by category----------------------------------------------------------------------------
 #-----------------------------------------------ScreenChart-------------------------------
@@ -5287,8 +6844,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -5305,8 +6862,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5317,8 +6874,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5354,8 +6911,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -5385,8 +6942,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Salesss", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -5451,8 +7008,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -5469,8 +7026,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5481,8 +7038,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5511,8 +7068,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -5540,8 +7097,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -5625,8 +7182,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -5643,8 +7200,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5655,8 +7212,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5692,8 +7249,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -5724,8 +7281,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -5736,18 +7293,7 @@ def screen_flt():
 
             lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
             lbl_invdtt2.place(x=2, y=85)
-            # def my_popup(event):
-            #     my_menu.tk_popup(event.x_root, event.y_root)
-                
-            # my_menu= Menu(canvasbar, tearoff=False)
-            # my_menu.add_command(label="Refresh Chart", command="run")
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Save Chart As Image", command='emailrp')
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Print Chart", command="excel")
-            # canvasbar.bind("<Button-3>", my_popup)
+            
 
         else:
             sql_paid = "SELECT SUM(invoicetot)from invoice"
@@ -5790,14 +7336,10 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
-
-            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-
 
 
             #**************add dates********
@@ -5808,8 +7350,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5820,8 +7362,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5850,8 +7392,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -5879,8 +7421,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -5964,8 +7506,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -5982,8 +7524,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -5994,8 +7536,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6031,8 +7573,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6062,8 +7604,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6128,8 +7670,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -6146,8 +7688,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6158,8 +7700,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6188,8 +7730,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Total")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6217,8 +7759,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6303,8 +7845,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -6321,8 +7863,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6333,8 +7875,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6370,8 +7912,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Total")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6402,8 +7944,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6468,8 +8010,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -6486,8 +8028,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6498,8 +8040,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6528,8 +8070,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6557,8 +8099,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6645,8 +8187,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -6663,8 +8205,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6675,8 +8217,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6712,8 +8254,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6744,8 +8286,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("TOtal Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6810,8 +8352,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -6828,8 +8370,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6840,8 +8382,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -6870,8 +8412,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -6899,8 +8441,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -6985,8 +8527,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7003,8 +8545,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7015,8 +8557,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7052,8 +8594,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7084,8 +8626,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -7150,8 +8692,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7168,8 +8710,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7180,8 +8722,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7210,8 +8752,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7239,8 +8781,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -7326,8 +8868,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7344,8 +8886,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7356,8 +8898,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7393,8 +8935,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7424,8 +8966,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -7490,8 +9032,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7508,8 +9050,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7520,8 +9062,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7550,8 +9092,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7579,8 +9121,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -7667,8 +9209,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7734,8 +9276,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7766,8 +9308,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -7832,8 +9374,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -7850,8 +9392,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7862,8 +9404,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -7892,8 +9434,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -7921,8 +9463,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -8002,8 +9544,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -8020,8 +9562,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8032,8 +9574,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8069,8 +9611,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -8101,8 +9643,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -8167,8 +9709,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -8185,8 +9727,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8197,8 +9739,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8227,8 +9769,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -8256,8 +9798,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -8335,8 +9877,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -8353,8 +9895,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8365,8 +9907,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8402,8 +9944,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amont")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -8434,8 +9976,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -8500,8 +10042,8 @@ def screen_flt():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -8518,8 +10060,8 @@ def screen_flt():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8530,8 +10072,8 @@ def screen_flt():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Amount")
+            plt.ylabel("Date")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -8560,8 +10102,8 @@ def screen_flt():
             y=paid_sec_x
             plt.barh(x,y, label="Top Billed Customer", color="orange") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Invoiced Amount")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
 
@@ -8589,8 +10131,8 @@ def screen_flt():
             y=paid_thrd_x   
             plt.barh(x,y, label="Top Product Sale", color="blue") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Total Sales")
+            plt.ylabel("")
             axes=plt.gca()
             axes.xaxis.grid()
             
@@ -8615,7 +10157,123 @@ def screen_flt():
     
 
 #---------------------------------------------------INVOICE FILTER-----------------------------------------------
+def emailkj():
+            rpmailDetail=Toplevel()
+            rpmailDetail.title("E-Mail")
+            p2 = PhotoImage(file = "images/fbicon.png")
+            rpmailDetail.iconphoto(False, p2)
+            rpmailDetail.geometry("1030x550+150+120")
+            
+            def myrp_SMTP():
+                if True:
+                    em_ser_conbtn.destroy()
+                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
+                    mysmtpservercon.place(x=610, y=110)
+                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
+                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
+                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
+                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
+                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
+                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
+                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
+                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
+                    ssl_chkvar=IntVar()
+                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
+                    ssl_chkbtn.place(x=50, y=110)
+                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
+                else:
+                    pass
+            
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", padding=5)
+            email_Notebook = ttk.Notebook(rpmailDetail)
+            email_Frame = Frame(email_Notebook, height=500, width=1080)
+            account_Frame = Frame(email_Notebook, height=550, width=1080)
+            email_Notebook.add(email_Frame, text="E-mail")
+            email_Notebook.add(account_Frame, text="Account")
+            email_Notebook.place(x=0, y=0)
+            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
+            messagelbframe.place(x=5, y=5)
+            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
+            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
+            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
+            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
+            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
+            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
+            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
+            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
 
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
+            mess_Notebook = ttk.Notebook(messagelbframe)
+            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
+            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
+            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
+            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
+            mess_Notebook.place(x=5, y=90)
+
+            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
+            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
+            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
+            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
+            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
+            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
+            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
+            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
+            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
+            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
+            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
+
+            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
+            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
+            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
+            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
+            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
+            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
+            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
+            mframe.place(x=0, y=28)
+            rp_attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
+            rp_attachlbframe.place(x=740, y=5)
+            htcodeframe=Frame(rp_attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
+            lbl_btn_info=Label(rp_attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
+            btn17=Button(rp_attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
+            btn18=Button(rp_attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
+            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
+            lbl_tt_info.place(x=740, y=370)
+
+            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
+            
+            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
+            sendatalbframe.place(x=5, y=5)
+            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
+            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
+            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
+            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
+            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
+            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
+            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
+            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
+            confirm_chkvar=IntVar()
+            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
+            confirm_chkbtn.place(x=200, y=215)
+            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
+
+            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
+            sendatalbframe.place(x=610, y=5)
+            servar=IntVar()
+            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
+            SMTP_rbtn.place(x=10, y=10)
+            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
+            MySMTP_rbtn.place(x=10, y=40)
+            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
+            em_ser_conbtn.place(x=710, y=110)
 
 def category():
   # firtst filter-----------------------------------Month to date
@@ -8783,136 +10441,20 @@ def category():
         canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
+        
         
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:rp_addemail_order())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -9059,136 +10601,18 @@ def category():
         canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:addemail_order())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -9335,136 +10759,18 @@ def category():
         canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -9611,136 +10917,18 @@ def category():
 
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -9884,136 +11072,18 @@ def category():
         canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -10158,136 +11228,18 @@ def category():
 
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -10432,136 +11384,18 @@ def category():
         canvas.create_text(875,145,text="Date From:"+invfrm.get()+"      Date To:"+invto.get()+"\n Invoice Category: All",fill='black',font=("Helvetica", 8), justify='right')
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -10714,136 +11548,18 @@ def category():
 
         canvas.create_text(330,228,text="Sales tax reg No.",fill='black',font=("Helvetica", 8), justify='left')
             
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -10988,136 +11704,18 @@ def category():
 
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -11264,136 +11862,18 @@ def category():
 
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -11534,136 +12014,18 @@ def category():
 
 
         
-        def emailrp():
-            rpmailDetail=Toplevel()
-            rpmailDetail.title("E-Mail")
-            p2 = PhotoImage(file = "images/fbicon.png")
-            rpmailDetail.iconphoto(False, p2)
-            rpmailDetail.geometry("1030x550+150+120")
-            
-            def myrp_SMTP():
-                if True:
-                    em_ser_conbtn.destroy()
-                    mysmtpservercon=LabelFrame(account_Frame,text="SMTP server connection(ask your ISP for your SMTP settings)", height=165, width=380)
-                    mysmtpservercon.place(x=610, y=110)
-                    lbl_hostn=Label(mysmtpservercon, text="Hostname").place(x=5, y=10)
-                    hostnent=Entry(mysmtpservercon, width=30).place(x=80, y=10)
-                    lbl_portn=Label(mysmtpservercon, text="Port").place(x=5, y=35)
-                    portent=Entry(mysmtpservercon, width=30).place(x=80, y=35)
-                    lbl_usn=Label(mysmtpservercon, text="Username").place(x=5, y=60)
-                    unament=Entry(mysmtpservercon, width=30).place(x=80, y=60)
-                    lbl_pasn=Label(mysmtpservercon, text="Password").place(x=5, y=85)
-                    pwdent=Entry(mysmtpservercon, width=30).place(x=80, y=85)
-                    ssl_chkvar=IntVar()
-                    ssl_chkbtn=Checkbutton(mysmtpservercon, variable=ssl_chkvar, text="This server requires a secure connection(SSL)", onvalue=1, offvalue=0)
-                    ssl_chkbtn.place(x=50, y=110)
-                    em_ser_conbtn1=Button(account_Frame, text="Test E-mail Server Connection").place(x=610, y=285)
-                else:
-                    pass
-            
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", padding=5)
-            email_Notebook = ttk.Notebook(rpmailDetail)
-            email_Frame = Frame(email_Notebook, height=500, width=1080)
-            account_Frame = Frame(email_Notebook, height=550, width=1080)
-            email_Notebook.add(email_Frame, text="E-mail")
-            email_Notebook.add(account_Frame, text="Account")
-            email_Notebook.place(x=0, y=0)
-            messagelbframe=LabelFrame(email_Frame,text="Message", height=495, width=730)
-            messagelbframe.place(x=5, y=5)
-            lbl_emailtoaddr=Label(messagelbframe, text="Email to address").place(x=5, y=5)
-            emailtoent=Entry(messagelbframe, width=50).place(x=120, y=5)
-            sendemail_btn=Button(messagelbframe, text="Send Email", width=10, height=1).place(x=600, y=10)
-            lbl_carcopyto=Label(messagelbframe, text="Carbon copy to").place(x=5, y=32)
-            carcopyent=Entry(messagelbframe, width=50).place(x=120, y=32)
-            stopemail_btn=Button(messagelbframe, text="Stop sending", width=10, height=1).place(x=600, y=40)
-            lbl_subject=Label(messagelbframe, text="Subject").place(x=5, y=59)
-            subent=Entry(messagelbframe, width=50).place(x=120, y=59)
-
-            style = ttk.Style()
-            style.theme_use('default')
-            style.configure('TNotebook.Tab', background="#999999", width=20, padding=5)
-            mess_Notebook = ttk.Notebook(messagelbframe)
-            emailmessage_Frame = Frame(mess_Notebook, height=350, width=710)
-            htmlsourse_Frame = Frame(mess_Notebook, height=350, width=710)
-            mess_Notebook.add(emailmessage_Frame, text="E-mail message")
-            mess_Notebook.add(htmlsourse_Frame, text="Html sourse code")
-            mess_Notebook.place(x=5, y=90)
-
-            btn1=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)  
-            btn2=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            btn5=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=undo).place(x=140, y=1)
-            btn6=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=redo).place(x=175, y=1)
-            btn7=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=bold).place(x=210, y=1)
-            btn8=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=italics).place(x=245, y=1)
-            btn9=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=underline).place(x=280, y=1)
-            btn10=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=left).place(x=315, y=1)
-            btn11=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=right).place(x=350, y=1)
-            btn12=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=center).place(x=385, y=1)
-            btn13=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink).place(x=420, y=1)
-            btn14=Button(emailmessage_Frame,width=31,height=23,compound = LEFT,image=remove).place(x=455, y=1)
-
-            dropcomp = ttk.Combobox(emailmessage_Frame, width=12, height=3).place(x=500, y=5)
-            dropcompo = ttk.Combobox(emailmessage_Frame, width=6, height=3).place(x=600, y=5)
-            mframe=Frame(emailmessage_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            btn1=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=selectall).place(x=0, y=1)
-            btn2=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=cut).place(x=36, y=1)
-            btn3=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=copy).place(x=73, y=1)
-            btn4=Button(htmlsourse_Frame,width=31,height=23,compound = LEFT,image=paste).place(x=105, y=1)
-            mframe=Frame(htmlsourse_Frame, height=350, width=710, bg="white")
-            mframe.place(x=0, y=28)
-            attachlbframe=LabelFrame(email_Frame,text="Attachment(s)", height=350, width=280)
-            attachlbframe.place(x=740, y=5)
-            htcodeframe=Frame(attachlbframe, height=220, width=265, bg="white").place(x=5, y=5)
-            lbl_btn_info=Label(attachlbframe, text="Double click on attachment to view").place(x=30, y=230)
-            btn17=Button(attachlbframe, width=20, text="Add attacment file...").place(x=60, y=260)
-            btn18=Button(attachlbframe, width=20, text="Remove attacment").place(x=60, y=295)
-            lbl_tt_info=Label(email_Frame, text="You can create predefined invoice, order, estimate\nand payment receipt email templates under Main\nmenu/Settings/E-Mail templates tab")
-            lbl_tt_info.place(x=740, y=370)
-
-            ready_frame=Frame(rpmailDetail, height=20, width=1080, bg="#b3b3b3").place(x=0,y=530)
-            
-            sendatalbframe=LabelFrame(account_Frame,text="E-Mail(Sender data)",height=270, width=600)
-            sendatalbframe.place(x=5, y=5)
-            lbl_sendermail=Label(sendatalbframe, text="Your company email address").place(x=5, y=30)
-            sentent=Entry(sendatalbframe, width=40).place(x=195, y=30)
-            lbl_orcompanyname=Label(sendatalbframe, text="Your name or company name").place(x=5, y=60)
-            nament=Entry(sendatalbframe, width=40).place(x=195, y=60)
-            lbl_reply=Label(sendatalbframe, text="Reply to email address").place(x=5, y=90)
-            replyent=Entry(sendatalbframe, width=40).place(x=195, y=90)
-            lbl_sign=Label(sendatalbframe, text="Signature").place(x=5, y=120)
-            signent=Entry(sendatalbframe,width=50).place(x=100, y=120,height=75)
-            confirm_chkvar=IntVar()
-            confirm_chkbtn=Checkbutton(sendatalbframe, variable=confirm_chkvar, text="Confirmation reading", onvalue=1, offvalue=0)
-            confirm_chkbtn.place(x=200, y=215)
-            btn18=Button(account_Frame, width=15, text="Save settings").place(x=25, y=285)
-
-            sendatalbframe=LabelFrame(account_Frame,text="SMTP Server",height=100, width=380)
-            sendatalbframe.place(x=610, y=5)
-            servar=IntVar()
-            SMTP_rbtn=Radiobutton(sendatalbframe, text="Use the Built-In SMTP Server Settings", variable=servar, value=1)
-            SMTP_rbtn.place(x=10, y=10)
-            MySMTP_rbtn=Radiobutton(sendatalbframe, text="Use My Own SMTP Server Settings(Recommended)", variable=servar, value=2, command=myrp_SMTP)
-            MySMTP_rbtn.place(x=10, y=40)
-            em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
-            em_ser_conbtn.place(x=710, y=110)
-        
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
             
         my_menu= Menu(canvas, tearoff=False)
-        my_menu.add_command(label="Run Report", command="run")
+        my_menu.add_command(label="Run Report", command=lambda:category())
         my_menu.add_separator()
-        my_menu.add_command(label="Print Report", command="pr")
-        my_menu.add_command(label="Email Report", command=emailrp)
+        my_menu.add_command(label="Print Report", command="")
+        my_menu.add_command(label="Email Report", command=lambda:emailkj())
 
         my_menu.add_separator()
-        my_menu.add_command(label="Export Report To Excel", command="excel")
-        my_menu.add_command(label="Export Report To PDF", command="pdf")
+        my_menu.add_command(label="Export Report To Excel", command=lambda:exportcanvas())
+        my_menu.add_command(label="Export Report To PDF", command=lambda:pdf_exp())
 
 
         canvas.bind("<Button-3>", my_popup)
@@ -34981,7 +35343,7 @@ def maindropmenu(event):
         rprefreshlebel.place(x=22,y=12)
 
 
-        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=print)
+        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print(reportframe))
         rpprintlabel.place(x=95,y=12)
     
 
@@ -35222,7 +35584,7 @@ def maindropmenu(event):
     lbl_ir.place(x=1110,y=85)
 
 
-    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp())
+    rpprintlabel = Button(midFrame,compound="top", text="Print",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:print_inr())
     rpprintlabel.place(x=95,y=12)
   
 
@@ -37072,8 +37434,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37090,8 +37452,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37102,8 +37464,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37148,8 +37510,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37166,8 +37528,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37178,8 +37540,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37224,8 +37586,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37241,8 +37603,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37253,8 +37615,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37300,8 +37662,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37318,8 +37680,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37330,8 +37692,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37376,8 +37738,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37394,8 +37756,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37406,8 +37768,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37452,8 +37814,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37469,8 +37831,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37481,8 +37843,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37527,8 +37889,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37545,8 +37907,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37557,8 +37919,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37602,8 +37964,8 @@ def chek_function():
             figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
             plt.bar(x,y, label="Invoice", color="orange")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
 
@@ -37620,8 +37982,8 @@ def chek_function():
             x=dates
             plt.bar(x,y, label="Outstanding", color="blue")
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -37632,8 +37994,8 @@ def chek_function():
             x=dates3
             plt.bar(x,y, label="Paid", color="green") 
             plt.legend()
-            plt.xlabel("x-axis")
-            plt.ylabel("y-label")
+            plt.xlabel("Date")
+            plt.ylabel("Total Amount")
             axes=plt.gca()
             axes.yaxis.grid()
             # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -43019,8 +43381,8 @@ x=axis_x
 figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
 plt.bar(x,y, label="Invoice", color="orange")
 plt.legend()
-plt.xlabel("x-axis")
-plt.ylabel("y-label")
+plt.xlabel("Date")
+plt.ylabel("Total Amount")
 axes=plt.gca()
 axes.yaxis.grid()
 
@@ -43037,8 +43399,8 @@ y=outstanding
 x=dates
 plt.bar(x,y, label="Outstanding", color="blue")
 plt.legend()
-plt.xlabel("x-axis")
-plt.ylabel("y-label")
+plt.xlabel("Date")
+plt.ylabel("Total Amount")
 axes=plt.gca()
 axes.yaxis.grid()
 # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -43049,8 +43411,8 @@ y=paid
 x=dates3
 plt.bar(x,y, label="Paid", color="green") 
 plt.legend()
-plt.xlabel("x-axis")
-plt.ylabel("y-label")
+plt.xlabel("Date")
+plt.ylabel("Total Amount")
 axes=plt.gca()
 axes.yaxis.grid()
 # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
@@ -43081,8 +43443,8 @@ x=paid_sec_y
 y=paid_sec_x
 plt.barh(x,y, label="Top Billed Customer", color="orange") 
 plt.legend()
-plt.xlabel("x-axis")
-plt.ylabel("y-label")
+plt.xlabel("Invoiced Amount")
+plt.ylabel("")
 axes=plt.gca()
 axes.xaxis.grid()
 
@@ -43112,8 +43474,8 @@ x=paid_thrd_y
 y=paid_thrd_x   
 plt.barh(x,y, label="Top Product Sale", color="blue") 
 plt.legend()
-plt.xlabel("x-axis")
-plt.ylabel("y-label")
+plt.xlabel("Total Sales")
+plt.ylabel("")
 axes=plt.gca()
 axes.xaxis.grid()
  
