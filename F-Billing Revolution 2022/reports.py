@@ -838,13 +838,14 @@ def exportcanvas7():
             documentTitle = 'Document title!'
             title = 'Invoices List'
             pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf.setTitle(documentTitle) 
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
             company= fbcursor.fetchone()
             
             pdf.setFont('Helvetica',12)
+            
             pdf.drawString(30,760, company[1])
             pdf.drawString(495,760, "Customer List")
             
@@ -856,9 +857,10 @@ def exportcanvas7():
             
             pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
             rth=cldfilter.get()
-            
+            story=[]
+
             if rth=="All Customers ":
-            
+                
                 count=0
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
@@ -866,37 +868,45 @@ def exportcanvas7():
                 tre=fbcursor.fetchall()
                 x=705
                 for i in tre:
-                    trf='select * from customer where businessname=%s '
+                    trf='select * from customer where businessname=%s'
                     vs=(str(i[18]),)
                             
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
+                    
+                    
                     for i in thg:
-                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
-                                
-                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                                count += 1
-                                x-=105
-
-
-                    pdf.save()
+                                    x-=105
+                                    count += 1
+                pdf.save()
+                    
             elif rth=="Default":
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
-            
+                count=0
                 fbcursor.execute(sql_inv_dt)
                 tre=fbcursor.fetchall()
                 x=705
@@ -907,28 +917,35 @@ def exportcanvas7():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
-                        
-                            count += 1
-                            x-=105
+                                    x-=105
+                                    count += 1
 
 
-                    pdf.save()
+                pdf.save()
             else:
                 pass
     elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
@@ -973,25 +990,32 @@ def exportcanvas7():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                                pdf.drawString(28,x-10,'Name: '+str(i[4]))
-                                
-                                pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                                pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                                pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                                pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                                pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                                pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                                pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                                pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                                pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                                pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                                pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                                pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                                pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                                count += 1
-                                x-=105
+                                    x-=105
+                                    count += 1
 
 
                     pdf.save()
@@ -1008,25 +1032,32 @@ def exportcanvas7():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
-                        
-                            count += 1
-                            x-=105
+                                    x-=105
+                                    count += 1
 
 
                     pdf.save()
@@ -1071,25 +1102,32 @@ def exportcanvas7():
                 x=705
                 
                 for i in tre:
-                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
-                        
-                            count += 1
-                            x-=105
+                                    x-=105
+                                    count += 1
 
 
                 pdf.save()
@@ -1104,25 +1142,32 @@ def exportcanvas7():
 
                 
                         for i in tre:
-                            pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    if x==-30 or x==57:
+                                        pdf.showPage()
+                                        x=855
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    else:
+                                        
+                                        pdf.drawString(28,x-10,'Name: '+str(i[4]))
+                                    
+                                        pdf.drawString(300,x-10,'Name:'+str(i[6]))
+                                        pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
+                                        pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
+                                        pdf.drawString(28,x-40,'Address: '+str(i[5]))
+                                        pdf.drawString(300,x-40,'Address:'+str(i[7]))
+                                        pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
+                                        pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
+                                        pdf.drawString(28,x-70,'Tel:'+str(i[10]))
+                                        pdf.drawString(300,x-70,'Tel:'+str(i[15]))
+                                        pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
+                                        pdf.drawString(430,x-70,'Fax: '+str(i[16]))
+                                        pdf.drawString(28,x-85,'Email: '+str(i[9]))
+                                        pdf.drawString(300,x-85,'Email: '+str(i[14]))
+                                        pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                                    
                             
-                            pdf.drawString(300,x-10,'Name:'+str(i[6]))
-                            pdf.drawString(28,x-25,"Customer Id:"+str(i[0]))
-                            pdf.drawString(300,x-25,"Tax exempt No.:"+str(i[17]))
-                            pdf.drawString(28,x-40,'Address: '+str(i[5]))
-                            pdf.drawString(300,x-40,'Address:'+str(i[7]))
-                            pdf.drawString(28,x-55,'Contact Person: '+str(i[8])) 
-                            pdf.drawString(300,x-55,'Contact Person:'+str(i[13]))
-                            pdf.drawString(28,x-70,'Tel:'+str(i[10]))
-                            pdf.drawString(300,x-70,'Tel:'+str(i[15]))
-                            pdf.drawString(150,x-70,'Fax: '+str(i[11])) 
-                            pdf.drawString(430,x-70,'Fax: '+str(i[16]))
-                            pdf.drawString(28,x-85,'Email: '+str(i[9]))
-                            pdf.drawString(300,x-85,'Email: '+str(i[14]))
-                            pdf.drawString(28,x-100,"__________________________________________________________________________________")
-                        
-                            count += 1
-                            x-=105
+                                    x-=105
+                                    count += 1
 
 
                 pdf.save()
@@ -1641,7 +1686,7 @@ def exportcanvas10():
         lst = []
         with open(path, "w", newline='') as myfile:
             csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select orderid,category,name,warehouse,stocklimit,stock from storingproduct'
+            sql = 'select Productserviceid,category,name,warehouse,stocklimit,stock from productservice where stock < stocklimit'
             
         
             fbcursor.execute(sql)
@@ -1662,7 +1707,7 @@ def exportcanvas10():
         lst = []
         with open(path, "w", newline='') as myfile:
             csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select orderid,category,name,warehouse,stocklimit,stock from storingproduct WHERE stock > stocklimit'
+            sql = 'select Productserviceid,category,name,warehouse,stocklimit,stock from productservice WHERE stock > stocklimit'
             
         
             fbcursor.execute(sql)
@@ -1683,7 +1728,7 @@ def exportcanvas10():
         lst = []
         with open(path, "w", newline='') as myfile:
             csvwriter = csv.writer(myfile, delimiter=',')
-            sql = 'select orderid,category,name,warehouse,stocklimit,stock from storingproduct WHERE stock < stocklimit'
+            sql = 'select Productserviceid,category,name,warehouse,stocklimit,stock from productservice WHERE stock < stocklimit'
             
         
             fbcursor.execute(sql)
@@ -1890,27 +1935,37 @@ def exportcanvas12():
             csvwriter.writerow(row)
 # srgd
 def exportcanvas13():
-    var_1=rp_exir.get()
-    var_2=rp_exir1.get()
+    var_1=srgd_frm.get()
+    var_2=srgd_to.get()
+    rth=srgdfilter.get()
+   
+    if rth==rth:
 
-    cols = ["Date","Quantity","Cost","Income","Profit"] # Your column headings here
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
-    
-    lst = []
-    with open(path, "w", newline='') as myfile:
-        csvwriter = csv.writer(myfile, delimiter=',')
-        sql = 'select invoice_number,	invodate,duedate,terms,status,invoicetot,totpaid,balance from invoice where invodate between %s and %s'
+        cols = ["Date","Quantity","Cost","Income","Profit"] # Your column headings here
+        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
         
-        irv=(var_1,var_2)
-        fbcursor.execute(sql,irv)
-        pandsdata = fbcursor.fetchall()
-        for row_id in pandsdata:
-            row = row_id
-            lst.append(row)
-        lst = list(map(list,lst))
-        lst.insert(0,cols)
-        for row in lst:
-            csvwriter.writerow(row)
+        lst = []
+        with open(path, "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+            sqr= 'select * from productservice where name=%s'
+            ty=(rth,)
+            fbcursor.execute(sqr,ty)
+            pd=fbcursor.fetchone()
+            
+
+            sql = 'select x.invodate, x.quantity, y.cost,(x.quantity*y.cost),x.invoicetot,(x.invoicetot-(x.quantity*y.cost)) total from invoice x, productservice y where invodate BETWEEN %s and %s and x.Productserviceid=y.Productserviceid and x.Productserviceid=%s '
+            
+            irv=(var_1,var_2, pd[0],)
+            fbcursor.execute(sql,irv)
+            pandsdata = fbcursor.fetchall()
+            
+            for row_id in pandsdata:
+                row = row_id
+                lst.append(row)
+            lst = list(map(list,lst))
+            lst.insert(0,cols)
+            for row in lst:
+                csvwriter.writerow(row)
 
 # ird
 def exportcanvas14():
@@ -2467,7 +2522,7 @@ def pdf_exp():
         tre=fbcursor.fetchall()
         x=660
         for i in tre:
-                if x>=44:
+                if x==44 or x==50:
                     pdf.showPage()
                     x=750
                 else:
@@ -3474,7 +3529,7 @@ def pdf_exp_cl():
                             x-=15
 
 
-                pdf.save()
+            pdf.save()
         elif rth=="Default":
             count=0
             sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1 '
@@ -3504,6 +3559,7 @@ def pdf_exp_cl():
                         
                             count += 1
                             x-=15
+            pdf.save()
     elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==1:
         path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
         defaultextension=".pdf")
@@ -3724,12 +3780,12 @@ def pdf_exp_cld():
                 tre=fbcursor.fetchall()
                 x=705
                 for i in tre:
-                    trf='select * from customer where businessname=%s '
+                    trf='select * from customer where businessname=%s'
                     vs=(str(i[18]),)
                             
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
-                    g=6
+                    
                     
                     for i in thg:
                                     if x==-30 or x==57:
@@ -3758,11 +3814,11 @@ def pdf_exp_cld():
                             
                                     x-=105
                                     count += 1
-                    pdf.save()
+                pdf.save()
                     
             elif rth=="Default":
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
-            
+                count=0
                 fbcursor.execute(sql_inv_dt)
                 tre=fbcursor.fetchall()
                 x=705
@@ -3801,7 +3857,7 @@ def pdf_exp_cld():
                                     count += 1
 
 
-                    pdf.save()
+                pdf.save()
             else:
                 pass
     elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
@@ -4650,7 +4706,7 @@ def pdf_exp_psl():
     elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==0:
         pass
     
-########
+
 def pdf_exp_prl():
     from reportlab.pdfgen import canvas
     # from tkdocviewer import *
@@ -5300,7 +5356,7 @@ def pdf_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct'
+            sql_inv_dt='SELECT * FROM productservice where stock < stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
@@ -5312,11 +5368,11 @@ def pdf_exp_plsr():
                         else:
                             pdf.drawString(28,x,str(i[0]))
                             
-                            pdf.drawString(128,x,str(i[5]))
-                            pdf.drawString(215,x,str(i[6]))
-                            pdf.drawString(315,x,str(i[17]))
-                            pdf.drawString(405,x,str(i[16])) 
-                            pdf.drawString(515,x,str(i[15]))
+                            pdf.drawString(128,x,str(i[3]))
+                            pdf.drawString(215,x,str(i[4]))
+                            pdf.drawString(315,x,str(i[15]))
+                            pdf.drawString(405,x,str(i[14])) 
+                            pdf.drawString(515,x,str(i[13]))
                         
                         count += 1
                         x-=15
@@ -5350,7 +5406,7 @@ def pdf_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct WHERE stock > stocklimit'
+            sql_inv_dt='SELECT * FROM productservice WHERE stock > stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
@@ -5358,11 +5414,11 @@ def pdf_exp_plsr():
             for i in tre:
                         pdf.drawString(28,x,str(i[0]))
                         
-                        pdf.drawString(128,x,str(i[5]))
-                        pdf.drawString(215,x,str(i[6]))
-                        pdf.drawString(315,x,str(i[17]))
-                        pdf.drawString(405,x,str(i[16])) 
-                        pdf.drawString(515,x,str(i[15]))
+                        pdf.drawString(128,x,str(i[3]))
+                        pdf.drawString(215,x,str(i[4]))
+                        pdf.drawString(315,x,str(i[15]))
+                        pdf.drawString(405,x,str(i[14])) 
+                        pdf.drawString(515,x,str(i[13]))
                     
                         count += 1
                         x-=15
@@ -5396,7 +5452,7 @@ def pdf_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct WHERE stock < stocklimit'
+            sql_inv_dt='SELECT * FROM productservice WHERE stock < stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
@@ -5404,11 +5460,11 @@ def pdf_exp_plsr():
             for i in tre:
                         pdf.drawString(28,x,str(i[0]))
                         
-                        pdf.drawString(128,x,str(i[5]))
-                        pdf.drawString(215,x,str(i[6]))
-                        pdf.drawString(315,x,str(i[17]))
-                        pdf.drawString(405,x,str(i[16])) 
-                        pdf.drawString(515,x,str(i[15]))
+                        pdf.drawString(128,x,str(i[3]))
+                        pdf.drawString(215,x,str(i[4]))
+                        pdf.drawString(315,x,str(i[15]))
+                        pdf.drawString(405,x,str(i[14])) 
+                        pdf.drawString(515,x,str(i[13]))
                     
                         count += 1
                         x-=15
@@ -5418,7 +5474,7 @@ def pdf_exp_plsr():
     else:
             pass
 
-    
+######## 
 
 def pdf_exp_tri():   
     
@@ -5467,8 +5523,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5478,8 +5539,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5519,8 +5580,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5530,8 +5596,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5571,8 +5637,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5582,8 +5653,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5623,8 +5694,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5634,8 +5710,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5675,8 +5751,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5686,8 +5767,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5727,8 +5808,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5738,8 +5824,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5779,8 +5865,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5790,8 +5881,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5831,8 +5922,13 @@ def pdf_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -5842,8 +5938,8 @@ def pdf_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -5896,8 +5992,14 @@ def pdf_exp_tro():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+            else:
+                        
                 pdf.drawString(28,x,str(i[0]))
                 
                 pdf.drawString(95,x,str(i[1]))
@@ -5907,8 +6009,8 @@ def pdf_exp_tro():
                 pdf.drawString(400,x,str(i[29]))
                 pdf.drawString(465,x,str(i[8]))
                 
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
@@ -5972,11 +6074,18 @@ def pdf_exp_srgd():
         tre1=fbcursor.fetchall()
 
         
-        x=655
+        x=660
         for i in tre1:
             for j in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     k=int(j[9]*int(i[38]))
-                    l=int(i[8])-int(j[9])
+                    rt=int(i[8])
+                    l=rt-k
                     pdf.drawString(28,x,str(i[2]))
                     
                     pdf.drawString(138,x,str(i[38]))
@@ -5984,8 +6093,8 @@ def pdf_exp_srgd():
                     pdf.drawString(385,x,str(i[8]))
                     pdf.drawString(485,x,str(l)) 
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
        
         pdf.save()
@@ -6039,8 +6148,14 @@ def pdf_exp_ird():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                pdf.showPage()
+                x=750
+                    
+            else:
+                        
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(108,x,str(i[2]))
@@ -6049,8 +6164,8 @@ def pdf_exp_ird():
                 pdf.drawString(435,x,str(i[9])) 
                 pdf.drawString(520,x,str(i[10]))
                
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
@@ -6107,6 +6222,12 @@ def pdf_exp_dir():
     tre=fbcursor.fetchall()
     x=655
     for i in tre:
+            if x==44 or x==50:
+                pdf.showPage()
+                x=750
+                    
+            else:
+                     
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(100,x,str(i[2]))
@@ -6115,8 +6236,8 @@ def pdf_exp_dir():
                 pdf.drawString(428,x,str(i[9])) 
                 pdf.drawString(515,x,str(i[10]))
                
-                count += 1
-                x-=15
+            count += 1
+            x-=15
     
 
 
@@ -6171,8 +6292,14 @@ def pdf_exp_por():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6181,8 +6308,8 @@ def pdf_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
@@ -6228,6 +6355,12 @@ def pdf_exp_por():
         tre=fbcursor.fetchall()
         x=655
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6236,8 +6369,8 @@ def pdf_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
@@ -6284,6 +6417,12 @@ def pdf_exp_por():
         tre=fbcursor.fetchall()
         x=655
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6292,8 +6431,8 @@ def pdf_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
@@ -6350,8 +6489,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6360,8 +6506,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -6406,8 +6552,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6416,8 +6569,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -6464,8 +6617,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6474,8 +6634,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -6520,8 +6680,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6530,8 +6697,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -6582,8 +6749,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6592,9 +6766,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
-
+                    count += 1
+                    x-=15
 
             pdf.save()
 
@@ -6638,8 +6811,15 @@ def pdf_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -6648,8 +6828,8 @@ def pdf_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
@@ -6672,8 +6852,7 @@ def pr_exp():
         pass
     elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
         
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
         
 
         sql_company = "SELECT * from company"
@@ -6696,14 +6875,19 @@ def pr_exp():
         cr=rp_exir1.get()
         var_1=in_dat
         var_2=cr
-    
+
         count=0
         sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s and 	invoicetot="0"'
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6713,15 +6897,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
-
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6749,8 +6932,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6760,16 +6947,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
-     
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
-
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6797,8 +6982,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6808,16 +6997,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
-        
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6845,8 +7032,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6856,16 +7047,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
-       
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6887,14 +7076,18 @@ def pr_exp():
         cr=rp_exir1.get()
         var_1=in_dat
         var_2=cr
-    
+        
         count=0
         sql_inv_dt='SELECT * FROM invoice WHERE invodate BETWEEN %s and %s'
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6904,16 +7097,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
-        
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6941,8 +7132,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6952,15 +7147,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -6988,8 +7182,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -6999,17 +7197,14 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
-        
-        
-        pdf = canvas.Canvas("reports\Invoice_report.pdf", pagesize=letter)
-
+        pdf = canvas.Canvas("reports/Invoice_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7037,8 +7232,12 @@ def pr_exp():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                else:
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7048,16 +7247,19 @@ def pr_exp():
                     pdf.drawString(360,x,str(i[8]))
                     pdf.drawString(450,x,str(i[9]))
                     pdf.drawString(525,x,str(i[10]))
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report.pdf",None,".",0) 
     else:
         pass
+    
+    
 
-def pr_exp_irwc(): 
+#==========irwc
+def pr_exp_irwc():
     from reportlab.pdfgen import canvas
     # from tkdocviewer import *
     from reportlab.lib import colors
@@ -7069,9 +7271,7 @@ def pr_exp_irwc():
     if rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
         pass
     elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
-        
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
-        
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7101,8 +7301,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7111,14 +7317,13 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
-
+                count += 1
+                x-=15
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7148,8 +7353,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7158,15 +7369,15 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
 
     elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7196,8 +7407,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7206,14 +7423,14 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7243,8 +7460,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7253,14 +7476,14 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7290,8 +7513,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7300,14 +7529,14 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==1:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7337,8 +7566,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7347,14 +7582,14 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7384,8 +7619,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7394,14 +7635,14 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
     elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
-        pdf = canvas.Canvas("reports\Invoice_report_With_Customer.pdf", pagesize=letter)
+        pdf = canvas.Canvas("reports/Invoice_Report_With Customer.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7431,8 +7672,14 @@ def pr_exp_irwc():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+            
                     pdf.drawString(28,x,str(i[1]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -7441,12 +7688,12 @@ def pr_exp_irwc():
                     pdf.drawString(405,x,str(i[4])) 
                     pdf.drawString(490,x,str(i[8]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
-        win32api.ShellExecute(0,"","reports\Invoice_report_With_Customer.pdf",None,".",0)
+        win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)  
     else:
         pass
     
@@ -7460,14 +7707,7 @@ def pr_exp_or():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Order_Report.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -7499,21 +7739,27 @@ def pr_exp_or():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
-                pdf.drawString(28,x,str(i[0]))
-                
-                pdf.drawString(88,x,str(i[1]))
-                pdf.drawString(158,x,str(i[2]))
-                pdf.drawString(235,x,str(i[3]))
-                pdf.drawString(405,x,str(i[4])) 
-                pdf.drawString(490,x,str(i[26]))
+                if x==44 or x==50 :
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                    pdf.drawString(28,x,str(i[0]))
+                    
+                    pdf.drawString(88,x,str(i[1]))
+                    pdf.drawString(158,x,str(i[2]))
+                    pdf.drawString(235,x,str(i[3]))
+                    pdf.drawString(405,x,str(i[4])) 
+                    pdf.drawString(490,x,str(i[26]))
                
                 count += 1
                 x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Order_Report.pdf",None,".",0)
 
 def pr_exp_rir():
     from reportlab.pdfgen import canvas
@@ -7524,14 +7770,7 @@ def pr_exp_rir():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Recurring_Invoice_Report.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -7554,8 +7793,13 @@ def pr_exp_rir():
  
     fbcursor.execute(sql_inv_dt)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+            else:
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(115,x,str(i[18]))
@@ -7564,11 +7808,12 @@ def pr_exp_rir():
                 pdf.drawString(430,x,str(i[27])) 
                 pdf.drawString(505,x,str(i[8]))
                
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Recurring_Invoice_Report.pdf",None,".",0)
 
 def pr_exp_pdi():   
     
@@ -7580,14 +7825,7 @@ def pr_exp_pdi():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Past_Due_Invoice_Report.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -7612,8 +7850,13 @@ def pr_exp_pdi():
     
     fbcursor.execute(sql_inv_dt)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50 :
+                    pdf.showPage()
+                    x=750
+                    
+            else:
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(88,x,str(i[2]))
@@ -7623,11 +7866,12 @@ def pr_exp_pdi():
                 pdf.drawString(365,x,str(i[8]))
                 pdf.drawString(455,x,str(i[9]))
                 pdf.drawString(530,x,str(i[10]))
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Past_Due_Invoice_Report.pdf",None,".",0)
 
 
 def pr_exp_pym():   
@@ -7640,14 +7884,7 @@ def pr_exp_pym():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Pyment_Report.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -7674,8 +7911,13 @@ def pr_exp_pym():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+            else:
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(110,x,str(i[2]))
@@ -7685,11 +7927,12 @@ def pr_exp_pym():
                 pdf.drawString(425,x,str(i[18]))
                 pdf.drawString(515,x,str(i[9]))
                 
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Pyment_Report.pdf",None,".",0)
 
 
 def pr_exp_cl():
@@ -7701,34 +7944,27 @@ def pr_exp_cl():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
     if rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==0:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        
+        rth=clfilter.get()
+        pdf = canvas.Canvas("reports/Customer_List.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
         company= fbcursor.fetchone()
-        
+            
         pdf.setFont('Helvetica',12)
         pdf.drawString(30,760, company[1])
         pdf.drawString(495,760, "Customer List")
-        
+            
 
         pdf.drawString(28,750,"__________________________________________________________________________________")
         pdf.drawString(28,730,"__________________________________________________________________________________")
 
-        
-        
+            
+            
         pdf.drawString(28,733,"Customer Id  Category     Customer Businnes Name        Customer Person         Tel              Fax    ")
-        rth=clfilter.get()
         
         if rth=="All Customers ":
-        
             count=0
             sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
@@ -7742,19 +7978,25 @@ def pr_exp_cl():
                 fbcursor.execute(trf, vs)
                 thg=fbcursor.fetchall()
                 for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
 
 
-                pdf.save()
+            pdf.save()
+            win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
         elif rth=="Default":
             count=0
             sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1 '
@@ -7765,29 +8007,29 @@ def pr_exp_cl():
             for i in tre:
                 trf='select * from customer where businessname=%s and category="Default"'
                 vs=(str(i[18]),)
-                    
+                
                 fbcursor.execute(trf, vs)
                 thg=fbcursor.fetchall()
                 for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
+            pdf.save()
+            win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
     elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==1:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Customer_List.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7821,19 +8063,25 @@ def pr_exp_cl():
                 fbcursor.execute(trf, vs)
                 thg=fbcursor.fetchall()
                 for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
 
 
                 pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
         elif rth=="Default":
             count=0
             sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1 '
@@ -7844,30 +8092,29 @@ def pr_exp_cl():
             for i in tre:
                 trf='select * from customer where businessname=%s and category="Default"'
                 vs=(str(i[18]),)
-                    
+                x=705
                 fbcursor.execute(trf, vs)
                 thg=fbcursor.fetchall()
                 for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
                 pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
     elif rpcheckvar1_cl.get()==1 and rpcheckvar2_cl.get()==1:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Customer_List.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -7898,64 +8145,69 @@ def pr_exp_cl():
             fbcursor.execute(trf)
             thg=fbcursor.fetchall()
             for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
         elif rth=="Default":
             count=0
             trf='select * from customer where category="Default" '
                 
             fbcursor.execute(trf)
             thg=fbcursor.fetchall()
+            x=705
             for i in thg:
-                            pdf.drawString(28,x,str(i[0]))
-                            
-                            pdf.drawString(110,x,str(i[2]))
-                            pdf.drawString(168,x,str(i[4]))
-                            pdf.drawString(335,x,str(i[8]))
-                            pdf.drawString(440,x,str(i[10])) 
-                            pdf.drawString(512,x,str(i[11]))
+                            if x==47 or i==57:
+                                pdf.showPage()
+                                x=855
+                                pdf.drawString(28,x-100,"__________________________________________________________________________________")
+                            else:
+                                pdf.drawString(28,x,str(i[0]))
+                                
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(168,x,str(i[4]))
+                                pdf.drawString(335,x,str(i[8]))
+                                pdf.drawString(440,x,str(i[10])) 
+                                pdf.drawString(512,x,str(i[11]))
                         
                             count += 1
                             x-=15
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Customer_List.pdf",None,".",0)
     elif rpcheckvar1_cl.get()==0 and rpcheckvar2_cl.get()==0:
         pass
     else:
         pass
     
-# pakka
+
 def pr_exp_cld():
     from reportlab.pdfgen import canvas
     # from tkdocviewer import *
     from reportlab.lib import colors
     from reportlab.pdfbase.ttfonts import TTFont
     from reportlab.pdfbase import pdfmetrics
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,PageBreak 
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
-
     if rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==0:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle) 
+            pdf = canvas.Canvas("reports/Customer_List_Detailed.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
             company= fbcursor.fetchone()
-            defgonpg()
+            
             pdf.setFont('Helvetica',12)
             
             pdf.drawString(30,760, company[1])
@@ -7967,30 +8219,29 @@ def pr_exp_cld():
 
             
             
-            pdf.drawString(28,733,"Billing Information:                                                    Shipping       Information:                      ")
+            pdf.drawString(28,733,"Billing Information:                                                    Shipping Information:                      ")
             rth=cldfilter.get()
             
 
             if rth=="All Customers ":
                 
-                count=0
+                
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
                 fbcursor.execute(sql_inv_dt)
                 tre=fbcursor.fetchall()
                 x=705
+                count=0
                 for i in tre:
-                    trf='select * from customer where businessname=%s '
+                    trf='select * from customer where businessname=%s'
                     vs=(str(i[18]),)
                             
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
-                    g=6
-                    
                     for i in thg:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8014,16 +8265,17 @@ def pr_exp_cld():
                             
                                     x-=105
                                     count += 1
-  
-                    pdf.save()
-    
-                    
+
+
+                pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             elif rth=="Default":
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)>1'
             
                 fbcursor.execute(sql_inv_dt)
                 tre=fbcursor.fetchall()
                 x=705
+                count=0
                 for i in tre:
                     trf='select * from customer where businessname=%s and category="Default"'
                     vs=(str(i[18]),)
@@ -8031,9 +8283,9 @@ def pr_exp_cld():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8058,18 +8310,13 @@ def pr_exp_cld():
                                     x-=105
                                     count += 1
 
-                    pdf.save()
+
+                pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             else:
                 pass
     elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Customer_List_Detailed.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8103,9 +8350,9 @@ def pr_exp_cld():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8132,6 +8379,7 @@ def pr_exp_cld():
 
 
                     pdf.save()
+                    win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             elif rth=="Default":
                 sql_inv_dt='SELECT * from invoice GROUP by businessname HAVING COUNT(businessname)=1'
             
@@ -8145,9 +8393,9 @@ def pr_exp_cld():
                     fbcursor.execute(trf, vs)
                     thg=fbcursor.fetchall()
                     for i in thg:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8174,19 +8422,13 @@ def pr_exp_cld():
 
 
                     pdf.save()
+                    win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             else:
                 pass
     elif rpcheckvar1_cld.get()==0 and rpcheckvar2_cld.get()==0:
         pass
     elif rpcheckvar1_cld.get()==1 and rpcheckvar2_cld.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Customer_List_Detailed.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8215,9 +8457,9 @@ def pr_exp_cld():
                 x=705
                 
                 for i in tre:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8244,6 +8486,7 @@ def pr_exp_cld():
 
 
                 pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             elif rth=="Default":
                 count=0
                 sql_inv_dt='SELECT * FROM customer where category="Default"'
@@ -8255,9 +8498,9 @@ def pr_exp_cld():
 
                 
                         for i in tre:
-                                    if x==-30:
+                                    if x==-30 or x==57:
                                         pdf.showPage()
-                                        x=860
+                                        x=855
                                         pdf.drawString(28,x-100,"__________________________________________________________________________________")
                                     else:
                                         
@@ -8284,6 +8527,7 @@ def pr_exp_cld():
 
 
                 pdf.save()
+                win32api.ShellExecute(0,"","reports\Customer_List_Detailed.pdf",None,".",0)
             else:
                 pass
     
@@ -8299,14 +8543,7 @@ def pr_exp_psl():
     rth=pslfilter.get()
     if rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==0:
         if rth=="All product and Services ":
-                path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-                defaultextension=".pdf")
-
-                fileName = path
-                documentTitle = 'Document title!'
-                title = 'Invoices List'
-                pdf = canvas.Canvas(fileName, pagesize=letter)
-                pdf.setTitle(documentTitle)
+                pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
                 sql_company = "SELECT * from company"
                 fbcursor.execute(sql_company)
@@ -8330,6 +8567,10 @@ def pr_exp_psl():
                 tre=fbcursor.fetchall()
                 x=705
                 for i in tre:
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
                             pdf.drawString(28,x,str(i[0]))
                             
                             pdf.drawString(95,x,str(i[3]))
@@ -8339,20 +8580,14 @@ def pr_exp_psl():
                             pdf.drawString(475,x,str(i[13]))
                             pdf.drawString(510,x,str(i[9]))
                             pdf.drawString(545,x,str(i[11]))
-                            count += 1
-                            x-=15
+                        count += 1
+                        x-=15
 
 
                 pdf.save()
+                win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8376,29 +8611,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8422,29 +8655,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8468,32 +8699,30 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==1:
         if rth=="All product and Services ":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8517,29 +8746,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8563,29 +8790,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8609,29 +8834,26 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
-
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8655,33 +8877,30 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==1:
         if rth=="All product and Services ":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
-
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
             company= fbcursor.fetchone()
@@ -8704,29 +8923,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8750,29 +8967,27 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8796,29 +9011,26 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
-
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_And_Services_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8842,20 +9054,25 @@ def pr_exp_psl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        pdf.drawString(95,x,str(i[3]))
-                        pdf.drawString(165,x,str(i[4]))
-                        pdf.drawString(295,x,str(i[5]))
-                        pdf.drawString(380,x,str(i[15])) 
-                        pdf.drawString(475,x,str(i[13]))
-                        pdf.drawString(510,x,str(i[9]))
-                        pdf.drawString(545,x,str(i[11]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(95,x,str(i[3]))
+                            pdf.drawString(165,x,str(i[4]))
+                            pdf.drawString(295,x,str(i[5]))
+                            pdf.drawString(380,x,str(i[15])) 
+                            pdf.drawString(475,x,str(i[13]))
+                            pdf.drawString(510,x,str(i[9]))
+                            pdf.drawString(545,x,str(i[11]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_psl.get()==0 and rpcheckvar2_psl.get()==0:
@@ -8873,14 +9090,7 @@ def pr_exp_prl():
     rth=prlfilter.get()
     if rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==1:
         if rth=="All product and Services ":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8888,7 +9098,7 @@ def pr_exp_prl():
             
             pdf.setFont('Helvetica',12)
             pdf.drawString(30,760, company[1])
-            pdf.drawString(415,760, "Product And Services Report")
+            pdf.drawString(492,760, "Price List")
             
 
             pdf.drawString(28,750,"__________________________________________________________________________________")
@@ -8904,27 +9114,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8948,27 +9157,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -8992,27 +9200,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9036,30 +9243,29 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==0:
         if rth=="All product and Services ":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9083,27 +9289,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9127,27 +9332,25 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
-
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9171,27 +9374,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9215,30 +9417,28 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
-
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_pl.get()==0 and rpcheckvar2_pl.get()==1:
         if rth=="All product and Services ":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9262,27 +9462,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All products":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9306,27 +9505,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="All Service":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9350,27 +9548,26 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         elif rth=="Default":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Price_List.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9394,18 +9591,24 @@ def pr_exp_prl():
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
-                        
-                        
-                        pdf.drawString(145,x,str(i[4]))
-                        pdf.drawString(373,x,str(i[5]))
-                        
-                        pdf.drawString(515,x,str(i[7]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            
+                            pdf.drawString(145,x,str(i[4]))
+                            pdf.drawString(373,x,str(i[5]))
+                            
+                            pdf.drawString(515,x,str(i[7]))
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_pl.get()==0 and rpcheckvar2_pl.get()==0:
@@ -9427,14 +9630,7 @@ def pr_exp_plsr():
 
 
     if rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_Low_Stock_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9453,34 +9649,32 @@ def pr_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct'
+            sql_inv_dt='SELECT * FROM productservice WHERE stock < stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
             x=705
             for i in tre:
-                        pdf.drawString(28,x,str(i[0]))
+                        if x==47 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            pdf.drawString(28,x,str(i[0]))
+                            
+                            pdf.drawString(128,x,str(i[3]))
+                            pdf.drawString(215,x,str(i[4]))
+                            pdf.drawString(315,x,str(i[15]))
+                            pdf.drawString(405,x,str(i[14])) 
+                            pdf.drawString(515,x,str(i[13]))
                         
-                        pdf.drawString(128,x,str(i[5]))
-                        pdf.drawString(215,x,str(i[6]))
-                        pdf.drawString(315,x,str(i[17]))
-                        pdf.drawString(405,x,str(i[16])) 
-                        pdf.drawString(515,x,str(i[15]))
-                    
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_Low_Stock_Report.pdf",None,".",0)
     elif rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_Low_Stock_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9499,7 +9693,7 @@ def pr_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct WHERE stock > stocklimit'
+            sql_inv_dt='SELECT * FROM productservice WHERE stock > stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
@@ -9507,26 +9701,20 @@ def pr_exp_plsr():
             for i in tre:
                         pdf.drawString(28,x,str(i[0]))
                         
-                        pdf.drawString(128,x,str(i[5]))
-                        pdf.drawString(215,x,str(i[6]))
-                        pdf.drawString(315,x,str(i[17]))
-                        pdf.drawString(405,x,str(i[16])) 
-                        pdf.drawString(515,x,str(i[15]))
+                        pdf.drawString(128,x,str(i[3]))
+                        pdf.drawString(215,x,str(i[4]))
+                        pdf.drawString(315,x,str(i[15]))
+                        pdf.drawString(405,x,str(i[14])) 
+                        pdf.drawString(515,x,str(i[13]))
                     
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_Low_Stock_Report.pdf",None,".",0)
     elif rpcheckvar1_plr.get()==0 and rpcheckvar2_plr.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Product_Low_Stock_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9545,7 +9733,7 @@ def pr_exp_plsr():
         
         
             count=0
-            sql_inv_dt='SELECT * FROM storingproduct WHERE stock < stocklimit'
+            sql_inv_dt='SELECT * FROM productservice WHERE stock < stocklimit'
         
             fbcursor.execute(sql_inv_dt)
             tre=fbcursor.fetchall()
@@ -9553,21 +9741,22 @@ def pr_exp_plsr():
             for i in tre:
                         pdf.drawString(28,x,str(i[0]))
                         
-                        pdf.drawString(128,x,str(i[5]))
-                        pdf.drawString(215,x,str(i[6]))
-                        pdf.drawString(315,x,str(i[17]))
-                        pdf.drawString(405,x,str(i[16])) 
-                        pdf.drawString(515,x,str(i[15]))
+                        pdf.drawString(128,x,str(i[3]))
+                        pdf.drawString(215,x,str(i[4]))
+                        pdf.drawString(315,x,str(i[15]))
+                        pdf.drawString(405,x,str(i[14])) 
+                        pdf.drawString(515,x,str(i[13]))
                     
                         count += 1
                         x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Product_Low_Stock_Report.pdf",None,".",0)
     else:
             pass
 
-    
+######## 
 
 def pr_exp_tri():   
     
@@ -9581,14 +9770,7 @@ def pr_exp_tri():
     if rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
         pass
     elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9616,8 +9798,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9627,20 +9814,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9668,8 +9849,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9679,20 +9865,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9720,8 +9900,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9731,20 +9916,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9772,8 +9951,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9783,20 +9967,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9824,8 +10002,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9835,20 +10018,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9876,8 +10053,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9887,20 +10069,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==1 and rpcheckvar3_tri.get()==0:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9928,8 +10104,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9939,20 +10120,14 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     elif rpcheckvar1_tri.get()==1 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==1:
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Tax_report_Invoice.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -9980,8 +10155,13 @@ def pr_exp_tri():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
                         pdf.drawString(28,x,str(i[1]))
                         
                         pdf.drawString(95,x,str(i[2]))
@@ -9991,11 +10171,12 @@ def pr_exp_tri():
                         pdf.drawString(400,x,str(i[36]))
                         pdf.drawString(465,x,str(i[8]))
                         
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
     else:
         pass
     
@@ -10010,14 +10191,7 @@ def pr_exp_tro():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Tax_report_Orders.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -10045,8 +10219,14 @@ def pr_exp_tro():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+            else:
+                        
                 pdf.drawString(28,x,str(i[0]))
                 
                 pdf.drawString(95,x,str(i[1]))
@@ -10056,11 +10236,12 @@ def pr_exp_tro():
                 pdf.drawString(400,x,str(i[29]))
                 pdf.drawString(465,x,str(i[8]))
                 
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Tax_report_Orders.pdf",None,".",0)
 
 
 def pr_exp_srgd():   
@@ -10075,14 +10256,7 @@ def pr_exp_srgd():
     rth=srgdfilter.get()
    
     if rth==rth:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Sales_Report_Group_By_Date.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -10121,11 +10295,20 @@ def pr_exp_srgd():
         tre1=fbcursor.fetchall()
 
         
-        x=655
+        x=660
         for i in tre1:
             for j in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     k=int(j[9]*int(i[38]))
-                    l=int(i[8])-int(j[9])
+                    rt=int(i[8])
+                    l=rt-k
+                    
+
                     pdf.drawString(28,x,str(i[2]))
                     
                     pdf.drawString(138,x,str(i[38]))
@@ -10133,11 +10316,12 @@ def pr_exp_srgd():
                     pdf.drawString(385,x,str(i[8]))
                     pdf.drawString(485,x,str(l)) 
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
        
         pdf.save()
+        win32api.ShellExecute(0,"","reports\Sales_Report_Group_By_Date.pdf",None,".",0)
     else:
         pass
 
@@ -10150,14 +10334,7 @@ def pr_exp_ird():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Invoice_Report_Detailed.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -10188,8 +10365,14 @@ def pr_exp_ird():
     inv_valuz=(var_1,var_2)
     fbcursor.execute(sql_inv_dt,inv_valuz)
     tre=fbcursor.fetchall()
-    x=655
+    x=660
     for i in tre:
+            if x==44 or x==50:
+                pdf.showPage()
+                x=750
+                    
+            else:
+                        
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(108,x,str(i[2]))
@@ -10198,11 +10381,12 @@ def pr_exp_ird():
                 pdf.drawString(435,x,str(i[9])) 
                 pdf.drawString(520,x,str(i[10]))
                
-                count += 1
-                x-=15
+            count += 1
+            x-=15
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Invoice_Report_Detailed.pdf",None,".",0)
 
 
 def pr_exp_dir():
@@ -10216,14 +10400,7 @@ def pr_exp_dir():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
 
-    path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-    defaultextension=".pdf")
-
-    fileName = path
-    documentTitle = 'Document title!'
-    title = 'Invoices List'
-    pdf = canvas.Canvas(fileName, pagesize=letter)
-    pdf.setTitle(documentTitle)
+    pdf = canvas.Canvas("reports/Daily_Invoice_Report.pdf", pagesize=letter)
 
     sql_company = "SELECT * from company"
     fbcursor.execute(sql_company)
@@ -10256,6 +10433,12 @@ def pr_exp_dir():
     tre=fbcursor.fetchall()
     x=655
     for i in tre:
+            if x==44 or x==50:
+                pdf.showPage()
+                x=750
+                    
+            else:
+                     
                 pdf.drawString(28,x,str(i[1]))
                 
                 pdf.drawString(100,x,str(i[2]))
@@ -10264,12 +10447,13 @@ def pr_exp_dir():
                 pdf.drawString(428,x,str(i[9])) 
                 pdf.drawString(515,x,str(i[10]))
                
-                count += 1
-                x-=15
+            count += 1
+            x-=15
     
 
 
     pdf.save()
+    win32api.ShellExecute(0,"","reports\Daily_Invoice_Report.pdf",None,".",0)
 
 
 def pr_exp_por():
@@ -10281,14 +10465,7 @@ def pr_exp_por():
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
     from reportlab.lib.pagesizes import letter, inch
     if rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==0:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Parchase_Order_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -10320,8 +10497,14 @@ def pr_exp_por():
         inv_valuz=(var_1,var_2)
         fbcursor.execute(sql_inv_dt,inv_valuz)
         tre=fbcursor.fetchall()
-        x=655
+        x=660
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -10330,20 +10513,14 @@ def pr_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
+        win32api.ShellExecute(0,"","reports\Parchase_Order_Report.pdf",None,".",0)
     elif rpcheckvar1_por.get()==0 and rpcheckvar2_por.get()==1:
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Parchase_Order_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -10377,6 +10554,12 @@ def pr_exp_por():
         tre=fbcursor.fetchall()
         x=655
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -10385,21 +10568,15 @@ def pr_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
+        win32api.ShellExecute(0,"","reports\Parchase_Order_Report.pdf",None,".",0)
     elif rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==1:
     
-        path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-        defaultextension=".pdf")
-
-        fileName = path
-        documentTitle = 'Document title!'
-        title = 'Invoices List'
-        pdf = canvas.Canvas(fileName, pagesize=letter)
-        pdf.setTitle(documentTitle)
+        pdf = canvas.Canvas("reports/Parchase_Order_Report.pdf", pagesize=letter)
 
         sql_company = "SELECT * from company"
         fbcursor.execute(sql_company)
@@ -10433,6 +10610,12 @@ def pr_exp_por():
         tre=fbcursor.fetchall()
         x=655
         for i in tre:
+                if x==44 or x==50:
+                    pdf.showPage()
+                    x=750
+                    
+                else:
+                        
                     pdf.drawString(28,x,str(i[0]))
                     
                     pdf.drawString(88,x,str(i[2]))
@@ -10441,11 +10624,12 @@ def pr_exp_por():
                     pdf.drawString(395,x,str(i[5])) 
                     pdf.drawString(495,x,str(i[10]))
                 
-                    count += 1
-                    x-=15
+                count += 1
+                x-=15
 
 
         pdf.save()
+        win32api.ShellExecute(0,"","reports\Parchase_Order_Report.pdf",None,".",0)
 
 def pr_exp_exp():
     rth=expfilter.get()
@@ -10460,14 +10644,7 @@ def pr_exp_exp():
 
     if rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==1:
         if rth=="All":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10499,8 +10676,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10509,21 +10693,15 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
 
         elif rth=="Internal":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10555,8 +10733,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10565,23 +10750,17 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
         if rth=="All":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10613,8 +10792,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10623,21 +10809,15 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
 
         elif rth=="Internal":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10669,8 +10849,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10679,11 +10866,12 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
         else:
             pass
     elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
@@ -10692,14 +10880,7 @@ def pr_exp_exp():
     
 
         if rth=="All":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10731,8 +10912,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10741,21 +10929,14 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
-
+                    count += 1
+                    x-=15
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
 
         elif rth=="Internal":
-            path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
-            defaultextension=".pdf")
-
-            fileName = path
-            documentTitle = 'Document title!'
-            title = 'Invoices List'
-            pdf = canvas.Canvas(fileName, pagesize=letter)
-            pdf.setTitle(documentTitle)
+            pdf = canvas.Canvas("reports/Expenses_Report.pdf", pagesize=letter)
 
             sql_company = "SELECT * from company"
             fbcursor.execute(sql_company)
@@ -10787,8 +10968,15 @@ def pr_exp_exp():
             inv_valuz=(var_1,var_2)
             fbcursor.execute(sql_inv_dt,inv_valuz)
             tre=fbcursor.fetchall()
-            x=655
+            x=660
             for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    
+                    else:
+                        
+                   
                         pdf.drawString(28,x,str(i[4]))
                         
                         pdf.drawString(105,x,str(i[10]))
@@ -10797,14 +10985,14 @@ def pr_exp_exp():
                         pdf.drawString(405,x,str(i[16])) 
                         pdf.drawString(520,x,str(i[3]))
                     
-                        count += 1
-                        x-=15
+                    count += 1
+                    x-=15
 
 
             pdf.save()
+            win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
         else:
             pass
-
 
 #############print image
 
@@ -11075,10 +11263,10 @@ def rp_addemail_order():
         
         font_family_variable=StringVar()
         font_familyes=font.families()
-        dropcompo147 = ttk.Combobox(rp_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
-        dropcompo147.place(x=600, y=5)
-        dropcompo147.current(font_familyes.index('Arial'))
-        dropcompo147.bind('<<ComboboxSelected>>', rp_font_style)
+        # dropcompo147 = ttk.Combobox(rp_emailmessage_Frame, width=10, textvariable=font_family_variable, values=font_familyes)
+        # dropcompo147.place(x=600, y=5)
+        # dropcompo147.current(font_familyes.index('Arial'))
+        # dropcompo147.bind('<<ComboboxSelected>>', rp_font_style)
         dropcomp11.bind('<<ComboboxSelected>>', rp_font_size)
         
         rp_attachlbframe=LabelFrame(rp_email_Frame,text="Attachment(s)", height=350, width=280)
@@ -23354,7 +23542,10 @@ def category_srgd():
             
             for i in tre1:
                 for j in tre:
-                    tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],int(j[9])*int(i[38]),i[8],int(i[8])-int(j[9])))
+                    y=int(j[9])*int(i[38])
+                    r=i[8]
+                    l=r-y
+                    tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],int(j[9])*int(i[38]),i[8],l))
                     count += 1
 
 
@@ -23399,7 +23590,7 @@ def category_srgd():
             tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
 
             window = canvas.create_window(290, 260, anchor="nw", window=tree)
-        canvas.create_text(900,100,text="Invoice Report",fill='black',font=("Helvetica", 16), justify='right')
+        canvas.create_text(850,100,text="Sales Report(Group By Daste)",fill='black',font=("Helvetica", 16), justify='right')
         canvas.create_text(875,145,text="Date From:"+srgdfrm.get()+"      Date To:"+srgdto.get()+"\nOrder Category: All",fill='black',font=("Helvetica", 8), justify='right')
         def my_popup(event):
             my_menu.tk_popup(event.x_root, event.y_root)
@@ -25310,14 +25501,14 @@ def category_exp():
     fbcursor.execute(tro_company)
     company_tro= fbcursor.fetchone()
 
-    given_date = datetime.today().date()
-    in_dat = given_date.replace(day=1)
-    exp_frm.delete(0,'end')
-    exp_frm.insert(0, in_dat)
+    # given_date = datetime.today().date()
+    # in_dat = given_date.replace(day=1)
+    # exp_frm.delete(0,'end')
+    # exp_frm.insert(0, in_dat)
 
-    cr=date.today()
-    exp_to.delete(0,'end')
-    exp_to.insert(0, cr)
+    # cr=date.today()
+    # exp_to.delete(0,'end')
+    # exp_to.insert(0, cr)
 
     global canvas
     if rth=="All":
@@ -28945,9 +29136,9 @@ def category_plsr():
             for record in rp_plsr_tree.get_children():
                 rp_plsr_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from storingproduct WHERE stock < stocklimit')
+            fbcursor.execute('SELECT * from productservice WHERE stock < stocklimit')
             for i in fbcursor:
-                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[5], i[6], i[17], i[16], i[15]))
+                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[15], i[14], i[13]))
                 count += 1
             
             window = canvas.create_window(290, 130, anchor="nw", window=rp_plsr_tree)
@@ -33758,9 +33949,9 @@ def check_plsr():
             for record in rp_plsr_tree.get_children():
                 rp_plsr_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from storingproduct WHERE stock > stocklimit')
+            fbcursor.execute('SELECT * from productservice WHERE stock > stocklimit')
             for i in fbcursor:
-                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[5], i[6], i[17], i[16], i[15]))
+                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[15], i[14], i[13]))
                 count += 1
             
             window = canvas.create_window(290, 130, anchor="nw", window=rp_plsr_tree)
@@ -33845,9 +34036,9 @@ def check_plsr():
             for record in rp_plsr_tree.get_children():
                 rp_plsr_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from storingproduct WHERE stock < stocklimit')
+            fbcursor.execute('SELECT * from productservice WHERE stock < stocklimit')
             for i in fbcursor:
-                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[5], i[6], i[17], i[16], i[15]))
+                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[15], i[14], i[13]))
                 count += 1
             
             window = canvas.create_window(290, 130, anchor="nw", window=rp_plsr_tree)
@@ -33905,9 +34096,9 @@ def check_plsr():
             for record in rp_plsr_tree.get_children():
                 rp_plsr_tree.delete(record)
             count=0
-            fbcursor.execute('SELECT * from storingproduct WHERE stock=stocklimit')
+            fbcursor.execute('SELECT * from productservice WHERE stock<stocklimit')
             for i in fbcursor:
-                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[5], i[6], i[17], i[16], i[15]))
+                rp_plsr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[15], i[14], i[13]))
                 count += 1
             
             window = canvas.create_window(290, 130, anchor="nw", window=rp_plsr_tree)
