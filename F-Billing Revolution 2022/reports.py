@@ -7063,6 +7063,7 @@ def pr_exp():
         pdf.setFont('Helvetica',12)
         pdf.drawString(30,760, company[1])
         pdf.drawString(30,740, company[2])
+        
         pdf.drawString(30,700, "Sales tax reg No:"+company[4])
         pdf.drawString(490,760, "Invoice Report")
         pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -8275,7 +8276,7 @@ def pr_exp_cld():
                 fbcursor.execute(sql_inv_dt)
                 tre=fbcursor.fetchall()
                 x=705
-                count=0
+                
                 for i in tre:
                     trf='select * from customer where businessname=%s and category="Default"'
                     vs=(str(i[18]),)
@@ -11072,9 +11073,9 @@ def rp_send_mails():
 
 def rp_empsfile_image(event):
           global rp_yawn
-          for i in htcodeframe.curselection():
-            print("hloo",htcodeframe.get(i))
-            rp_yawn=htcodeframe.get(i)        
+          for i in rp_htcodeframe.curselection():
+            print("hloo",rp_htcodeframe.get(i))
+            rp_yawn=rp_htcodeframe.get(i)        
             edit_window_img = Toplevel()
             edit_window_img.title("View Image")
             edit_window_img.geometry("700x500")
@@ -11085,12 +11086,17 @@ def rp_empsfile_image(event):
             rp_psimage.photo = image
             rp_psimage.pack()
 
+
+def op_file(event):
+    win32api.ShellExecute(0,"",rp_filenamez,None,".",0)
+    
+
 def rp_UploadAction(event=None):
       global rp_filenamez
-      rp_filenamez = askopenfilename(filetypes=(("png file ",'.png'),("jpg file", ".jpg"), ('PDF', '*.pdf',), ("All files", "*.*"),))
+      rp_filenamez = askopenfilename(filetypes=(('PDF', '*.pdf',),("png file ",'.png'),("jpg file", ".jpg"),  ("All files", "*.*"),))
       shutil.copyfile(rp_filenamez, os.getcwd()+'/images/'+rp_filenamez.split('/')[-1])
       rp_htcodeframe.insert(0, rp_filenamez.split('/')[-1])
-
+      
     
 def rp_addemail_order():
 
@@ -11212,8 +11218,100 @@ def rp_addemail_order():
             rp_mframe.delete(0.0,END)
             rp_mframe.insert(INSERT,data,'center')
 
+        def add_link():
+            # from tkHyperLinkManager import HyperlinkManager
+            # import webbrowser
+            # from functools import partial
+            
+            content=rp_mframe.selection_get()
+            
+            
+            print(content)
+
+            url="Haiii"
+            rp_mframe.insert(END, url)
+            rp_mframe.configure(foreground="red")
+            # rp_mframe.delete(1.0,END)
+            
+            # content.replace()
+            top.distroy()
+        def callback(url):
+            webbrowser.open_new_tab_url(url)
+
+        def addlinkbox():
+            global top
+            top = Toplevel()
+            top.title('Hyperlink')
+            top.geometry("400x100")
+            hyp_lbl = LabelFrame(top,text="Hyperlink Information", height=80, width=300)
+            hyp_lbl.place(x=10, y=5)
+
+            hyp_lbl1 = Label(top,text="Type:")
+            hyp_lbl1.place(x=18, y=24)
+            
+            def comb_select(event):
+                hyper = cb_comb.get()
+                if hyper == "(other)":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "(other)")
+                elif hyper == "file://":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "file://")
+                elif hyper == "ftp://":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "ftp://") 
+                elif hyper == "http://":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "http://") 
+                elif hyper == "https://":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "https://") 
+                elif hyper == "mailto:":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "mailto:") 
+                elif hyper == "telnet:":
+                    hyp= Entry(top,width=35)
+                    hyp.place(x=90,y=55)
+                    hyp.insert(END,  "telnet:")
+
+
+            cb_comb = StringVar()
+            cb1=ttk.Combobox(top,textvariable=cb_comb,width=15)
+            cb1.grid(row=1,column=1,padx=90,pady=30)
+            cb1['values']=('(other)','file://','ftp://','http://','https://','mailto:','news:','telnet:')
+            cb1.current(0)
+            cb1.bind('<<ComboboxSelected>>',comb_select)
+
+
+            hyp_lbl2 = Label(top,text="URL:")
+            hyp_lbl2.place(x=18, y=55)
+            global rp_hyper
+            rp_hyper = StringVar()
+            
+            hyp= Entry(top,textvariable=rp_hyper,width=35)
+            hyp.place(x=90,y=55)
+
+            
+
+            hypbtn1 = Button(top,text="OK",width=10, command=add_link)
+            hypbtn1.place(x=315,y=8)
+
+            hypbtn2 = Button(top,text="Cancel",width=10)
+            hypbtn2.place(x=315,y=35)
+
         rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=88, bg="white", height=22)
         rp_mframe.place(x=0, y=30)
+
+        # link.bind("<Button-1>",lambda e:callback("http://www.tutorialspoint.com"))
+        
+        
+        
 
         rp_btn1=Button(rp_emailmessage_Frame,width=20,height=20,compound = LEFT,image=selectall,command=lambda :rp_mframe.event_generate('<Control a>'))
         rp_btn1.place(x=0, y=1)
@@ -11254,7 +11352,7 @@ def rp_addemail_order():
         
         rp_btn15=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=rp_color_select)
         rp_btn15.place(x=420, y=1)
-        rp_btn16=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink)
+        rp_btn16=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command=addlinkbox)
         rp_btn16.place(x=491, y=1)
 
         size_variable=IntVar()
@@ -11275,7 +11373,7 @@ def rp_addemail_order():
         rp_lstfrm=StringVar()  
         rp_htcodeframe=Listbox(rp_attachlbframe, height=13, width=43,listvariable=rp_lstfrm, bg="white")
         rp_htcodeframe.place(x=5, y=5)
-        rp_htcodeframe.bind('<Double-Button-1>' , rp_empsfile_image)
+        rp_htcodeframe.bind('<Double-Button-1>' , op_file)
 
         def rp_deslist():
             rp_laa=rp_htcodeframe.curselection()
@@ -14357,183 +14455,337 @@ def screen_flt():
 
         
         if company is not None:
-            
+            ltr=rp_scr_frm.get_date()
+            ltr1=rp_sc_to.get_date()
+            # var_12=ltr
+            # var_21=ltr1
+
+            # sqlr_paid ="SELECT * from invoice WHERE invodate BETWEEN %s and %s"
+            # invs_valuz=(var_12,var_21)
+            # fbcursor.execute(sqlr_paid,invs_valuz)
+            # invoicess= fbcursor.fetchone()
+
+            if ltr!=ltr1:
+                print("hai")
 
 
-            ltt=rp_scr_frm.get_date()
-            ltt1=rp_sc_to.get_date()
-            
-
-            var_1=ltt
-            var_2=ltt1
-            
-            sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(sql_paid,inv_valuz)
-            invoice= fbcursor.fetchone()
-
-            x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(x_axis, inv_valuz)
-            axis_x= fbcursor.fetchone()
-
-
-
-            sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(sql_company,inv_valuz)
-            paid= fbcursor.fetchone()
-
-
-
-            sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(sql_outstanding,inv_valuz)
-            outstanding= fbcursor.fetchone()
-
-
-            frame = Frame(
-                    reportframe,
-                    width=1380,
-                    height=1000,
-                    bg='#b3b3b3',
-                    )
-            frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                ltt=rp_scr_frm.get_date()
+                ltt1=rp_sc_to.get_date()
                 
-            frame.pack()
 
-
-            x=ltt1
-           
-            y=invoice
-
-            x=axis_x
-            figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
-            plt.bar(x,y, label="Invoice", color="orange")
-            plt.legend()
-            plt.xlabel("Total Amount")
-            plt.ylabel("Date")
-            axes=plt.gca()
-            axes.yaxis.grid()
-
-            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-
-
-
-            #**************add dates********
-
-            dates=axis_x[0]+timedelta(days=2)
-
-            y=outstanding
-            x=dates
-            plt.bar(x,y, label="Outstanding", color="blue")
-            plt.legend()
-            plt.xlabel("Total Amount")
-            plt.ylabel("Date")
-            axes=plt.gca()
-            axes.yaxis.grid()
-            # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-
-            dates3=axis_x[0]-timedelta(days=2)
-            y=paid
-            x=dates3
-            plt.bar(x,y, label="Paid", color="green") 
-            plt.legend()
-            plt.xlabel("Total Amount")
-            plt.ylabel("Date")
-            axes=plt.gca()
-            axes.yaxis.grid()
-            # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
-
-            #used to display chart in our frame
-            canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
-            canvasbar.draw()
-            canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
-
-            #second graph
-
-            sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(sec_paid,inv_valuz)
-            paid_sec_x= fbcursor.fetchone()
-
-            
-
-
-            sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
-            inv_valuz=(var_1,var_2)
-
-            fbcursor.execute(sec_paid_y,inv_valuz)
-
-            paid_sec_y= fbcursor.fetchone()
-
-            
-
-
-            figsecond = plt.figure(figsize=(9, 4), dpi=80)
-
-            x=paid_sec_y
-            y=paid_sec_x
-            plt.barh(x,y, label="Top Billed Customer", color="orange") 
-            plt.legend()
-            plt.xlabel("Invoiced Amont")
-            plt.ylabel("")
-            axes=plt.gca()
-            axes.xaxis.grid()
-
-
-            canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
-            canvasbar.draw()
-            canvasbar.get_tk_widget().place(x=0, y=370)
-
-            # #second graph
-
-            thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(thrd_paid,inv_valuz)
-            paid_thrd_x= fbcursor.fetchone()
-            
-
-
-            thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
-            inv_valuz=(var_1,var_2)
-            fbcursor.execute(thrd_paid_y,inv_valuz)
-
-            paid_thrd_y= fbcursor.fetchone()
-
-
-            figlast = plt.figure(figsize=(9, 4), dpi=80)
-
-            x=paid_thrd_y
-            y=paid_thrd_x   
-            plt.barh(x,y, label="Top Product Sale", color="blue") 
-            plt.legend()
-            plt.xlabel("Total Sales")
-            plt.ylabel("")
-            axes=plt.gca()
-            axes.xaxis.grid()
-            
-
-            canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
-            canvasbar.draw()
-            canvasbar.get_tk_widget().place(x=650, y=370)
-
-            lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
-            lbl_invdtt2.place(x=2, y=85)
-            # def my_popup(event):
-            #     my_menu.tk_popup(event.x_root, event.y_root)
+                var_1=ltt
+                var_2=ltt1
                 
-            # my_menu= Menu(canvasbar, tearoff=False)
-            # my_menu.add_command(label="Refresh Chart", command="run")
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Save Chart As Image", command='emailrp')
-            # my_menu.add_separator()
-            # my_menu.add_command(label="Print Chart", command="excel")
-            # canvasbar.bind("<Button-3>", my_popup)
+                sql_paid ="SELECT SUM(invoicetot)from invoice WHERE invodate BETWEEN %s and %s"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(sql_paid,inv_valuz)
+                invoice= fbcursor.fetchone()
+
+                x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice WHERE invodate BETWEEN %s and %s)"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(x_axis, inv_valuz)
+                axis_x= fbcursor.fetchone()
+
+
+
+                sql_company = "SELECT SUM(totpaid)from invoice WHERE invodate BETWEEN %s and %s"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(sql_company,inv_valuz)
+                paid= fbcursor.fetchone()
+
+
+
+                sql_outstanding = "SELECT SUM(balance)from invoice WHERE invodate BETWEEN %s and %s"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(sql_outstanding,inv_valuz)
+                outstanding= fbcursor.fetchone()
+
+
+                frame = Frame(
+                        reportframe,
+                        width=1380,
+                        height=1000,
+                        bg='#b3b3b3',
+                        )
+                frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                    
+                frame.pack()
+
+
+                x=ltt1
+            
+                y=invoice
+
+                x=axis_x
+                figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+                plt.bar(x,y, label="Invoice", color="orange")
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+
+                # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+                #**************add dates********
+
+                dates=axis_x[0]+timedelta(days=2)
+
+                y=outstanding
+                x=dates
+                plt.bar(x,y, label="Outstanding", color="blue")
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+                # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+                dates3=axis_x[0]-timedelta(days=2)
+                y=paid
+                x=dates3
+                plt.bar(x,y, label="Paid", color="green") 
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+                # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+                #used to display chart in our frame
+                canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+                #second graph
+
+                sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(sec_paid,inv_valuz)
+                paid_sec_x= fbcursor.fetchone()
+
+                
+
+
+                sec_paid_y = "SELECT businessname from (select invodate, businessname from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
+                inv_valuz=(var_1,var_2)
+
+                fbcursor.execute(sec_paid_y,inv_valuz)
+
+                paid_sec_y= fbcursor.fetchone()
+
+                
+
+
+                figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+                x=paid_sec_y
+                y=paid_sec_x
+                plt.barh(x,y, label="Top Billed Customer", color="orange") 
+                plt.legend()
+                plt.xlabel("Invoiced Amont")
+                plt.ylabel("")
+                axes=plt.gca()
+                axes.xaxis.grid()
+
+
+                canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=0, y=370)
+
+                # #second graph
+
+                thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(thrd_paid,inv_valuz)
+                paid_thrd_x= fbcursor.fetchone()
+                
+
+
+                thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
+                inv_valuz=(var_1,var_2)
+                fbcursor.execute(thrd_paid_y,inv_valuz)
+
+                paid_thrd_y= fbcursor.fetchone()
+
+
+                figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+                x=paid_thrd_y
+                y=paid_thrd_x   
+                plt.barh(x,y, label="Top Product Sale", color="blue") 
+                plt.legend()
+                plt.xlabel("Total Sales")
+                plt.ylabel("")
+                axes=plt.gca()
+                axes.xaxis.grid()
+                
+
+                canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=650, y=370)
+
+                lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+                lbl_invdtt2.place(x=2, y=85)
+                # def my_popup(event):
+                #     my_menu.tk_popup(event.x_root, event.y_root)
+                    
+                # my_menu= Menu(canvasbar, tearoff=False)
+                # my_menu.add_command(label="Refresh Chart", command="run")
+                # my_menu.add_separator()
+                # my_menu.add_command(label="Copy Chart To Clipboard", command="pr")
+                # my_menu.add_separator()
+                # my_menu.add_command(label="Save Chart As Image", command='emailrp')
+                # my_menu.add_separator()
+                # my_menu.add_command(label="Print Chart", command="excel")
+                # canvasbar.bind("<Button-3>", my_popup)
+            else:
+            
+                sql_paid = "SELECT SUM(invoicetot)from invoice"
+                fbcursor.execute(sql_paid)
+                invoice= fbcursor.fetchone()
+
+                x_axis = "SELECT invodate from invoice WHERE invoicetot=(SELECT MAX(invoicetot) from invoice)"
+                fbcursor.execute(x_axis)
+                axis_x= fbcursor.fetchone()
+
+
+
+                sql_company = "SELECT SUM(totpaid)from invoice"
+                fbcursor.execute(sql_company)
+                paid= fbcursor.fetchone()
+
+
+
+                sql_outstanding = "SELECT SUM(balance)from invoice"
+                fbcursor.execute(sql_outstanding)
+                outstanding= fbcursor.fetchone()
+
+
+                frame = Frame(
+                        reportframe,
+                        width=1380,
+                        height=1000,
+                        bg='#b3b3b3',
+                        )
+                frame.pack(expand=True, fill=BOTH,  padx=0, pady=0)
+                    
+                frame.pack()
+
+
+                x=datetime.today()
+
+                y=0
+
+                x=axis_x
+                figfirst = plt.figure(figsize=(17, 3.58), dpi=80)
+                plt.bar(x,y, label="Invoice", color="orange")
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+
+                # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+
+
+                #**************add dates********
+
+                dates=axis_x[0]+timedelta(days=2)
+
+                y=0
+                x=dates
+                plt.bar(x,y, label="Outstanding", color="blue")
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+                # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+
+                dates3=axis_x[0]-timedelta(days=2)
+                y=0
+                x=dates3
+                plt.bar(x,y, label="Paid", color="green") 
+                plt.legend()
+                plt.xlabel("Total Amount")
+                plt.ylabel("Date")
+                axes=plt.gca()
+                axes.yaxis.grid()
+                # # cursor=Cursor(ax, horizOn=True, vertOn=True, useblit=True, color='r', linewidth=1)
+
+                #used to display chart in our frame
+                canvasbar = FigureCanvasTkAgg(figfirst, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
+
+                #second graph
+
+                sec_paid = "SELECT MAX(invoicetot) from invoice"
+                fbcursor.execute(sec_paid)
+                paid_sec_x= fbcursor.fetchone()
+
+                sec_paid_y = "SELECT businessname from invoice WHERE invoicetot= (SELECT MAX(invoicetot) from invoice)"
+
+                fbcursor.execute(sec_paid_y)
+
+                paid_sec_y= fbcursor.fetchone()
+
+
+                figsecond = plt.figure(figsize=(9, 4), dpi=80)
+
+                x=0
+                y=0
+                plt.barh(x,y, label="Top Billed Customer", color="orange") 
+                plt.legend()
+                plt.xlabel("Invoiced Amount")
+                plt.ylabel("")
+                axes=plt.gca()
+                axes.xaxis.grid()
+
+
+                canvasbar = FigureCanvasTkAgg(figsecond, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=0, y=370)
+
+                # #second graph
+
+                thrd_paid = "SELECT MAX(unitprice) from productservice"
+                fbcursor.execute(thrd_paid)
+                paid_thrd_x= fbcursor.fetchone()
+
+
+                thrd_paid_y = "SELECT name from productservice WHERE unitprice= (SELECT MAX(unitprice) from productservice)"
+
+                fbcursor.execute(thrd_paid_y)
+
+                paid_thrd_y= fbcursor.fetchone()
+
+                figlast = plt.figure(figsize=(9, 4), dpi=80)
+
+                x=0
+                y=0 
+                plt.barh(x,y, label="Top Product Sale", color="blue") 
+                plt.legend()
+                plt.xlabel("Total Sales")
+                plt.ylabel("")
+                axes=plt.gca()
+                axes.xaxis.grid()
+                
+
+                canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+                canvasbar.draw()
+                canvasbar.get_tk_widget().place(x=650, y=370)
+
+                lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+                lbl_invdtt2.place(x=2, y=85)
 
         else:
             sql_paid = "SELECT SUM(invoicetot)from invoice"
@@ -14868,11 +15120,13 @@ def category():
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         
         if company is not None:
-       
-            k=canvas.create_text(310,100,text=company[1],fill='black',font=("Helvetica", 12), justify='left')
-            
 
-            canvas.create_text(320,165,text=company[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
+            
             
             lk=canvas.create_text(365,228,text="Sales tax reg No:"+company[4],fill='black',font=("Helvetica", 8), justify='left')
             
@@ -14898,7 +15152,7 @@ def category():
             rp_inv_tree.heading("# 8", text="Balance")
             # Insert the data in Treeview widget
             
-            global window
+            
             rp_inv_tree.insert('', 'end',text="1",values=('','','','','','Invoice Total','Total Paid','Balance'))
             
             for record in rp_inv_tree.get_children():
@@ -14939,7 +15193,7 @@ def category():
             
             # rp_inv_tree.insert('', 'end',text="1",values=('','','-End Of List- ','','','Invoice Total','Total Paid','Balance'))
             # rp_inv_tree.insert('', 'end',text="1",values=('','','','','',tot_tri,tot_tax1_tri,tot_inv_bal))
-            global window
+           
 
             window = canvas.create_window(270, 260, anchor="nw", window=rp_inv_tree)
             
@@ -16621,8 +16875,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -16776,8 +17033,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -16928,8 +17188,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17080,8 +17343,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17230,8 +17496,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17379,8 +17648,11 @@ def category_irwc():
             )
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17531,8 +17803,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17683,8 +17958,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17834,8 +18112,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -17985,8 +18266,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -18131,8 +18415,11 @@ def category_irwc():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -18297,8 +18584,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -18442,8 +18732,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -18589,10 +18882,12 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
-            
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
             style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
@@ -18733,8 +19028,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -18879,8 +19177,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -19022,8 +19323,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -19168,10 +19472,12 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
-            
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
             style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
@@ -19314,8 +19620,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -19458,8 +19767,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -19601,10 +19913,12 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
-            
             style=ttk.Style()
             style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
             style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
@@ -19740,8 +20054,11 @@ def category_or():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_or is not None:
-            canvas.create_text(310,100,text=company_or[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_or[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_or[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_or[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_or[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -19897,8 +20214,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20060,8 +20380,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20224,8 +20547,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20388,8 +20714,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20550,8 +20879,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20713,8 +21045,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -20879,8 +21214,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21042,8 +21380,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21203,8 +21544,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21363,8 +21707,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21519,8 +21866,11 @@ def category_tri():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tri is not None:
-            canvas.create_text(310,100,text=company_tri[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tri[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tri[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tri[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tri[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21696,8 +22046,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -21860,8 +22213,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22025,8 +22381,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22189,8 +22548,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22351,8 +22713,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22513,8 +22878,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22677,8 +23045,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -22841,8 +23212,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -23003,8 +23377,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -23164,8 +23541,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -23321,8 +23701,11 @@ def category_tro():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -23492,8 +23875,13 @@ def category_srgd():
         canvas.pack(expand=True,side=LEFT,fill=BOTH)
         canvas.create_rectangle(235,25,1025,1430,  outline='yellow',fill='white')
         if company_tro is not None:
-            canvas.create_text(310,100,text=company_tro[1],fill='black',font=("Helvetica", 12), justify='left')
-            canvas.create_text(320,165,text=company_tro[2],fill='black',font=("Helvetica", 10), justify='left')
+            labelcmp=Label(canvas,text=company_tro[1], bg="white",anchor="nw",font=("Helvetica", 12), width=40, height=2)
+            window = canvas.create_window(285,80, anchor="nw", window=labelcmp)
+
+            labelcmpl=Label(canvas,text=company_tro[2], bg="white",font=("Helvetica", 10),anchor="nw", width=50, height=6)
+            windowl = canvas.create_window(285,120, anchor="nw", window=labelcmpl)
+            canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
+
             canvas.create_text(365,228,text="Sales tax reg No:"+company_tro[4],fill='black',font=("Helvetica", 8),     justify='left')
             
             style=ttk.Style()
@@ -29304,7 +29692,7 @@ rpcheckvar2_cld= BooleanVar()
 def maindropmenu(event):
   menuvar=menu1.get()
   if menuvar== "Screen Charts":
-        rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=screen_flt)
+        rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=lambda:screen_flt())
         rprefreshlebel.place(x=22,y=12)
 
 
@@ -30071,6 +30459,8 @@ def maindropmenu(event):
     rpcopyLabel = Button(midFrame,compound="top", text="Export Report\n to PDF",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:pdf_exp_cl())
     rpcopyLabel.place(x=240,y=12)
 
+    lbl_ir = Label(reportframe, text="    \n   \n   \n   \n   \n  ", bg="#f8f8f2")
+    lbl_ir.place(x=0,y=500)
 
     pdiuw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
     pdiuw1.place(x=415,y=9)
