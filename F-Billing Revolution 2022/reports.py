@@ -29696,7 +29696,7 @@ def maindropmenu(event):
         rprefreshlebel.place(x=22,y=12)
 
 
-        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print(reportframe))
+        rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print(tab9))
         rpprintlabel.place(x=95,y=12)
     
 
