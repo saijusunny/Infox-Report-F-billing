@@ -11305,7 +11305,7 @@ def rp_addemail_order():
             hypbtn2 = Button(top,text="Cancel",width=10)
             hypbtn2.place(x=315,y=35)
 
-        rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=88, bg="white", height=22)
+        rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=60, bg="white", height=22)
         rp_mframe.place(x=0, y=30)
 
         # link.bind("<Button-1>",lambda e:callback("http://www.tutorialspoint.com"))

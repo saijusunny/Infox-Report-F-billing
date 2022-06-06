@@ -69,6 +69,10 @@ import tempfile
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+from tkinter import font as tkFont
+from tkinter import TclError
+from textwrap import wrap
+
 
 
 
@@ -263,13 +267,13 @@ def mainpage():
   w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=(5, 2))
 
-  printlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print(reportframe))
+  printlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print())
   printlabel.pack(side="left")
   w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=(5, 2))
 
 
-  saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image(reportframe))
+  saveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
   saveLabel.pack(side="left",)
   w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=(0, 5))
@@ -285,6 +289,12 @@ def mainpage():
   lbframe.pack(side="left", padx=10, pady=0)
 
   ############################################(print function)####################################################
+
+
+
+  
+
+  
   def exportcanvas():
 
       var_1=rp_exir.get()
@@ -481,7 +491,7 @@ def mainpage():
                   csvwriter.writerow(row)
       else:
           pass
-
+ 
   def exportcanvas2():
       var_1=irwcfrm1.get()
       var_2=irwcto1.get()
@@ -6915,6 +6925,8 @@ def mainpage():
 
 
   def pr_exp():
+    #   from reportlab.pdfgen.canvas import Canvas
+
       from reportlab.pdfgen import canvas
       # from tkdocviewer import *
       from reportlab.lib import colors
@@ -6923,6 +6935,7 @@ def mainpage():
       from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
       from reportlab.lib.pagesizes import letter, inch
       from textwrap import wrap
+      import split
       if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
           pass
       elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==0:
@@ -7134,16 +7147,26 @@ def mainpage():
           sql_company = "SELECT * from company"
           fbcursor.execute(sql_company)
           company= fbcursor.fetchone()
+        #   labelcmpl=Label(canvas,text=company[2], bg="red",font=("Helvetica", 9),anchor="nw",justify=LEFT, width=50, height=6)
+        #   labelcmpl.config(justify="left")
           
           pdf.setFont('Helvetica',12)
           pdf.drawString(30,760, company[1])
           text=company[2]
-          wraped_text="\n".join(wrap(text,40 ))
-            
+          
+          wraped_text="\n".join(wrap(text,40))
+          
+
+        #   wraped_text=tht.split(wrap(tht,40))
+
+        #   wraped_text=yt.split(",").join(wrap(yt,40 ))
         #   print(wraped_text)
-          ljh=wraped_text
+            
+        # #   print(wraped_text)
+        #   ljh=wraped_text
         #   pdf.drawString(30,740, company[2])
-          pdf.drawString(30,740,  ljh)
+        #   canvas.create_window(30,740,window=labelcmpl)
+          pdf.drawString(30,740,wraped_text)
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7153,8 +7176,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
           
@@ -7164,22 +7187,68 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,crc+str(i[8]))
+                            pdf.drawString(450,x,crc+str(i[9]))
+                            pdf.drawString(525,x,crc+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+crc)
+                            pdf.drawString(450,x,str(i[9])+crc)
+                            pdf.drawString(525,x,str(i[10])+crc)
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,crc+" "+str(i[8]))
+                            pdf.drawString(450,x,crc+" "+str(i[9]))
+                            pdf.drawString(525,x,crc+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+crc)
+                            pdf.drawString(450,x,str(i[9])+" "+crc)
+                            pdf.drawString(525,x,str(i[10])+" "+crc)
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -11077,26 +11146,26 @@ def mainpage():
 
   #############print image
 
-  def image_print(widget):
+  def image_print():
       
       from PIL import ImageGrab
-      x=root.winfo_rootx()+widget.winfo_x()
-      y=root.winfo_rooty()+widget.winfo_y()
-      x1=x+widget.winfo_width()
-      y1=y+widget.winfo_height()
+    #   x=root.winfo_rootx()+event.winfo_x()
+    #   y=root.winfo_rooty()+event.winfo_y()
+    #   x1=x+event.winfo_width()
+    #   y1=y+event.winfo_height()
     #   thr=ImageGrab.grab().crop((x,182,x1,760)).save("reports/Screen_Chart.png")
-      thr=ImageGrab.grab().crop((x,y,x1,y1)).save("reports/Screen_Chart.png")
+      thr=ImageGrab.grab().crop((20,182,1360,760)).save("reports/Screen_Chart.png")
       win32api.ShellExecute(0,"","reports\Screen_Chart.png",None,".",0)    
 
-  def image(widget):
+  def image():
       from PIL import ImageGrab
       path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('PNG File', '*.png',)],
       defaultextension=".png")
-      x=root.winfo_rootx()+widget.winfo_x()
-      y=root.winfo_rooty()+widget.winfo_y()
-      x1=x+widget.winfo_width()
-      y1=y+widget.winfo_height()
-      thr=ImageGrab.grab().crop((x,182,x1,760)).save(path)
+    #   x=root.winfo_rootx()+widget.winfo_x()
+    #   y=root.winfo_rooty()+widget.winfo_y()
+    #   x1=x+widget.winfo_width()
+    #   y1=y+widget.winfo_height()
+      thr=ImageGrab.grab().crop((20,182,1360,760)).save(path)
     
 
   ##################################### (Report Preview)############################################################# 
@@ -11254,32 +11323,56 @@ def mainpage():
               rp_mframe.config(font=(fontStyle,fontSize))
 
           def rp_bold_text():
-              text_property=font.Font(font=rp_mframe['font']).actual()
-              if text_property['weight']=='normal':
-                  rp_mframe.config(font=(fontStyle,fontSize,'bold'))
+              bold_font = font.Font(rp_mframe, rp_mframe.cget("font"))
+              bold_font.configure(weight="bold")
 
-              if text_property['weight']=='bold':
-                  rp_mframe.config(font=(fontStyle,fontSize,'normal'))    
+              rp_mframe.tag_configure("bold", font=bold_font)
+
+              current_tags = rp_mframe.tag_names("sel.first")
+
+              if "bold" in current_tags:
+                rp_mframe.tag_remove("bold", "sel.first", "sel.last")
+              else:
+                rp_mframe.tag_add("bold", "sel.first", "sel.last")    
           
           def rp_italic_text():
-              text_property=font.Font(font=rp_mframe['font']).actual()
-              if text_property['slant']=='roman':
-                  rp_mframe.config(font=(fontStyle,fontSize,'italic'))
+              italic_font = font.Font(rp_mframe, rp_mframe.cget("font"))
+              italic_font.configure(slant="italic")
 
-              if text_property['slant']=='italic':
-                  rp_mframe.config(font=(fontStyle,fontSize,'roman'))
+              rp_mframe.tag_configure("italic", font=italic_font)
+
+              current_tags = rp_mframe.tag_names("sel.first")
+
+              if "italic" in current_tags:
+                rp_mframe.tag_remove("italic", "sel.first", "sel.last")
+              else:
+                rp_mframe.tag_add("italic", "sel.first", "sel.last")
 
           def rp_underline_text():
-              text_property=font.Font(font=rp_mframe['font']).actual()
-              if text_property['underline']==0:
-                  rp_mframe.config(font=(fontStyle,fontSize,'underline'))
-
-                  if text_property['underline']==1:
-                      rp_mframe.config(font=(fontStyle,fontSize))
+            try:
+                if rp_mframe.tag_nextrange('underline_selection', 'sel.first', 'sel.last') != ():
+                    rp_mframe.tag_remove('underline_selection', 'sel.first', 'sel.last')
+                else:
+                    rp_mframe.tag_add('underline_selection', 'sel.first', 'sel.last')
+                    rp_mframe.tag_configure('underline_selection', underline=True)
+            except TclError:
+                pass
 
           def rp_color_select():
-              color=colorchooser.askcolor()
-              rp_mframe.config(fg=color[1])
+              color=colorchooser.askcolor()[1]
+              if color:
+            # if color:
+
+                color_font = font.Font(rp_mframe, rp_mframe.cget("font"))
+
+                rp_mframe.tag_configure("colored", font=color_font, foreground=color)
+
+                current_tags = rp_mframe.tag_names("sel.first")
+
+              if "colored" in current_tags:
+                rp_mframe.tag_remove("colored", "sel.first", "sel.last")
+              else:
+                rp_mframe.tag_add("colored", "sel.first", "sel.last")
 
           def rp_align_right():
               data=rp_mframe.get(0.0,END)
@@ -11386,8 +11479,9 @@ def mainpage():
               hypbtn2.place(x=315,y=35)
 
           rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=88, bg="white", height=22)
+          
           rp_mframe.place(x=0, y=30)
-
+          
           # link.bind("<Button-1>",lambda e:callback("http://www.tutorialspoint.com"))
           
           
@@ -15144,6 +15238,16 @@ def mainpage():
   def category():
     # firtst filter-----------------------------------Month to date
       rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
@@ -15162,6 +15266,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -15251,7 +15385,22 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
+                  
                   count += 1
               
               
@@ -15341,6 +15490,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -15422,7 +15601,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -15502,6 +15695,36 @@ def mainpage():
           end = test_date_end.end_of('year')
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, end)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -15584,7 +15807,21 @@ def mainpage():
             
               
               for i in tot_tris:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
             #   total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
             #   inv_valuz1=(var1,var2)
@@ -15664,6 +15901,36 @@ def mainpage():
           nxt_mnth=(test_date+relativedelta(day=31))
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, nxt_mnth)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
           
           frame = Frame(
           reportframe,
@@ -15745,7 +16012,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -15824,6 +16105,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -15905,7 +16216,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               inv_valuz1=(var1,var2)
@@ -15987,6 +16312,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -16067,7 +16422,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16148,6 +16517,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -16227,7 +16626,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16307,6 +16720,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -16387,7 +16830,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16474,6 +16931,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -16554,7 +17041,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16635,6 +17136,36 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
           frame = Frame(
           reportframe,
@@ -16716,7 +17247,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16790,6 +17335,37 @@ def mainpage():
       elif rth=="Custom Range":
           ltt=rp_exir.get_date()
           ltt1=rp_exir1.get_date()
+
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+            pass
+          else:
+            if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+            elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+            elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+            elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+            elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+            else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
           
 
           frame = Frame(
@@ -16872,7 +17448,21 @@ def mainpage():
             
               
               for i in fbcursor:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice WHERE invoicetot = (SELECT invoicetot FROM invoice WHERE invodate BETWEEN %s and %s)'
               # inv_valuz1=(var1,var2)
@@ -16956,6 +17546,18 @@ def mainpage():
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
       global drf
+
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rth=="Month to date":
 
           given_date = datetime.today().date()
@@ -17045,9 +17647,20 @@ def mainpage():
               inv_valuz=(var1,var2)
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
+              print(ps_cr)
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8]+" "+crc)))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17202,7 +17815,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17357,7 +17980,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17513,7 +18146,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17667,7 +18310,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17822,7 +18475,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -17978,7 +18641,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -18134,7 +18807,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -18288,7 +18971,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -18443,7 +19136,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -18593,7 +19296,17 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -18680,6 +19393,17 @@ def mainpage():
       fbcursor.execute(or_company)
       company_or= fbcursor.fetchone()
       
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       if rth=="Month to date":
           given_date = datetime.today().date()
@@ -18765,8 +19489,23 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -18915,7 +19654,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19065,7 +19818,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19214,7 +19981,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19363,7 +20144,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19510,7 +20305,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19660,7 +20469,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19810,7 +20633,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -19958,7 +20795,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -20106,7 +20957,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -20248,7 +21113,21 @@ def mainpage():
 
               for i in tre:
                   
-                  rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], i[26]))
+                  if ps_cr=="before amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+str(i[26])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], crc+" "+str(i[26])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_or_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[3], i[4], str(i[26])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(sum_subtotal) from orders'
               # fbcursor.execute(total_tri)
@@ -20324,7 +21203,17 @@ def mainpage():
       fbcursor.execute(tri_company)
       company_tri= fbcursor.fetchone()
       global drf
-
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -20411,7 +21300,23 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
+                    
+                  
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -20578,7 +21483,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -20746,7 +21665,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -20914,7 +21847,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21080,7 +22027,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21247,7 +22208,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21416,7 +22391,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21583,7 +22572,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21748,7 +22751,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -21912,7 +22929,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -22072,7 +23103,21 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -22166,6 +23211,17 @@ def mainpage():
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       if rth=="Month to date":
 
@@ -22253,8 +23309,25 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -22421,7 +23494,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -22592,7 +23681,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -22759,7 +23864,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -22925,7 +24046,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23091,7 +24228,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23259,7 +24412,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23427,7 +24596,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23593,7 +24778,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23758,7 +24959,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -23919,7 +25136,23 @@ def mainpage():
 
               for i in tre:
 
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], i[28], i[14], i[29],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+str(i[28]), crc+str(i[14]), crc+str(i[29]),crc+str(i[8])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+crc, str(i[14])+crc, str(i[29])+crc,str(i[8])+crc))
+                      
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], crc+" "+str(i[28]), crc+" "+str(i[14]), crc+" "+str(i[29]),crc+" "+str(i[8])))
+                    
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[1], i[2], str(i[28])+" "+crc, str(i[14])+" "+crc, str(i[29])+" "+crc,str(i[8])+" "+crc))
+                      
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(Order_total) from orders'
@@ -24011,6 +25244,17 @@ def mainpage():
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       irt1=srgd_frm.get_date()
       irt2=srgd_to.get_date()
@@ -24105,7 +25349,24 @@ def mainpage():
                       y=int(j[9])*int(i[38])
                       r=i[8]
                       l=r-y
-                      tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],int(j[9])*int(i[38]),i[8],l))
+                      if ps_cr=="before amount":
+                            tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],crc+str(int(j[9])*int(i[38])),crc+str(i[8]),crc+str(l)))
+                            
+                            
+                      elif ps_cr=="after amount":
+                            tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],str(int(j[9])*int(i[38]))+crc,str(i[8])+crc,str(l)+crc))
+                            
+                            
+                      elif ps_cr=="before amount with space":
+                            tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],crc+" "+str(int(j[9])*int(i[38])),crc+" "+str(i[8]),crc+" "+str(l)))
+                            
+                            
+                      elif ps_cr=="after amount with space":
+                            tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],str(int(j[9])*int(i[38]))+" "+crc,str(i[8])+" "+crc,str(l)+" "+crc))
+                            
+                      else:
+                            pass
+                            # tree.insert(parent='', index='end', text='hello',values=(i[2],i[38],int(j[9])*int(i[38]),i[8],l))
                       count += 1
 
 
@@ -24177,6 +25438,17 @@ def mainpage():
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       if rth=="All":
 
@@ -24254,7 +25526,20 @@ def mainpage():
               rep_ird_tree.insert('', 'end',text="1",values=('','','','Invoice Total','Paid','Balance'))
               
               for i in tre:
-                  rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], i[8], i[9], i[10]))
+                  if ps_cr=="before amount":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], crc+str(i[8]), crc+str(i[9]), crc+str(i[10])))
+                  elif ps_cr=="after amount":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], str(i[8])+crc, str(i[9])+crc, str(i[10])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], crc+" "+str(i[8]), crc+" "+str(i[9]), crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], str(i[8])+" "+crc, str(i[9])+" "+crc, str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+                #   rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], i[8], i[9], i[10]))
                   count += 1
 
               # total_tri='SELECT SUM(invoicetot) from invoice'
@@ -24336,6 +25621,17 @@ def mainpage():
           ddr=dir_frm.get_date()
 
           ddr2=date.today()
+          rth=invfilter.get()
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+          global crc
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          global ps_cr
+          ps_cr=post_rp[0]
           
           frame = Frame(
           reportframe,
@@ -24407,10 +25703,24 @@ def mainpage():
               
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
+
               
 
               for i in tre:
-                  rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], i[8], i[9], i[10]))
+                  if ps_cr=="before amount":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], crc+str(i[8]), crc+str(i[9]), crc+str(i[10])))
+                  elif ps_cr=="after amount":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], str(i[8])+crc, str(i[9])+crc, str(i[10])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], crc+" "+str(i[8]), crc+" "+str(i[9]), crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], str(i[8])+" "+crc, str(i[9])+" "+crc, str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+                #   rep_ird_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[29], i[8], i[9], i[10]))
                   count += 1
               # total_tri='SELECT SUM(invoicetot) from invoice'
               # fbcursor.execute(total_tri)
@@ -24491,6 +25801,19 @@ def mainpage():
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_or= fbcursor.fetchone()
+
+      ddr2=date.today()
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -24576,8 +25899,22 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                #   rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -24725,7 +26062,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -24873,7 +26223,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25025,7 +26388,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25169,7 +26545,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25317,7 +26706,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25465,7 +26867,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25613,7 +27028,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25759,7 +27187,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -25905,7 +27346,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -26045,7 +27499,20 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -26118,6 +27585,18 @@ def mainpage():
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
+      ddr2=date.today()
+      rth=invfilter.get()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       # given_date = datetime.today().date()
       # in_dat = given_date.replace(day=1)
@@ -26204,7 +27683,24 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                  if ps_cr=="before amount":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                      
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                   
+                  else:
+                      pass
+ 
+                #   rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
                   count += 1
 
               # total_tri='SELECT SUM(expense_amount) from expenses'
@@ -26351,7 +27847,22 @@ def mainpage():
 
 
               for i in tre:
-                  rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                  if ps_cr=="before amount":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                      
+                     
+                  elif ps_cr=="after amount":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                      
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(expense_amount) from expenses WHERE customer="Internal" '
@@ -26431,6 +27942,16 @@ def mainpage():
       tri_company = "SELECT * from company"
       fbcursor.execute(tri_company)
       company_tri= fbcursor.fetchone()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       if rth=="Month to date":
           given_date = datetime.today().date()
@@ -26515,8 +28036,21 @@ def mainpage():
               
               
               for i in tre:
-              
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
+                #   rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -26661,7 +28195,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -26811,7 +28358,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -26959,7 +28519,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27107,7 +28680,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27255,7 +28841,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27404,7 +29003,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27553,7 +29165,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27700,7 +29325,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27846,7 +29484,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -27990,7 +29641,20 @@ def mainpage():
               
               for i in tre:
               
-                  rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],i[9]))
+                  if ps_cr=="before amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+str(i[9])))
+
+                  elif ps_cr=="after amount":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],crc+" "+str(i[9])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pr_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[18], i[34], i[2], i[18],str(i[9])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
 
               # total_tri='SELECT SUM(totpaid) from invoice'
@@ -28063,6 +29727,16 @@ def mainpage():
           tro_company = "SELECT * from company"
           fbcursor.execute(tro_company)
           company_tro= fbcursor.fetchone()
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+          global crc
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          global ps_cr
+          ps_cr=post_rp[0]
           frame = Frame(
           reportframe,
           width=1500,
@@ -28128,7 +29802,21 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from invoice')
               for i in fbcursor:
-                  rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], i[8]))
+                  if ps_cr=="before amount":
+                      rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], crc+str(i[8])))
+
+                  elif ps_cr=="after amount":
+                      rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], str(i[8])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], crc+" "+str(i[8])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], str(i[8])+" "+crc))
+ 
+                  else:
+                      pass
+                #   rp_rir_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[18], i[26], i[24], i[27], i[8]))
                   count += 1
 
               total_tri='SELECT SUM(invoicetot) from invoice'
@@ -28197,6 +29885,17 @@ def mainpage():
           sql_company = "SELECT * from company"
           fbcursor.execute(sql_company)
           company= fbcursor.fetchone()
+
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+          global crc
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          global ps_cr
+          ps_cr=post_rp[0]
 
           frame = Frame(
           reportframe,
@@ -28271,25 +29970,40 @@ def mainpage():
               fbcursor.execute('SELECT * FROM invoice WHERE duedate>invodate')
 
               for i in fbcursor:
-                  rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+
+                  elif ps_cr=="after amount":
+                      rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+                  
+                #   rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
                   count += 1
 
-              total_tri='SELECT SUM(invoicetot) from invoice'
-              fbcursor.execute(total_tri)
-              tot_ird= fbcursor.fetchone()
+            #   total_tri='SELECT SUM(invoicetot) from invoice'
+            #   fbcursor.execute(total_tri)
+            #   tot_ird= fbcursor.fetchone()
               
 
-              total_tax1_tri='SELECT SUM(totpaid) from invoice'
-              fbcursor.execute(total_tax1_tri)
-              tot_tax1_ird= fbcursor.fetchone()
+            #   total_tax1_tri='SELECT SUM(totpaid) from invoice'
+            #   fbcursor.execute(total_tax1_tri)
+            #   tot_tax1_ird= fbcursor.fetchone()
 
-              total_tax2_tri='SELECT SUM(balance) from invoice'
-              fbcursor.execute(total_tax2_tri)
-              tot_tax2_ird= fbcursor.fetchone()
+            #   total_tax2_tri='SELECT SUM(balance) from invoice'
+            #   fbcursor.execute(total_tax2_tri)
+            #   tot_tax2_ird= fbcursor.fetchone()
               
 
-              rp_pdi_tree.insert('', 'end',text="1",values=('','','','','',tot_ird,tot_tax1_ird,tot_tax2_ird))
-              window = canvas.create_window(270, 260, anchor="nw", window=rp_pdi_tree)
+            #   rp_pdi_tree.insert('', 'end',text="1",values=('','','','','',tot_ird,tot_tax1_ird,tot_tax2_ird))
+            #   window = canvas.create_window(270, 260, anchor="nw", window=rp_pdi_tree)
           else:
               
               canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -28348,6 +30062,17 @@ def mainpage():
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       global drf
       
@@ -28838,6 +30563,17 @@ def mainpage():
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
       global drf
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
+      
       if rth=="All product and Services ":
 
           frame = Frame(
@@ -28906,7 +30642,21 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice')
               for i in fbcursor:
-                  rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                  if ps_cr=="before amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                  elif ps_cr=="after amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+ 
+                  else:
+                      pass
+                #   rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
                   count += 1
               window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
           
@@ -29026,7 +30776,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="products" ')
               for i in fbcursor:
-                  rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                  if ps_cr=="before amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                  elif ps_cr=="after amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
           
@@ -29147,7 +30910,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="Service" ')
               for i in fbcursor:
-                  rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                  if ps_cr=="before amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                  elif ps_cr=="after amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
           
@@ -29269,7 +31045,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="Default"')
               for i in fbcursor:
-                  rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
+                  if ps_cr=="before amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                  elif ps_cr=="after amount":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
           
@@ -29335,6 +31124,16 @@ def mainpage():
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
       global drf
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rth=="All product and Services ":
 
           frame = Frame(
@@ -29396,7 +31195,22 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice')
               for i in fbcursor:
-                  rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                  if ps_cr=="before amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                  elif ps_cr=="after amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+ 
+                  else:
+                      pass
+                 
+                #   rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
                   count += 1
               window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
           
@@ -29503,7 +31317,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="Products"')
               for i in fbcursor:
-                  rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                  if ps_cr=="before amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                  elif ps_cr=="after amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
           
@@ -29612,7 +31439,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="Service"')
               for i in fbcursor:
-                  rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                  if ps_cr=="before amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                  elif ps_cr=="after amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
           else:
@@ -29717,7 +31557,20 @@ def mainpage():
               count=0
               fbcursor.execute('SELECT * from productservice WHERE category="Default"')
               for i in fbcursor:
-                  rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
+                  if ps_cr=="before amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                  elif ps_cr=="after amount":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+  
+                  elif ps_cr=="before amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+ 
+                  else:
+                      pass
                   count += 1
               window = canvas.create_window(280, 130, anchor="nw", window=rp_pl_tree)
           else:
@@ -29771,6 +31624,16 @@ def mainpage():
           company_tro= fbcursor.fetchone()
 
           global drf
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+          global crc
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          global ps_cr
+          ps_cr=post_rp[0]
 
           frame = Frame(
           reportframe,
@@ -30004,12 +31867,12 @@ def mainpage():
           rprefreshlebel.place(x=22,y=12)
 
 
-          rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="b  lack", height=55, bd=1, width=55,command=lambda:image_print(tab9))
+          rpprintlabel = Button(midFrame,compound="top", text="Print Chart",relief=RAISED, image=photo5,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image_print())
           rpprintlabel.place(x=95,y=12)
       
 
 
-          rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image(reportframe))
+          rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
           rpsaveLabel.place(x=168,y=12)
 
           rpcopyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
@@ -30264,15 +32127,51 @@ def mainpage():
       lbl_ir.place(x=676,y=10)
 
       global rp_exir
-      rp_exir=DateEntry(midFrame, textvariable=invfrm,  date_pattern='y-mm-dd')
+      rp_exir=DateEntry(midFrame, textvariable=invfrm,  )
       rp_exir.place(x=721,y=10)
 
       lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_ir.place(x=690,y=50)
+      
+
 
       global rp_exir1
-      rp_exir1=DateEntry(midFrame,textvariable=invto, date_pattern='y-mm-dd')
+      rp_exir1=DateEntry(midFrame,textvariable=invto, )
       rp_exir1.place(x=721,y=50)
+
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+          pass
+      else:
+          if rp_date_for[0]=="mm-dd-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
+          elif rp_date_for[0]=="dd-mm-yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #       rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+          elif rp_date_for[0]=="mm/dd/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
+          elif rp_date_for[0]=="dd/mm/yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
+          elif rp_date_for[0]=="dd.mm.yyyy":
+              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #       rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+          else:
+              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
+              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+              
+
+
 
       lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_ir.place(x=470,y=10)
@@ -32681,6 +34580,16 @@ def mainpage():
         
 
   def check_function_por():
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==0:
           
           in_dat=porfrm.get()
@@ -32724,7 +34633,21 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+ 
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -32821,7 +34744,21 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+ 
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -32893,7 +34830,21 @@ def mainpage():
 
               for i in tre:
           
-                  rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], i[10]))
+                  if ps_cr=="before amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+crc))
+                     
+                  elif ps_cr=="before amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], crc+" "+str(i[10])))
+
+                  elif ps_cr=="after amount with space":
+                      rp_por_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[2], i[3], i[26], i[5], str(i[10])+" "+crc))
+ 
+                  else:
+                      pass
+ 
                   count += 1
               # total_tri='SELECT SUM(total) from porder'
               # fbcursor.execute(total_tri)
@@ -32931,6 +34882,16 @@ def mainpage():
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       
       if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
@@ -33004,7 +34965,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33075,7 +35050,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33144,7 +35133,7 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33213,7 +35202,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33282,7 +35285,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33351,7 +35368,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33420,7 +35451,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33489,7 +35534,21 @@ def mainpage():
               
               
               for i in tre:
-                  rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], i[8], i[9],i[10]))
+                  if ps_cr=="before amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
+                     
+                  elif ps_cr=="after amount":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+crc, str(i[9])+crc,str(i[10])+crc))
+                      
+                  elif ps_cr=="before amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+" "+str(i[8]), crc+" "+str(i[9]),crc+" "+str(i[10])))
+                      
+                      
+                  elif ps_cr=="after amount with space":
+                      rp_inv_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], str(i[8])+" "+crc, str(i[9])+" "+crc,str(i[10])+" "+crc))
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_inv_tree)
@@ -33525,6 +35584,17 @@ def mainpage():
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       if rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
 
@@ -33590,7 +35660,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
                   count+=1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -33655,7 +35735,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass              
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -33717,8 +35807,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
-                  count += 1
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8]+" "+crc)))
+                  else:
+                      pass
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -33779,7 +35878,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass              
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -33841,8 +35950,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
-                  count += 1
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
 
@@ -33903,7 +36021,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass              
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -33967,7 +36095,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass              
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -34029,7 +36167,17 @@ def mainpage():
               
               
               for i in tre:
-                  rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], i[8]))                
+                  if ps_cr=="before amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+str(i[8])))
+                  elif ps_cr=="after amount":
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+crc))
+                  elif ps_cr=="before amount with space":
+                      
+                      rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], crc+" "+str(i[8])))
+                  elif ps_cr=="after amount with space":
+                     rp_irwc_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[18], i[4], str(i[8])+" "+crc))
+                  else:
+                      pass               
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rp_irwc_tree)
@@ -34063,6 +36211,17 @@ def mainpage():
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       if rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
 
@@ -34133,7 +36292,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count+=1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34200,7 +36373,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34264,7 +36451,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34328,7 +36529,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34392,7 +36607,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34456,7 +36685,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34522,7 +36765,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34586,7 +36843,21 @@ def mainpage():
               
               
               for i in tre:
-                  rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[37], i[16], i[36],i[8]))
+                  if ps_cr=="before amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+str(i[37]), crc+str(i[16]), crc+str(i[36]),crc+str(i[8])))
+                     
+                  elif ps_cr=="after amount":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], str(i[37])+crc, str(i[16])+crc, str(i[36])+crc,str(i[8])))
+                      
+                  elif ps_cr=="before amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], crc+" "+str(i[37]), crc+" "+str(i[16]), crc+" "+str(i[36]),crc+" "+str(i[8])))
+                      
+                  elif ps_cr=="after amount with space":
+                      rep_tro_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3],str(i[37])+" "+crc, str(i[16])+" "+crc, str(i[36])+" "+crc,str(i[8])+" "+crc))
+                      
+                   
+                  else:
+                      pass
                   count += 1
               
               window = drf.create_window(270, 260, anchor="nw", window=rep_tro_tree)
@@ -34617,6 +36888,17 @@ def mainpage():
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_or= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
 
       if rpcheckvar1_plr.get()==1 and rpcheckvar2_plr.get()==0:
           
@@ -34834,6 +37116,17 @@ def mainpage():
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_tro= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       if rpcheckvar1_pl.get()==1 and rpcheckvar2_pl.get()==0:
           if rth=="All product and Services ":
@@ -34866,8 +37159,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE stock > stocklimit')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -34929,8 +37235,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE (category="Products" and stock > stocklimit)')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -34992,8 +37311,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE (category="Service" and stock > stocklimit)')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35050,8 +37382,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35111,8 +37456,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE stock < stocklimit')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -35174,8 +37532,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE (category="Products" and stock < stocklimit)')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -35237,8 +37608,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE (category="Service" and stock < stocklimit)')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35298,8 +37682,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE (category="Default" and stock < stocklimit)')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35358,8 +37755,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -35421,8 +37831,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE category="Products" ')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               
               
@@ -35484,8 +37907,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE category="Service"')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35545,8 +37981,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice WHERE category="Default"')
                   for i in fbcursor:
-                      rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], i[7]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+str(i[7])))
+
+                        elif ps_cr=="after amount":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], crc+" "+str(i[7])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_pl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[4], i[5], str(i[7])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(280, 130, anchor="nw", window=rp_pl_tree)
               else:
                   drf.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -35691,6 +38140,17 @@ def mainpage():
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_tro= fbcursor.fetchone()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       
       if rpcheckvar1_psl.get()==1 and rpcheckvar2_psl.get()==0:
           if rth=="All product and Services ":
@@ -35730,8 +38190,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where stock>stocklimit')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -35805,8 +38278,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Products" and stock>stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -35880,8 +38366,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Service" and stock > stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -35953,8 +38452,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Default" and stock > stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36029,8 +38541,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice Where stock < stocklimit')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36104,8 +38629,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Products" and stock < stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36179,8 +38717,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Service" and stock < stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36252,8 +38803,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where (category="Default" and stock<stocklimit)')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36326,8 +38890,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36401,8 +38978,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where category="Products" ')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36476,8 +39066,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where category="Service" ')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36549,8 +39152,21 @@ def mainpage():
                   count=0
                   fbcursor.execute('SELECT * from productservice where category="Default" ')
                   for i in fbcursor:
-                      rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], i[9], i[11]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+str(i[9]), crc+str(i[11])))
+
+                        elif ps_cr=="after amount":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+crc, str(i[11])+crc))
+        
+                        elif ps_cr=="before amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], crc+" "+str(i[9]), crc+" "+str(i[11])))
+
+                        elif ps_cr=="after amount with space":
+                            rp_psl_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[0], i[3], i[4], i[5], i[15], i[13], str(i[9])+" "+crc, str(i[11])+" "+crc))
+        
+                        else:
+                            pass
+                        count += 1
                   window = drf.create_window(170, 150, anchor="nw",  window=rp_psl_tree)
               
               
@@ -36626,6 +39242,17 @@ def mainpage():
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
       rth=expfilter.get()
+
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+      global crc
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      global ps_cr
+      ps_cr=post_rp[0]
       if rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
           if rth=="All":
               if company_tro is not None:
@@ -36664,8 +39291,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -36743,8 +39385,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -36823,8 +39480,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -36899,8 +39571,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -36978,8 +39665,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -37054,8 +39756,23 @@ def mainpage():
                   tre=fbcursor.fetchall()
 
                   for i in tre:
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
-                      count += 1
+                        if ps_cr=="before amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            
+                            
+                        elif ps_cr=="after amount":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            
+                            
+                        elif ps_cr=="before amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            
+                        elif ps_cr=="after amount with space":
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                        
+                        else:
+                            pass
+                        count += 1
 
                   rp_exp_tree.insert('', 'end',text="1",values=('','','','-End List-','Rebill.Amount','Amount'))
                   
@@ -39331,7 +42048,7 @@ def mainpage():
   
   comdaf = StringVar()
   daf = ttk.Combobox(secondtab,textvariable=comdaf)
-  daf["values"] = ("Default",'mm-dd-yyyy','dd-mm-yyyy','yyy.mm.dd','mm/dd/yyyy','dd/mm/yyy','dd.mm.yyyy','yyyy/  mm/dd')
+  daf["values"] = ("Default",'mm-dd-yyyy','dd-mm-yyyy','yyyy.mm.dd','mm/dd/yyyy','dd/mm/yyyy','dd.mm.yyyy','yyyy/mm/dd')
   daf.bind("<<ComboboxSelected>>",daffun)
   if not sectab:
     pass
