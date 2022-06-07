@@ -77,7 +77,7 @@ from textwrap import wrap
 
 
 fbilldb = mysql.connector.connect(
-    host="localhost", user="root", password="", database="fbillingsintgrtd", port="3306"
+    host="localhost", user="root", password="", database="fbd", port="3306"
 )
 fbcursor = fbilldb.cursor(buffered=True)
 
@@ -297,8 +297,8 @@ def mainpage():
   
   def exportcanvas():
 
-      var_1=rp_exir.get()
-      var_2=rp_exir1.get()
+      var_1=rp_exir.get_date()
+      var_2=rp_exir1.get_date()
       if rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==0:
           cols = ["No","Date","Due Date","Terms","Status","Invoice Total","Invoice Paid","Balance"] # Your column headings here
           path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
@@ -493,8 +493,8 @@ def mainpage():
           pass
  
   def exportcanvas2():
-      var_1=irwcfrm1.get()
-      var_2=irwcto1.get()
+      var_1=irwcfrm1.get_date()
+      var_2=irwcto1.get_date()
       if rpcheckvar1_irwc.get()==0 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==0:
           cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
           path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
@@ -680,8 +680,8 @@ def mainpage():
           pass
 
   def exportcanvas3():
-      var_1=orfrm1.get()
-      var_2=orto1.get()
+      var_1=orfrm1.get_date()
+      var_2=orto1.get_date()
 
       cols = ["No","Date","Due Date","Customer","Status","Invoice Total"] # Your column headings here
       path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
@@ -1831,8 +1831,8 @@ def mainpage():
 
   #=====tax Invoice========
   def exportcanvas11():
-      var_1=trifrm1.get()
-      var_2=trito1.get()
+      var_1=trifrm1.get_date()
+      var_2=trito1.get_date()
 
       if rpcheckvar1_tri.get()==0 and rpcheckvar2_tri.get()==0 and rpcheckvar3_tri.get()==0:
           pass
@@ -1995,8 +1995,8 @@ def mainpage():
       
   #tax order
   def exportcanvas12():
-      var_1=trofrm1.get()
-      var_2=troto1.get()
+      var_1=trofrm1.get_date()
+      var_2=troto1.get_date()
       
       cols = ["Order No","Issue Date","Due Date","Total Before TAX","TAX1","TAX2","Order Total"] # Your column headings here
       path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
@@ -2019,8 +2019,8 @@ def mainpage():
               csvwriter.writerow(row)
   # srgd
   def exportcanvas13():
-      var_1=srgd_frm.get()
-      var_2=srgd_to.get()
+      var_1=srgd_frm.get_date()
+      var_2=srgd_to.get_date()
       rth=srgdfilter.get()
     
       if rth==rth:
@@ -2100,8 +2100,8 @@ def mainpage():
               csvwriter.writerow(row)
   #por
   def exportcanvas16():
-      var_1=porfrm1.get()
-      var_2=porto1.get()
+      var_1=porfrm1.get_date()
+      var_2=porto1.get_date()
       
 
       if rpcheckvar1_por.get()==1 and rpcheckvar2_por.get()==0:
@@ -2308,8 +2308,8 @@ def mainpage():
   def exportcanvas18():
 
 
-      var_1=pyrfrm1.get()
-      var_2=pyrto1.get()
+      var_1=pyrfrm1.get_date()
+      var_2=pyrto1.get_date()
 
       cols = ["Invoice No","Invoice Issue Date","Customer","Payment ID","Payment Date","Paid By","Amount Paid"] # Your column headings here
       path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('CSV File', '*.csv',)],defaultextension=".csv")
@@ -2358,8 +2358,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2369,8 +2394,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2415,8 +2440,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2426,8 +2476,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2471,8 +2521,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2482,8 +2557,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2527,8 +2602,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2538,8 +2638,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2583,8 +2683,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2594,8 +2719,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2639,8 +2764,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2650,8 +2800,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2695,8 +2845,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2706,8 +2881,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2751,8 +2926,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -2762,8 +2962,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2824,8 +3024,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -2836,8 +3061,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2882,8 +3107,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -2894,8 +3144,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -2942,8 +3192,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -2954,8 +3229,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3001,8 +3276,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -3013,8 +3313,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3060,8 +3360,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -3072,8 +3397,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3119,8 +3444,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -3131,8 +3481,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3178,8 +3528,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -3190,8 +3565,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3237,8 +3612,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+            
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -3249,8 +3649,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -3308,8 +3708,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+            
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                   
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(495,760, "Order Report")
       
@@ -3322,8 +3747,8 @@ def mainpage():
       
       pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
       
-      in_dat=orfrm1.get()
-      cr=orto1.get()
+      in_dat=orfrm1.get_date()
+      cr=orto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -3377,8 +3802,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+            
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                   
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(445,760, "Recurring Invoice Report")
       "Invoice No","Customer","Next Invoice","Recurring Interval","Stop After","Invoice Total"
@@ -3438,8 +3888,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+            
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                   
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(450,760, "Past Due Invoice Report")
 
@@ -3503,8 +3978,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',10)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+            
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                   
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(500,760, "Pyment Report")
       pdf.drawString(370,740, "Date From:"+pyrfrm.get()+"  Date To:"+pyrto.get())
@@ -3513,8 +4013,8 @@ def mainpage():
       pdf.drawString(28,675,"_________________________________________________________________________________________________")
       pdf.drawString(28,678,"Invoice No          Invoice Issue Date  Customer                      Payment ID   Payment Date     Paid By               Amount Paid       ")
       
-      in_dat=pyrfrm1.get()
-      cr=pyrto1.get()
+      in_dat=pyrfrm1.get_date()
+      cr=pyrto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -5586,8 +6086,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5597,8 +6122,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5643,8 +6168,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5654,8 +6204,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5700,8 +6250,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5711,8 +6286,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5757,8 +6332,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5768,8 +6368,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5814,8 +6414,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5825,8 +6450,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5871,8 +6496,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5882,8 +6532,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5928,8 +6578,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5939,8 +6614,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -5985,8 +6660,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                    
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -5996,8 +6696,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -6055,8 +6755,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',10)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+                    
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(488,760, "Tax report(Orders)")
       pdf.drawString(370,740, "Date From:"+trofrm.get()+"  Date To:"+troto.get())
@@ -6066,8 +6791,8 @@ def mainpage():
       pdf.drawString(28,678,"Order No         Issue Date     Due Date                      Total Before TAX   TAX1         TAX2                Order Total       ")
       
 
-      in_dat=trofrm1.get()
-      cr=troto1.get()
+      in_dat=trofrm1.get_date()
+      cr=troto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -6126,8 +6851,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',10)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+                        
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(442,760, "Sales Report(Group By Date)")
           pdf.drawString(365,740, "Date From:"+srgdfrm.get()+"  Date To:"+srgdto.get())
@@ -6208,8 +6958,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+                    
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(450,760, "Invoice Report(Detailed)")
       
@@ -6280,8 +7055,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+                    
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(460,760, "Daily Invoice Report")
       
@@ -6351,8 +7151,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+                        
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -6365,8 +7190,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -6412,8 +7237,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+                        
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -6426,8 +7276,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -6474,8 +7324,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+                        
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -6488,8 +7363,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -6548,8 +7423,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6611,8 +7510,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6676,8 +7599,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6739,8 +7686,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6808,8 +7779,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6870,8 +7865,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -6948,8 +7967,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
+          
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -6959,8 +8003,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
 
@@ -6999,8 +8043,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7010,8 +8079,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7049,8 +8118,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7060,8 +8154,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7099,8 +8193,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7110,8 +8229,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7147,26 +8266,35 @@ def mainpage():
           sql_company = "SELECT * from company"
           fbcursor.execute(sql_company)
           company= fbcursor.fetchone()
-        #   labelcmpl=Label(canvas,text=company[2], bg="red",font=("Helvetica", 9),anchor="nw",justify=LEFT, width=50, height=6)
-        #   labelcmpl.config(justify="left")
-          
-          pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
+          pdf.drawString(30,768, company[1])
           text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
           
-          wraped_text="\n".join(wrap(text,40))
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           
-
-        #   wraped_text=tht.split(wrap(tht,40))
-
-        #   wraped_text=yt.split(",").join(wrap(yt,40 ))
-        #   print(wraped_text)
-            
-        # #   print(wraped_text)
-        #   ljh=wraped_text
-        #   pdf.drawString(30,740, company[2])
-        #   canvas.create_window(30,740,window=labelcmpl)
-          pdf.drawString(30,740,wraped_text)
+              
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7200,9 +8328,9 @@ def mainpage():
                             pdf.drawString(158,x,str(i[3]))
                             pdf.drawString(231,x,str(i[35]))
                             pdf.drawString(300,x,str(i[4])) 
-                            pdf.drawString(360,x,crc+str(i[8]))
-                            pdf.drawString(450,x,crc+str(i[9]))
-                            pdf.drawString(525,x,crc+str(i[10]))
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
                             
                         elif ps_cr=="after amount":
                             pdf.drawString(28,x,str(i[1]))
@@ -7210,9 +8338,9 @@ def mainpage():
                             pdf.drawString(158,x,str(i[3]))
                             pdf.drawString(231,x,str(i[35]))
                             pdf.drawString(300,x,str(i[4])) 
-                            pdf.drawString(360,x,str(i[8])+crc)
-                            pdf.drawString(450,x,str(i[9])+crc)
-                            pdf.drawString(525,x,str(i[10])+crc)
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
                             
                         elif ps_cr=="before amount with space":
                             pdf.drawString(28,x,str(i[1]))
@@ -7221,9 +8349,9 @@ def mainpage():
                             pdf.drawString(158,x,str(i[3]))
                             pdf.drawString(231,x,str(i[35]))
                             pdf.drawString(300,x,str(i[4])) 
-                            pdf.drawString(360,x,crc+" "+str(i[8]))
-                            pdf.drawString(450,x,crc+" "+str(i[9]))
-                            pdf.drawString(525,x,crc+" "+str(i[10]))
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
                             
                             
                         elif ps_cr=="after amount with space":
@@ -7232,9 +8360,9 @@ def mainpage():
                             pdf.drawString(158,x,str(i[3]))
                             pdf.drawString(231,x,str(i[35]))
                             pdf.drawString(300,x,str(i[4])) 
-                            pdf.drawString(360,x,str(i[8])+" "+crc)
-                            pdf.drawString(450,x,str(i[9])+" "+crc)
-                            pdf.drawString(525,x,str(i[10])+" "+crc)
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
                         
                         else:
                             pass
@@ -7261,8 +8389,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7272,8 +8425,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7311,8 +8464,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7322,8 +8500,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7361,8 +8539,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           pdf.drawString(335,740, "Date From:"+invfrm.get()+"  Date To:"+invto.get())
@@ -7372,8 +8575,8 @@ def mainpage():
           pdf.drawString(28,678,"No                 Date           Due Date        Terms        Status        Invoice Total      Invoice Paid     Balance      ")
           
           
-          in_dat=rp_exir.get()
-          cr=rp_exir1.get()
+          in_dat=rp_exir.get_date()
+          cr=rp_exir1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7428,8 +8631,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7440,8 +8668,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7480,8 +8708,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7534,8 +8787,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7546,8 +8824,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7587,8 +8865,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7599,8 +8902,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7640,8 +8943,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7652,8 +8980,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7693,8 +9021,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7705,8 +9058,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7746,8 +9099,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7758,8 +9136,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7799,8 +9177,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(490,760, "Invoice Report")
           
@@ -7811,8 +9214,8 @@ def mainpage():
           
           pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
           
-          in_dat=irwcfrm1.get()
-          cr=irwcto1.get()
+          in_dat=irwcfrm1.get_date()
+          cr=irwcto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -7864,8 +9267,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+          
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(495,760, "Order Report")
       
@@ -7878,8 +9306,8 @@ def mainpage():
       
       pdf.drawString(28,678,"No                 Date           Due Date        Customer                                 Status                 Invoice Total    ")
       
-      in_dat=orfrm1.get()
-      cr=orto1.get()
+      in_dat=orfrm1.get_date()
+      cr=orto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -7927,8 +9355,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+          
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(445,760, "Recurring Invoice Report")
       "Invoice No","Customer","Next Invoice","Recurring Interval","Stop After","Invoice Total"
@@ -7982,8 +9435,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+          
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(450,760, "Past Due Invoice Report")
 
@@ -8041,8 +9519,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',10)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+          
+      vg=len(htg)
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                   
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(500,760, "Pyment Report")
       pdf.drawString(370,740, "Date From:"+pyrfrm.get()+"  Date To:"+pyrto.get())
@@ -8051,8 +9554,8 @@ def mainpage():
       pdf.drawString(28,675,"_________________________________________________________________________________________________")
       pdf.drawString(28,678,"Invoice No          Invoice Issue Date  Customer                      Payment ID   Payment Date     Paid By               Amount Paid       ")
       
-      in_dat=pyrfrm1.get()
-      cr=pyrto1.get()
+      in_dat=pyrfrm1.get_date()
+      cr=pyrto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -9927,8 +11430,34 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              
+          
+              vg=len(htg)
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -9938,8 +11467,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -9978,8 +11507,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -9989,8 +11543,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10029,8 +11583,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10040,8 +11619,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10080,8 +11659,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10091,8 +11695,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10131,8 +11735,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10142,8 +11771,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10182,8 +11811,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10193,8 +11847,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10233,8 +11887,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10244,8 +11923,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10284,8 +11963,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',10)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+          
+              if vg>0:
+                        pdf.drawString(30,752,htg[0])
+                        
+                        if vg>1:
+                            pdf.drawString(30,738,htg[1])
+                            
+                            if vg>2:
+                                pdf.drawString(30,725,htg[2])
+                            
+                                if vg>3:
+                                    pdf.drawString(30,712,htg[3])
+                                    
+                                else:
+                                    pass
+                            else:
+                                pass
+                        else:
+                            pass
+                        
+              else:
+                        pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(485,760, "Tax report(Invoice)")
               pdf.drawString(370,740, "Date From:"+trifrm.get()+"  Date To:"+trito.get())
@@ -10295,8 +11999,8 @@ def mainpage():
               pdf.drawString(28,678,"Invoice No       Issue Date     Due Date                      Total Before TAX   TAX1         TAX2               Invoice Total       ")
               
 
-              in_dat=trifrm1.get()
-              cr=trito1.get()
+              in_dat=trifrm1.get_date()
+              cr=trito1.get_date()
               var_1=in_dat
               var_2=cr
           
@@ -10348,8 +12052,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',10)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+      vg=len(htg)
+          
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(488,760, "Tax report(Orders)")
       pdf.drawString(370,740, "Date From:"+trofrm.get()+"  Date To:"+troto.get())
@@ -10359,8 +12088,8 @@ def mainpage():
       pdf.drawString(28,678,"Order No         Issue Date     Due Date                      Total Before TAX   TAX1         TAX2                Order Total       ")
       
 
-      in_dat=trofrm1.get()
-      cr=troto1.get()
+      in_dat=trofrm1.get_date()
+      cr=troto1.get_date()
       var_1=in_dat
       var_2=cr
     
@@ -10413,8 +12142,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',10)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          vg=len(htg)
+                
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(442,760, "Sales Report(Group By Date)")
           pdf.drawString(365,740, "Date From:"+srgdfrm.get()+"  Date To:"+srgdto.get())
@@ -10491,8 +12245,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+      vg=len(htg)
+                
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(450,760, "Invoice Report(Detailed)")
       
@@ -10557,8 +12336,33 @@ def mainpage():
       company= fbcursor.fetchone()
       
       pdf.setFont('Helvetica',12)
-      pdf.drawString(30,760, company[1])
-      pdf.drawString(30,740, company[2])
+      pdf.drawString(30,768, company[1])
+      text=company[2]
+      wraped_text="\n".join(wrap(text,30))
+      htg=wraped_text.split('\n')
+      vg=len(htg)
+                
+      if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+      else:
+              pass
       pdf.drawString(30,700, "Sales tax reg No:"+company[4])
       pdf.drawString(460,760, "Daily Invoice Report")
       
@@ -10622,8 +12426,32 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          vg=len(htg)
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -10636,8 +12464,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -10677,8 +12505,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          vg=len(htg)
+                
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -10691,8 +12544,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -10733,8 +12586,33 @@ def mainpage():
           company= fbcursor.fetchone()
           
           pdf.setFont('Helvetica',12)
-          pdf.drawString(30,760, company[1])
-          pdf.drawString(30,740, company[2])
+          pdf.drawString(30,768, company[1])
+          text=company[2]
+          wraped_text="\n".join(wrap(text,30))
+          htg=wraped_text.split('\n')
+          vg=len(htg)
+                
+          if vg>0:
+              pdf.drawString(30,752,htg[0])
+              print("1")
+              if vg>1:
+                pdf.drawString(30,738,htg[1])
+                print("2")
+                if vg>2:
+                    pdf.drawString(30,725,htg[2])
+                    print("3")
+                    if vg>3:
+                        pdf.drawString(30,712,htg[3])
+                        print("4")
+                    else:
+                        pass
+                else:
+                    pass
+              else:
+                  pass
+              
+          else:
+              pass
           pdf.drawString(30,700, "Sales tax reg No:"+company[4])
           pdf.drawString(450,760, "Parchase Order Report")
           
@@ -10747,8 +12625,8 @@ def mainpage():
           
 
           
-          in_dat=porfrm1.get()
-          cr=porto1.get()
+          in_dat=porfrm1.get_date()
+          cr=porto1.get_date()
           var_1=in_dat
           var_2=cr
       
@@ -10801,8 +12679,32 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -10859,7 +12761,32 @@ def mainpage():
               
               pdf.setFont('Helvetica',12)
               pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -10917,8 +12844,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -10975,7 +12927,33 @@ def mainpage():
               
               pdf.setFont('Helvetica',12)
               pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                
+              
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -11026,7 +13004,7 @@ def mainpage():
               pass
       elif rpcheckvar1_exp.get()==0 and rpcheckvar2_exp.get()==0:
           pass
-      elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1:
+      elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==1: 
       
 
           if rth=="All":
@@ -11037,8 +13015,33 @@ def mainpage():
               company= fbcursor.fetchone()
               
               pdf.setFont('Helvetica',12)
-              pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              pdf.drawString(30,768, company[1])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                
+              vg=len(htg)
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -11094,7 +13097,31 @@ def mainpage():
               
               pdf.setFont('Helvetica',12)
               pdf.drawString(30,760, company[1])
-              pdf.drawString(30,740, company[2])
+              text=company[2]
+              wraped_text="\n".join(wrap(text,30))
+              htg=wraped_text.split('\n')
+                
+              if vg>0:
+                    pdf.drawString(30,752,htg[0])
+                    print("1")
+                    if vg>1:
+                        pdf.drawString(30,738,htg[1])
+                        print("2")
+                        if vg>2:
+                            pdf.drawString(30,725,htg[2])
+                            print("3")
+                            if vg>3:
+                                pdf.drawString(30,712,htg[3])
+                                print("4")
+                            else:
+                                pass
+                        else:
+                            pass
+                    else:
+                        pass
+                    
+              else:
+                    pass
               pdf.drawString(30,700, "Sales tax reg No:"+company[4])
               pdf.drawString(475,760, "Expenses Report")
               
@@ -15235,9 +17262,74 @@ def mainpage():
               em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
               em_ser_conbtn.place(x=710, y=110)
 
+
+#   sql='select dateformat from company'
+#   fbcursor.execute(sql)
+#   rp_date_for=fbcursor.fetchone()
+#   global dts
+#   if not rp_date_for:
+#         pass
+#   else:
+#           if rp_date_for[0]=="mm-dd-yyyy":
+#              dts='%m-%d-%Y'
+
+#           elif rp_date_for[0]=="dd-mm-yyyy":
+#              dts='%d-%m-%Y'
+   
+#           elif rp_date_for[0]=="yyyy.mm.dd":
+#              dts='%Y.%m.%d'
+    
+#           elif rp_date_for[0]=="mm/dd/yyyy":
+#               dts='%m/%d/%y'
+    
+#           elif rp_date_for[0]=="dd/mm/yyyy":
+#               dts='%d/%m/%Y'
+             
+#           elif rp_date_for[0]=="dd.mm.yyyy":
+#               dts='%d.%m.%Y'
+              
+#           elif rp_date_for[0]=="yyyy/mm/dd":
+#               dts='%Y/%m/%d'
+
+#           else:
+#               dts='%d-%m-%Y'
+              
+
+
   def category():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      global dts
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                elif rp_date_for[0]=="yyyy.mm.dd":
+                    dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                elif rp_date_for[0]=="yyyy/mm/dd":
+                    dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
+      
     # firtst filter-----------------------------------Month to date
-      rth=invfilter.get()
+      
       sqlr= 'select currencysign from company'
       fbcursor.execute(sqlr)
       crncy=fbcursor.fetchone()
@@ -15248,55 +17340,34 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
+      global drf
       
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
       
       #-------------------------
-      global drf
+      
+      rth=invfilter.get()
       
       if rth=="Month to date":
-          
-          given_date = datetime.today().date()
-          in_dat = given_date.replace(day=1)
-          rp_exir.delete(0,'end')
-          rp_exir.insert(0, in_dat)
-
-          cr=date.today()
-          rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
           sql='select dateformat from company'
           fbcursor.execute(sql)
           rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
 
+          print(rp_exir.get())
+          lkj=rp_exir.get()
+          given_date = datetime.today().date()
+          in_dat = given_date.replace(day=1)
+          print(in_dat)
+          rp_exir.delete(0,'end')
+        #   jh=rp_exir.insert(0, in_dat)
+          rp_exir.set_date(in_dat.strftime(dts))
+        
+          cr=date.today()
+          rp_exir1.delete(0,'end')
+          rp_exir1.insert(0, cr.strftime(dts))
+          
           frame = Frame(
           reportframe,
           width=1500,
@@ -15485,41 +17556,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, start)
+          rp_exir.insert(0, start.strftime(dts))
 
           cr=date.today()
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, cr.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -15689,42 +17731,13 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, start)
+          rp_exir.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, end)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, end.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -15895,42 +17908,13 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, in_dat)
+          rp_exir.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, nxt_mnth)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, nxt_mnth.strftime(dts))
+          
           
           frame = Frame(
           reportframe,
@@ -16098,43 +18082,19 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #=====================================================================================================
       elif rth=="Current days":
+
+        #   given_date=rp_exir.get_date().strftime(dts)
+          
           given_date = date.today()
           rp_exir.delete(0,'end')
-          rp_exir.insert(0,given_date)
+          rp_exir.insert(0,given_date.strftime(dts))
 
-          cr=date.today()
-          rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+        #   cr=date.today()
+        #   rp_exir1.delete(0,'end')
+        #   rp_exir1.insert(0, cr.strftime(dts))
+          cr=rp_exir1.get_date().strftime(dts)
+          
+          
 
           frame = Frame(
           reportframe,
@@ -16307,41 +18267,12 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, in_dat)
+          rp_exir.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, cr.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -16517,36 +18448,7 @@ def mainpage():
           cr=date.today()
           rp_exir1.delete(0,'end')
           rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          
 
           frame = Frame(
           reportframe,
@@ -16715,41 +18617,12 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, in_dat)
+          rp_exir.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, cr.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -16926,41 +18799,12 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, in_dat)
+          rp_exir.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, cr.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -17129,43 +18973,14 @@ def mainpage():
       elif rth=="Previous year":
           
 
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           rp_exir.delete(0,'end')
-          rp_exir.insert(0, last_year)
+          rp_exir.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           rp_exir1.delete(0,'end')
-          rp_exir1.insert(0, cr)
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          rp_exir1.insert(0, cr.strftime(dts))
+          
 
           frame = Frame(
           reportframe,
@@ -17333,39 +19148,11 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
       # ------------------------------
       elif rth=="Custom Range":
-          ltt=rp_exir.get_date()
-          ltt1=rp_exir1.get_date()
+          trt=rp_exir.get_date()
+          ltt=trt.set_date(trt).strftime(dts)
+          ltt1=rp_exir1.get_date().strftime(dts)
 
-          sql='select dateformat from company'
-          fbcursor.execute(sql)
-          rp_date_for=fbcursor.fetchone()
-          if not rp_date_for:
-            pass
-          else:
-            if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-            elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-            elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-            elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-            elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #     rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #     rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-            else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
+          
           
 
           frame = Frame(
@@ -17539,35 +19326,67 @@ def mainpage():
       
   #---------------------------------------------------INVOICE REPORT (WITH CUSTOMER)---------------------------------
   def category_irwc(): 
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                elif rp_date_for[0]=="yyyy.mm.dd":
+                    dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                elif rp_date_for[0]=="yyyy/mm/dd":
+                    dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
-      rth=irwcfilter.get()
+      
       # #for company details
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
-      global drf
+     
 
       rth=invfilter.get()
       sqlr= 'select currencysign from company'
       fbcursor.execute(sqlr)
       crncy=fbcursor.fetchone()
-      global crc
+    
       crc=crncy[0]
       sqlrt= 'select currsignplace from company'
       fbcursor.execute(sqlrt)
       post_rp=fbcursor.fetchone()
-      global ps_cr
+      
       ps_cr=post_rp[0]
+      global drf
+      rth=irwcfilter.get()
       if rth=="Month to date":
+          
 
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -17577,6 +19396,7 @@ def mainpage():
           )
           frame.pack(expand=True, fill=BOTH,  padx=10, pady=20)
           frame.place(x=20,y=115)
+          
           canvas=Canvas(
               frame,
               bg='grey',
@@ -17584,8 +19404,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-         
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -17734,11 +19553,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, start)
+          irwcfrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -17755,7 +19574,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -17899,12 +19718,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, start)
+          irwcfrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, end)
+          irwcto1.insert(0, end.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -17921,7 +19740,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18065,12 +19884,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, nxt_mnth)
+          irwcto1.insert(0, nxt_mnth.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -18087,7 +19906,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18228,13 +20047,14 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #=====================================================================================================
       elif rth=="Current days":
-          given_date = date.today()
-          irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0,given_date)
+        #   given_date = date.today()
+        #   irwcfrm1.delete(0,'end')
+          given_date=irwcfrm1.get_date()
+        #   irwcfrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -18251,7 +20071,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18394,11 +20214,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -18415,7 +20235,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18561,11 +20381,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
           frame = Frame(
           reportframe,
           width=1500,
@@ -18581,7 +20401,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18726,11 +20546,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -18747,7 +20567,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -18891,11 +20711,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, in_dat)
+          irwcfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -18912,7 +20732,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19053,13 +20873,13 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           irwcfrm1.delete(0,'end')
-          irwcfrm1.insert(0, last_year)
+          irwcfrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           irwcto1.delete(0,'end')
-          irwcto1.insert(0, cr)
+          irwcto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -19076,7 +20896,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19236,7 +21056,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19381,18 +21201,18 @@ def mainpage():
       
       else:
           pass
-      drf=canvas
+      
       
 
   #-------------------------------------------------Order report-----------------------------------------
   def category_or():
     # firtst filter-----------------------------------Month to date
-      rth=orfilter.get()
+      
       # #for company details
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_or= fbcursor.fetchone()
-      
+      global drf
       rth=invfilter.get()
       sqlr= 'select currencysign from company'
       fbcursor.execute(sqlr)
@@ -19404,7 +21224,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
-      
+      rth=orfilter.get()
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -19430,7 +21250,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19594,7 +21414,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19619,7 +21439,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -19759,7 +21579,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19784,7 +21604,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -19921,7 +21741,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -19946,7 +21766,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20085,7 +21905,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20110,7 +21930,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20246,7 +22066,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20271,7 +22091,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20410,7 +22230,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20435,7 +22255,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20574,7 +22394,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20599,7 +22419,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20736,7 +22556,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20761,7 +22581,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -20897,7 +22717,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -20922,7 +22742,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -21054,7 +22874,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -21079,7 +22899,7 @@ def mainpage():
               
               style=ttk.Style()
               style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+              style.configure("mystyle.Treeview.Heading", font=('Calibri', 13), background='white') # Modify the font of the headings
               style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
 
               # Add a Treeview widge
@@ -21198,7 +23018,7 @@ def mainpage():
   #-------------------------------------------------Tax Report Invoice-----------------------------------------
   def category_tri():
     # firtst filter-----------------------------------Month to date
-      rth=trifilter.get()
+      
       tri_company = "SELECT * from company"
       fbcursor.execute(tri_company)
       company_tri= fbcursor.fetchone()
@@ -21214,6 +23034,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
+      rth=trifilter.get()
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -21239,7 +23060,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -21422,7 +23243,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -21604,7 +23425,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -21786,7 +23607,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -21966,7 +23787,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -22147,7 +23968,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -22331,7 +24152,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -22512,7 +24333,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -22691,7 +24512,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -22869,7 +24690,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23043,7 +24864,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23205,7 +25026,7 @@ def mainpage():
   #-------------------------------------------------tax report order-----------------------------------------
   def category_tro():
     # firtst filter-----------------------------------Month to date
-      rth=trofilter.get()
+      
 
       # #for company details
       tro_company = "SELECT * from company"
@@ -23222,7 +25043,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
-      
+      rth=trofilter.get()
       if rth=="Month to date":
 
           given_date = datetime.today().date()
@@ -23249,7 +25070,8 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
+          
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23433,7 +25255,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23619,7 +25441,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23803,7 +25625,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -23985,7 +25807,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -24167,7 +25989,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -24351,7 +26173,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -24535,7 +26357,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -24717,7 +26539,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -24898,7 +26720,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -25075,7 +26897,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -25239,7 +27061,7 @@ def mainpage():
   #-------------------------------------------------Sales report group by date------------------------------------------
   def category_srgd():
     # firtst filter-----------------------------------Month to date
-      rth=srgdfilter.get()
+      
       # #for company details
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
@@ -25258,7 +27080,7 @@ def mainpage():
 
       irt1=srgd_frm.get_date()
       irt2=srgd_to.get_date()
-
+      rth=srgdfilter.get()
       if rth==rth:
           lkt=srgdfilter.get()
           lkts=srgdfilter.get()
@@ -25432,7 +27254,7 @@ def mainpage():
   #----------------------------------------invoice report detail------------------------------------------------------
   def category_ird():
     # firtst filter-----------------------------------Month to date
-      rth=irdfilter.get()
+      
       ird1=irdfrm1.get_date()
       ird2=irdfrm2.get_date()
       tro_company = "SELECT * from company"
@@ -25449,7 +27271,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
-
+      rth=irdfilter.get()
       if rth=="All":
 
           frame = Frame(
@@ -25796,12 +27618,12 @@ def mainpage():
 
   def category_por():   
     # firtst filter-----------------------------------Month to date
-      rth=porfilter.get()
+      
       # #for company details
       or_company = "SELECT * from company"
       fbcursor.execute(or_company)
       company_or= fbcursor.fetchone()
-
+      global drf
       ddr2=date.today()
       rth=invfilter.get()
       sqlr= 'select currencysign from company'
@@ -25814,6 +27636,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
+      rth=porfilter.get()
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -25841,7 +27664,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26003,7 +27826,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26164,7 +27987,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26329,7 +28152,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26487,7 +28310,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26647,7 +28470,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26809,7 +28632,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -26970,7 +28793,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -27129,7 +28952,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -27288,7 +29111,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -27442,7 +29265,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvaspor
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -27580,8 +29403,10 @@ def mainpage():
           pass
   #------------------------------------expense report--------------------
   def category_exp():
+      
     # firtst filter-----------------------------------Month to date
-      rth=expfilter.get()
+      
+      
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
@@ -27597,7 +29422,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
-
+      
       # given_date = datetime.today().date()
       # in_dat = given_date.replace(day=1)
       # exp_frm.delete(0,'end')
@@ -27608,7 +29433,9 @@ def mainpage():
       # exp_to.insert(0, cr)
 
       global drf
+      rth=expfilter.get()
       if rth=="All":
+          
 
           frame = Frame(
           reportframe,
@@ -27625,6 +29452,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
+          drf=canvas
 
           vertibar=Scrollbar(
               frame,
@@ -27683,24 +29511,24 @@ def mainpage():
               tre=fbcursor.fetchall()
 
               for i in tre:
-                  if ps_cr=="before amount":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                #   if ps_cr=="before amount":
+                #       rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                       
                      
-                  elif ps_cr=="after amount":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                #   elif ps_cr=="after amount":
+                #       rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                       
                      
-                  elif ps_cr=="before amount with space":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                #   elif ps_cr=="before amount with space":
+                #       rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                       
-                  elif ps_cr=="after amount with space":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                #   elif ps_cr=="after amount with space":
+                #       rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                    
-                  else:
-                      pass
+                #   else:
+                #       pass
  
-                #   rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
+                  rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], i[16], i[3]))
                   count += 1
 
               # total_tri='SELECT SUM(expense_amount) from expenses'
@@ -27788,7 +29616,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -27848,18 +29676,18 @@ def mainpage():
 
               for i in tre:
                   if ps_cr=="before amount":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                       
                      
                   elif ps_cr=="after amount":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                       
                      
                   elif ps_cr=="before amount with space":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                       
                   elif ps_cr=="after amount with space":
-                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                      rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                    
                   else:
                       pass
@@ -27934,11 +29762,11 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
       else:
           pass
-      drf=canvas
+      
   #------------------------------payment report------------------------
   def category_pyr():
     # firtst filter-----------------------------------Month to date
-      rth=pyrfilter.get()
+      
       tri_company = "SELECT * from company"
       fbcursor.execute(tri_company)
       company_tri= fbcursor.fetchone()
@@ -27952,7 +29780,8 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
-
+      global drf
+      rth=pyrfilter.get()
       if rth=="Month to date":
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
@@ -27979,6 +29808,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
+          drf=canvas
 
           vertibar=Scrollbar(
               frame,
@@ -28137,7 +29967,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -28300,7 +30130,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -28462,7 +30292,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -28622,7 +30452,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -28783,7 +30613,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -28945,7 +30775,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29107,7 +30937,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29267,7 +31097,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29426,7 +31256,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29583,7 +31413,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29896,7 +31726,7 @@ def mainpage():
           post_rp=fbcursor.fetchone()
           global ps_cr
           ps_cr=post_rp[0]
-
+          global drf
           frame = Frame(
           reportframe,
           width=1500,
@@ -29912,7 +31742,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -29968,7 +31798,7 @@ def mainpage():
                   rp_pdi_tree.delete(record)
               count=0
               fbcursor.execute('SELECT * FROM invoice WHERE duedate>invodate')
-
+              
               for i in fbcursor:
                   if ps_cr=="before amount":
                       rp_pdi_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[1], i[2], i[3], i[35], i[4], crc+str(i[8]), crc+str(i[9]),crc+str(i[10])))
@@ -30003,7 +31833,7 @@ def mainpage():
               
 
             #   rp_pdi_tree.insert('', 'end',text="1",values=('','','','','',tot_ird,tot_tax1_ird,tot_tax2_ird))
-            #   window = canvas.create_window(270, 260, anchor="nw", window=rp_pdi_tree)
+              window = canvas.create_window(270, 260, anchor="nw", window=rp_pdi_tree)
           else:
               
               canvas.create_text(360,100,text="Your Company Name",fill='black',font=("Helvetica", 12), justify='center')
@@ -30057,7 +31887,7 @@ def mainpage():
   #-----------------------Customer list --------------------------------------
   def category_cl():
     # firtst filter-----------------------------------Month to date
-      rth=clfilter.get()
+      
       # #for company details
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
@@ -30076,7 +31906,7 @@ def mainpage():
 
       global drf
       
-
+      rth=clfilter.get()
       if rth=="All Customers ":
 
           frame = Frame(
@@ -30094,7 +31924,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30206,7 +32036,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30312,12 +32142,13 @@ def mainpage():
   #-----------------------Customer list detailed--------------------------
   def category_cld():
     # firtst filter-----------------------------------Month to date
-      rth=cldfilter.get()
+      
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
 
       global drf
+      rth=cldfilter.get()
 
       if rth=="All Customers ":
           # #for company details
@@ -30339,7 +32170,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30446,7 +32277,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30554,11 +32385,11 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
       else:
           pass
-      drf=canvas
+      
   #products/Service list--------------------------------------------------------------------------
   def category_psl():
     # firtst filter-----------------------------------Month to date
-      rth=pslfilter.get()
+      
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
       company_tro= fbcursor.fetchone()
@@ -30573,6 +32404,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
+      rth=pslfilter.get()
       
       if rth=="All product and Services ":
 
@@ -30591,7 +32423,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30725,7 +32557,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30859,7 +32691,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -30994,7 +32826,7 @@ def mainpage():
               height=1200,
               scrollregion=(0,0,1500, 1500)
               )
-
+          drf=canvas
           vertibar=Scrollbar(
               frame,
               orient=VERTICAL
@@ -31114,11 +32946,11 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
       else:
           pass
-      drf=canvas
+      
   #-------------------------------------------------prace list----------------------
   def category_prl():
     # firtst filter-----------------------------------Month to date
-      rth=prlfilter.get()
+      
       # #for company details
       tro_company = "SELECT * from company"
       fbcursor.execute(tro_company)
@@ -31134,6 +32966,7 @@ def mainpage():
       post_rp=fbcursor.fetchone()
       global ps_cr
       ps_cr=post_rp[0]
+      rth=prlfilter.get()
       if rth=="All product and Services ":
 
           frame = Frame(
@@ -33676,7 +35509,7 @@ def mainpage():
       menupor = StringVar()
       drop1por=ttk.Combobox(midFrame, textvariable=menupor)
       drop1por.place(x=530,y=10)
-      drop1por["values"]=("Java","Php", "POP")
+      drop1por["values"]=("0")
       drop1por.current(0)
 
       rpdrop2_por=ttk.Combobox(midFrame, textvariable=porfilter)
@@ -34877,8 +36710,8 @@ def mainpage():
           pass
 
   def check_inv():  
-      in_dat=invfrm.get()
-      cr=invto.get()
+      in_dat=rp_exir.get_date()
+      cr=rp_exir1.get_date()
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
@@ -35579,8 +37412,8 @@ def mainpage():
           pass
 
   def check_irwc():
-      in_dat=irwcfrm.get()
-      cr=irwcto.get()
+      in_dat=irwcfrm.get_date()
+      cr=irwcto.get_date()
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
@@ -36206,8 +38039,8 @@ def mainpage():
 
 
   def check_tri():
-      in_dat=trifrm.get()
-      cr=trito.get()
+      in_dat=trifrm.get_date()
+      cr=trito.get_date()
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
@@ -39292,18 +41125,18 @@ def mainpage():
 
                   for i in tre:
                         if ps_cr=="before amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                             
                             
                         elif ps_cr=="after amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                             
                             
                         elif ps_cr=="before amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                             
                         elif ps_cr=="after amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                         
                         else:
                             pass
@@ -39386,18 +41219,18 @@ def mainpage():
 
                   for i in tre:
                         if ps_cr=="before amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                             
                             
                         elif ps_cr=="after amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                             
                             
                         elif ps_cr=="before amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                             
                         elif ps_cr=="after amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                         
                         else:
                             pass
@@ -39481,18 +41314,18 @@ def mainpage():
 
                   for i in tre:
                         if ps_cr=="before amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                             
                             
                         elif ps_cr=="after amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                             
                             
                         elif ps_cr=="before amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                             
                         elif ps_cr=="after amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                         
                         else:
                             pass
@@ -39572,18 +41405,18 @@ def mainpage():
 
                   for i in tre:
                         if ps_cr=="before amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                             
                             
                         elif ps_cr=="after amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                             
                             
                         elif ps_cr=="before amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                             
                         elif ps_cr=="after amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                         
                         else:
                             pass
@@ -39666,18 +41499,18 @@ def mainpage():
 
                   for i in tre:
                         if ps_cr=="before amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+str(i[14]), crc+str(i[16]), crc+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+str(i[16]), crc+str(i[3])))
                             
                             
                         elif ps_cr=="after amount":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+crc, str(i[16])+crc, str(i[3])+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+crc, str(i[3])+crc))
                             
                             
                         elif ps_cr=="before amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],crc+" "+str(i[14]), crc+" "+str(i[16]), crc+" "+str(i[3])))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5],i[14], crc+" "+str(i[16]), crc+" "+str(i[3])))
                             
                         elif ps_cr=="after amount with space":
-                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], str(i[14])+" "+crc, str(i[16])+" "+crc, str(i[3])+" "+crc))
+                            rp_exp_tree.insert(parent='', index='end', iid=i, text='hello', values=(i[4], i[10], i[5], i[14], str(i[16])+" "+crc, str(i[3])+" "+crc))
                         
                         else:
                             pass

@@ -1,32 +1,100 @@
+
+import tkinter as tk
+from textwrap import wrap
+
+root = tk.Tk()
+
+canvas_width = 600
+canvas_height = 400
+w = canvas_width // 2
+h = canvas_height // 2
+canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
+canvas.pack()
+
+r1 = canvas.create_rectangle(w, h, w + 40, h + 10)
+t = canvas.create_text(w + 20, h + 5, text="Hello")
+
+
+def keypress(event):
+    """The 4 key press"""
+    x, y = 0, 0
+    if event.char == "a":
+        x = -10
+    if event.char == "d":
+        x = 10
+    if event.char == "w":
+        y = -10
+    if event.char == "s":
+        y = 10
+    canvas.move(r1, x, y)
+    canvas.move(t, x, y)
+
+
+root.bind("<Key>", keypress)
+root.mainloop()
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
 import tkinter as tk
  
-# Create our master object to the Application
-master = tk.Tk()
+root = tk.Tk()
  
-# Create the text widget
-text_widget = tk.Text(master, height=5, width=40)
+canvas_width = 600
+canvas_height = 400
+w = canvas_width // 2
+h = canvas_height // 2
+canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
+canvas.pack()
  
-# Create a scrollbar
-scroll_bar = tk.Scrollbar(master)
+r1 = canvas.create_rectangle(w, h, w + 40, h + 10)
+text="Hellodfjhsgfjhgfjhgdjhgfjhdsgfjhgsdjhgfdjshgfjshgjdhfgjhgsfjdhudhfiughfuisdgbuidifid"
+wraped_text="\n".join(wrap(text,40))
+t = canvas.create_text(w + 20, h + 5, text=wraped_text)
  
-# Pack the scroll bar
-# Place it to the right side, using tk.RIGHT
-scroll_bar.pack(side=tk.RIGHT)
-
  
-# Pack it into our tkinter application
-# Place the text widget to the left side
-text_widget.pack(side=tk.LEFT)
+def keypress(event):
+    """The 4 key press"""
+    x, y = 0, 0
+    if event.char == "a":
+        x = -10
+    if event.char == "d":
+        x = 10
+    if event.char == "w":
+        y = -10
+    if event.char == "s":
+        y = 10
+    canvas.move(r1, x, y)
+    canvas.move(t, x, y)
  
-long_text = """This is a multiline string.
-We can write this in multiple lines too!
-Hello from AskPython. This is the third line.
-This is the fourth line. Although the length of the text is longer than
-the width, we can use tkinter's scrollbar to solve this problem!
-"""
  
-# Insert text into the text widget
-text_widget.insert(tk.END, long_text)
- 
-# Start the mainloop
-tk.mainloop()
+root.bind("<Key>", keypress)
+root.mainloop()
