@@ -77,7 +77,7 @@ from textwrap import wrap
 
 
 fbilldb = mysql.connector.connect(
-    host="localhost", user="root", password="", database="fbd", port="3306"
+    host="localhost", user="root", password="", database="fbillingsintgrtd", port="3306"
 )
 fbcursor = fbilldb.cursor(buffered=True)
 
@@ -278,7 +278,7 @@ def mainpage():
   w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=(0, 5))
 
-  copyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+  copyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
   copyLabel.pack(side="left")
   w = Canvas(midFrame, width=1, height=65, bg="#b3b3b3", bd=0)
   w.pack(side="left", padx=(0, 5))
@@ -2405,24 +2405,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
-          for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
-                      
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
+          for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
           pdf.save()
       elif rpcheckvar1_ir.get()==1 and rpcheckvar2_ir.get()==0 and rpcheckvar3_ir.get()==1:
@@ -2487,22 +2540,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -2568,22 +2676,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -2649,22 +2812,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -2730,23 +2948,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
-          for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
-                      
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
+          for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
           pdf.save()
       elif rpcheckvar1_ir.get()==0 and rpcheckvar2_ir.get()==1 and rpcheckvar3_ir.get()==1:
@@ -2811,22 +3083,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -2892,22 +3219,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -2973,22 +3355,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3073,23 +3510,62 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
           pdf.save()
       elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==0 and rpcheckvar3_irwc.get()==1:
@@ -3156,23 +3632,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3241,23 +3757,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3325,23 +3881,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3409,23 +4005,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3493,24 +4129,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
-          for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
-                      
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
+          
+          for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
           pdf.save()
       elif rpcheckvar1_irwc.get()==1 and rpcheckvar2_irwc.get()==1 and rpcheckvar3_irwc.get()==0:
@@ -3577,23 +4252,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3661,23 +4376,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -3759,22 +4514,63 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
+
       for i in tre:
-                  if x==44 or x==50 :
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                      pdf.drawString(28,x,str(i[0]))
-                      
-                      pdf.drawString(88,x,str(i[1]))
-                      pdf.drawString(158,x,str(i[2]))
-                      pdf.drawString(235,x,str(i[3]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[26]))
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[26]))
                 
-                  count += 1
-                  x-=15
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[26])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[26]))
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[26])+" "+str(crc))
+                        
+                        else:
+                            pass
+                       
+                    count += 1
+                    x-=15
 
 
       pdf.save()
@@ -3844,22 +4640,74 @@ def mainpage():
       fbcursor.execute(sql_inv_dt)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(115,x,str(i[18]))
-                  pdf.drawString(250,x,str(i[26]))
-                  pdf.drawString(335,x,str(i[24]))
-                  pdf.drawString(430,x,str(i[27])) 
-                  pdf.drawString(505,x,str(i[8]))
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(crc)+str(i[8]))
                 
-              count += 1
-              x-=15
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(crc)+" "+str(i[8]))
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(i[8])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                       
+                    count += 1
+                    x-=15
+                      
+            #   else:
+            #       pdf.drawString(28,x,str(i[1]))
+                  
+            #       pdf.drawString(115,x,str(i[18]))
+            #       pdf.drawString(250,x,str(i[26]))
+            #       pdf.drawString(335,x,str(i[24]))
+            #       pdf.drawString(430,x,str(i[27])) 
+            #       pdf.drawString(505,x,str(i[8]))
+                
+            #   count += 1
+            #   x-=15
 
 
       pdf.save()
@@ -3932,23 +4780,81 @@ def mainpage():
       fbcursor.execute(sql_inv_dt)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50 :
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50 :
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(88,x,str(i[2]))
-                  pdf.drawString(158,x,str(i[3]))
-                  pdf.drawString(234,x,str(i[35]))
-                  pdf.drawString(300,x,str(i[4])) 
-                  pdf.drawString(365,x,str(i[8]))
-                  pdf.drawString(455,x,str(i[9]))
-                  pdf.drawString(530,x,str(i[10]))
-              count += 1
-              x-=15
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(crc)+str(i[8]))
+                                pdf.drawString(455,x,str(crc)+str(i[9]))
+                                pdf.drawString(530,x,str(crc)+str(i[10]))
+                
+                            
+                        elif ps_cr=="after amount":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(i[8])+str(crc))
+                                pdf.drawString(455,x,str(i[9])+str(crc))
+                                pdf.drawString(530,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(crc)+" "+str(i[8]))
+                                pdf.drawString(455,x,str(crc)+" "+str(i[9]))
+                                pdf.drawString(530,x,str(crc)+" "+str(i[10]))
+                            
+                        elif ps_cr=="after amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(i[8]))
+                                pdf.drawString(455,x,str(i[9])+" "+str(crc))
+                                pdf.drawString(530,x,str(i[10])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                    count += 1
+                    x-=15
+            #   else:count += 1
+                   
+                #   pdf.drawString(28,x,str(i[1]))
+                  
+                #   pdf.drawString(88,x,str(i[2]))
+                #   pdf.drawString(158,x,str(i[3]))
+                #   pdf.drawString(234,x,str(i[35]))
+                #   pdf.drawString(300,x,str(i[4])) 
+                #   pdf.drawString(365,x,str(i[8]))
+                #   pdf.drawString(455,x,str(i[9]))
+                #   pdf.drawString(530,x,str(i[10]))
+              
 
 
       pdf.save()
@@ -4024,23 +4930,65 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(110,x,str(i[2]))
-                  pdf.drawString(190,x,str(i[18]))
-                  pdf.drawString(298,x,str(i[34]))
-                  pdf.drawString(358,x,str(i[2])) 
-                  pdf.drawString(425,x,str(i[18]))
-                  pdf.drawString(515,x,str(i[9]))
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(crc)+str(i[9]))
+                
+                            
+                        elif ps_cr=="after amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-              count += 1
-              x-=15
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(i[9])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(crc)+" "+str(i[9]))
+                            
+                        elif ps_cr=="after amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(i[9])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
       pdf.save()
@@ -4712,20 +5660,78 @@ def mainpage():
                   fbcursor.execute(sql_inv_dt)
                   tre=fbcursor.fetchall()
                   x=705
+                  sqlr= 'select currencysign from company'
+                  fbcursor.execute(sqlr)
+                  crncy=fbcursor.fetchone()
+                        
+                  crc=crncy[0]
+                  sqlrt= 'select currsignplace from company'
+                  fbcursor.execute(sqlrt)
+                  post_rp=fbcursor.fetchone()
+                  ps_cr=post_rp[0]
                   for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                            else:
+                                pass
+                        #   else:
+                        #       pdf.drawString(28,x,str(i[0]))
+                              
+                        #       pdf.drawString(95,x,str(i[3]))
+                        #       pdf.drawString(165,x,str(i[4]))
+                        #       pdf.drawString(295,x,str(i[5]))
+                        #       pdf.drawString(380,x,str(i[15])) 
+                        #       pdf.drawString(475,x,str(i[13]))
+                        #       pdf.drawString(510,x,str(i[9]))
+                        #       pdf.drawString(545,x,str(i[11]))
                           count += 1
                           x-=15
 
@@ -4757,25 +5763,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Products" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Products" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -4807,25 +5861,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Service" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Service" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -4857,25 +5959,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Default" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Default" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -4915,20 +6065,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -4965,23 +6163,70 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
           elif rth=="All Service":
@@ -5015,23 +6260,70 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
-
               pdf.save()
           elif rth=="Default":
               path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
@@ -5064,20 +6356,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5117,20 +6457,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5167,20 +6555,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5217,20 +6653,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5266,20 +6750,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5332,19 +6864,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5381,19 +6954,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5430,19 +7044,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5479,19 +7134,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5531,22 +7227,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
           elif rth=="All products":
@@ -5580,22 +7316,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
               pdf.save()
           elif rth=="All Service":
               path = filedialog.asksaveasfilename(initialdir=os.getcwd,title="Save File",filetypes=[('Pdf File', '*.pdf',)],
@@ -5628,22 +7404,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
           elif rth=="Default":
@@ -5677,19 +7493,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5728,19 +7585,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5777,22 +7675,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
           elif rth=="All Service":
@@ -5826,22 +7764,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
           elif rth=="Default":
@@ -5875,19 +7853,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -5945,6 +7964,7 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+             
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
@@ -6133,23 +8153,76 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
+                    #   else:
+                    #       pdf.drawString(28,x,str(i[1]))
+                          
+                    #       pdf.drawString(95,x,str(i[2]))
+                    #       pdf.drawString(150,x,str(i[3]))
+                    #       pdf.drawString(268,x,str(i[37]))
+                    #       pdf.drawString(348,x,str(i[16])) 
+                    #       pdf.drawString(400,x,str(i[36]))
+                    #       pdf.drawString(465,x,str(i[8]))
+                          
+                    #   count += 1
+                    #   x-=15
 
 
               pdf.save()
@@ -6215,23 +8288,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6297,23 +8411,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6379,23 +8534,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6461,23 +8657,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6543,23 +8780,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6624,24 +8902,64 @@ def mainpage():
               inv_valuz=(var_1,var_2)
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
-              x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6707,23 +9025,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -6802,24 +9161,65 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-              else:
-                          
-                  pdf.drawString(28,x,str(i[0]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                   
-                  pdf.drawString(95,x,str(i[1]))
-                  pdf.drawString(150,x,str(i[2]))
-                  pdf.drawString(268,x,str(i[28]))
-                  pdf.drawString(348,x,str(i[14])) 
-                  pdf.drawString(400,x,str(i[29]))
-                  pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(crc)+str(i[28]))
+                                    pdf.drawString(348,x,str(crc)+str(i[14])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[29]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                   
-              count += 1
-              x-=15
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(i[28])+str(crc))
+                                    pdf.drawString(348,x,str(i[14])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[29])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[28]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[14])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[29]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(i[28])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[14])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[29])+ " "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                  
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
       pdf.save()
@@ -6909,27 +9309,83 @@ def mainpage():
 
           
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                            
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre1:
               for j in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-                          
-                      k=int(j[9]*int(i[38]))
-                      rt=int(i[8])
-                      l=rt-k
-                      pdf.drawString(28,x,str(i[2]))
-                      
-                      pdf.drawString(138,x,str(i[38]))
-                      pdf.drawString(245,x,str(k))
-                      pdf.drawString(385,x,str(i[8]))
-                      pdf.drawString(485,x,str(l)) 
-                  
-                  count += 1
-                  x-=15
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(crc)+str(k))
+                                    pdf.drawString(385,x,str(crc)+str(i[8]))
+                                    pdf.drawString(485,x,str(crc)+str(l)) 
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(k)+str(crc))
+                                    pdf.drawString(385,x,str(i[8])+str(crc))
+                                    pdf.drawString(485,x,str(l)+str(crc)) 
+                    
+                            elif ps_cr=="before amount with space":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(crc)+" "+str(k))
+                                    pdf.drawString(385,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(485,x,str(crc)+" "+str(l)) 
+                                
+                            elif ps_cr=="after amount with space":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(k)+" "+str(crc))
+                                    pdf.drawString(385,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(485,x,str(l)+" "+str(crc)) 
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
+                #   else:
+                          
+                #       k=int(j[9]*int(i[38]))
+                #       rt=int(i[8])
+                #       l=rt-k
+                #       pdf.drawString(28,x,str(i[2]))
+                      
+                #       pdf.drawString(138,x,str(i[38]))
+                #       pdf.drawString(245,x,str(k))
+                #       pdf.drawString(385,x,str(i[8]))
+                #       pdf.drawString(485,x,str(l)) 
+                  
+                  
         
           pdf.save()
       else:
@@ -7008,23 +9464,61 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                            
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                  pdf.showPage()
-                  x=750
-                      
-              else:
-                          
-                  pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(108,x,str(i[2]))
-                  pdf.drawString(180,x,str(i[29]))
-                  pdf.drawString(300,x,str(i[8]))
-                  pdf.drawString(435,x,str(i[9])) 
-                  pdf.drawString(520,x,str(i[10]))
-                
-              count += 1
-              x-=15
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(crc)+str(i[8]))
+                                    pdf.drawString(435,x,str(crc)+str(i[9])) 
+                                    pdf.drawString(520,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(i[8])+str(crc))
+                                    pdf.drawString(435,x,str(i[9])+str(crc)) 
+                                    pdf.drawString(520,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(435,x,str(crc)+" "+str(i[9])) 
+                                    pdf.drawString(520,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(435,x,str(i[9])+" "+str(crc)) 
+                                    pdf.drawString(520,x,str(i[10])+" "+str(crc))
+                  
+                            else:
+                                pass 
+                        count += 1
+                        x-=15 
 
 
       pdf.save()
@@ -7105,23 +9599,61 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=655
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                            
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                  pdf.showPage()
-                  x=750
-                      
-              else:
-                      
-                  pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(100,x,str(i[2]))
-                  pdf.drawString(178,x,str(i[29]))
-                  pdf.drawString(295,x,str(i[8]))
-                  pdf.drawString(428,x,str(i[9])) 
-                  pdf.drawString(515,x,str(i[10]))
-                
-              count += 1
-              x-=15
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(crc)+str(i[8]))
+                                    pdf.drawString(428,x,str(crc)+str(i[9])) 
+                                    pdf.drawString(515,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(i[8])+str(crc))
+                                    pdf.drawString(428,x,str(i[9])+str(crc)) 
+                                    pdf.drawString(515,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(428,x,str(crc)+" "+str(i[9])) 
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(428,x,str(i[9])+" "+str(crc)) 
+                                    pdf.drawString(515,x,str(i[10])+" "+str(crc))
+                  
+                            else:
+                                pass  
+                        count += 1
+                        x-=15   
       
 
 
@@ -7202,23 +9734,72 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
+                #   else:
+                          
+                #       pdf.drawString(28,x,str(i[0]))
+                      
+                #       pdf.drawString(88,x,str(i[2]))
+                #       pdf.drawString(160,x,str(i[3]))
+                #       pdf.drawString(280,x,str(i[26]))
+                #       pdf.drawString(395,x,str(i[5])) 
+                #       pdf.drawString(495,x,str(i[10]))
+                  
+                  
 
 
           pdf.save()
@@ -7288,23 +9869,61 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=655
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
 
 
           pdf.save()
@@ -7375,23 +9994,61 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=655
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
 
 
           pdf.save()
@@ -7473,24 +10130,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -7560,27 +10254,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
-
-
-              pdf.save()
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
           else:
               pass
       elif rpcheckvar1_exp.get()==1 and rpcheckvar2_exp.get()==0:
@@ -7649,24 +10377,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -7736,25 +10501,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
-
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
               pdf.save()
           else:
@@ -7829,24 +10630,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
               pdf.save()
 
@@ -7915,24 +10753,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -8014,23 +10889,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8090,22 +11019,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8165,22 +11149,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8271,6 +11310,8 @@ def mainpage():
           wraped_text="\n".join(wrap(text,30))
           htg=wraped_text.split('\n')
           
+        
+          
           vg=len(htg)
           if vg>0:
               pdf.drawString(30,752,htg[0])
@@ -8315,6 +11356,15 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
           for i in tre:
                     if x==44 or x==50:
@@ -8436,22 +11486,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8511,22 +11616,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8586,22 +11746,77 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                  else:
-                      pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(231,x,str(i[35]))
-                      pdf.drawString(300,x,str(i[4])) 
-                      pdf.drawString(360,x,str(i[8]))
-                      pdf.drawString(450,x,str(i[9]))
-                      pdf.drawString(525,x,str(i[10]))
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+str(i[10]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+str(crc))
+                            pdf.drawString(450,x,str(i[9])+str(crc))
+                            pdf.drawString(525,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(crc)+" "+str(i[8]))
+                            pdf.drawString(450,x,str(crc)+" "+str(i[9]))
+                            pdf.drawString(525,x,str(crc)+" "+str(i[10]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(231,x,str(i[35]))
+                            pdf.drawString(300,x,str(i[4])) 
+                            pdf.drawString(360,x,str(i[8])+" "+str(crc))
+                            pdf.drawString(450,x,str(i[9])+" "+str(crc))
+                            pdf.drawString(525,x,str(i[10])+" "+str(crc))
+                        
+                        else:
+                            pass
+                        # pdf.drawString(28,x,str(i[1]))
+                      
+                        # pdf.drawString(88,x,str(i[2]))
+                        # pdf.drawString(158,x,str(i[3]))
+                        # pdf.drawString(231,x,str(i[35]))
+                        # pdf.drawString(300,x,str(i[4])) 
+                        # pdf.drawString(360,x,str(i[8]))
+                        # pdf.drawString(450,x,str(i[9]))
+                        # pdf.drawString(525,x,str(i[10]))
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8680,23 +11895,81 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
+                        
+        #   for i in tre:
+        #           if x==44 or x==50:
+        #               pdf.showPage()
+        #               x=750
+                      
+        #           else:
               
-                      pdf.drawString(28,x,str(i[1]))
+                    #   pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
+                    #   pdf.drawString(88,x,str(i[2]))
+                    #   pdf.drawString(158,x,str(i[3]))
+                    #   pdf.drawString(235,x,str(i[18]))
+                    #   pdf.drawString(405,x,str(i[4])) 
+                    #   pdf.drawString(490,x,str(i[8]))
                   
-                  count += 1
-                  x-=15
+        #           count += 1
+        #           x-=15
 
           pdf.save()
           win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
@@ -8757,23 +12030,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8836,23 +12149,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8914,23 +12267,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -8992,24 +12385,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
-          for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
-                      
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
+          
+          for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
           pdf.save()
           win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)
@@ -9070,23 +12502,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -9148,23 +12620,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
+
+          
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
           pdf.save()
@@ -9226,24 +12738,63 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
-          for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-              
-                      pdf.drawString(28,x,str(i[1]))
-                      
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(158,x,str(i[3]))
-                      pdf.drawString(235,x,str(i[18]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[8]))
-                  
-                  count += 1
-                  x-=15
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+        
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
 
+          
+          for i in tre:
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[8]))
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[8]))
+                            
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                      
+                            pdf.drawString(88,x,str(i[2]))
+                            pdf.drawString(158,x,str(i[3]))
+                            pdf.drawString(235,x,str(i[18]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[8])+" "+str(crc))
+                        
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
           pdf.save()
           win32api.ShellExecute(0,"","reports\Invoice_Report_With Customer.pdf",None,".",0)  
@@ -9318,22 +12869,80 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
+
       for i in tre:
-                  if x==44 or x==50 :
-                      pdf.showPage()
-                      x=750
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                      pdf.drawString(28,x,str(i[0]))
-                      
-                      pdf.drawString(88,x,str(i[1]))
-                      pdf.drawString(158,x,str(i[2]))
-                      pdf.drawString(235,x,str(i[3]))
-                      pdf.drawString(405,x,str(i[4])) 
-                      pdf.drawString(490,x,str(i[26]))
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+str(i[26]))
                 
-                  count += 1
-                  x-=15
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[26])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(crc)+" "+str(i[26]))
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[0]))
+                      
+                            pdf.drawString(88,x,str(i[1]))
+                            pdf.drawString(158,x,str(i[2]))
+                            pdf.drawString(235,x,str(i[3]))
+                            pdf.drawString(405,x,str(i[4])) 
+                            pdf.drawString(490,x,str(i[26])+" "+str(crc))
+                        
+                        else:
+                            pass
+                       
+                    count += 1
+                    x-=15
+
+    #   for i in tre:
+    #               if x==44 or x==50 :
+    #                   pdf.showPage()
+    #                   x=750
+                      
+    #               else:
+    #                   pdf.drawString(28,x,str(i[0]))
+                      
+    #                   pdf.drawString(88,x,str(i[1]))
+    #                   pdf.drawString(158,x,str(i[2]))
+    #                   pdf.drawString(235,x,str(i[3]))
+    #                   pdf.drawString(405,x,str(i[4])) 
+    #                   pdf.drawString(490,x,str(i[26]))
+                
+    #               count += 1
+    #               x-=15
 
 
       pdf.save()
@@ -9397,22 +13006,62 @@ def mainpage():
       fbcursor.execute(sql_inv_dt)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                            pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(115,x,str(i[18]))
-                  pdf.drawString(250,x,str(i[26]))
-                  pdf.drawString(335,x,str(i[24]))
-                  pdf.drawString(430,x,str(i[27])) 
-                  pdf.drawString(505,x,str(i[8]))
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(crc)+str(i[8]))
                 
-              count += 1
-              x-=15
+                            
+                        elif ps_cr=="after amount":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(i[8])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(crc)+" "+str(i[8]))
+                            
+                        elif ps_cr=="after amount with space":
+                            pdf.drawString(28,x,str(i[1]))
+                  
+                            pdf.drawString(115,x,str(i[18]))
+                            pdf.drawString(250,x,str(i[26]))
+                            pdf.drawString(335,x,str(i[24]))
+                            pdf.drawString(430,x,str(i[27])) 
+                            pdf.drawString(505,x,str(i[8])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                       
+                    count += 1
+                    x-=15
 
 
       pdf.save()
@@ -9479,23 +13128,69 @@ def mainpage():
       fbcursor.execute(sql_inv_dt)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50 :
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50 :
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(88,x,str(i[2]))
-                  pdf.drawString(158,x,str(i[3]))
-                  pdf.drawString(234,x,str(i[35]))
-                  pdf.drawString(300,x,str(i[4])) 
-                  pdf.drawString(365,x,str(i[8]))
-                  pdf.drawString(455,x,str(i[9]))
-                  pdf.drawString(530,x,str(i[10]))
-              count += 1
-              x-=15
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(crc)+str(i[8]))
+                                pdf.drawString(455,x,str(crc)+str(i[9]))
+                                pdf.drawString(530,x,str(crc)+str(i[10]))
+                
+                            
+                        elif ps_cr=="after amount":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(i[8])+str(crc))
+                                pdf.drawString(455,x,str(i[9])+str(crc))
+                                pdf.drawString(530,x,str(i[10])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(crc)+" "+str(i[8]))
+                                pdf.drawString(455,x,str(crc)+" "+str(i[9]))
+                                pdf.drawString(530,x,str(crc)+" "+str(i[10]))
+                            
+                        elif ps_cr=="after amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(88,x,str(i[2]))
+                                pdf.drawString(158,x,str(i[3]))
+                                pdf.drawString(234,x,str(i[35]))
+                                pdf.drawString(300,x,str(i[4])) 
+                                pdf.drawString(365,x,str(i[8]))
+                                pdf.drawString(455,x,str(i[9])+" "+str(crc))
+                                pdf.drawString(530,x,str(i[10])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                    count += 1
+                    x-=15
 
 
       pdf.save()
@@ -9565,23 +13260,77 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-              else:
-                  pdf.drawString(28,x,str(i[1]))
+                    if x==44 or x==50:
+                        pdf.showPage()
+                        x=750
+                    else:
+                        if ps_cr=="before amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(110,x,str(i[2]))
-                  pdf.drawString(190,x,str(i[18]))
-                  pdf.drawString(298,x,str(i[34]))
-                  pdf.drawString(358,x,str(i[2])) 
-                  pdf.drawString(425,x,str(i[18]))
-                  pdf.drawString(515,x,str(i[9]))
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(crc)+str(i[9]))
+                
+                            
+                        elif ps_cr=="after amount":
+                                pdf.drawString(28,x,str(i[1]))
                   
-              count += 1
-              x-=15
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(i[9])+str(crc))
+                            
+                        elif ps_cr=="before amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(crc)+" "+str(i[9]))
+                            
+                        elif ps_cr=="after amount with space":
+                                pdf.drawString(28,x,str(i[1]))
+                  
+                                pdf.drawString(110,x,str(i[2]))
+                                pdf.drawString(190,x,str(i[18]))
+                                pdf.drawString(298,x,str(i[34]))
+                                pdf.drawString(358,x,str(i[2])) 
+                                pdf.drawString(425,x,str(i[18]))
+                                pdf.drawString(515,x,str(i[9])+" "+str(crc))
+                                    
+                        else:
+                            pass
+                    count += 1
+                    x-=15
+            #   else:
+            #       pdf.drawString(28,x,str(i[1]))
+                  
+            #       pdf.drawString(110,x,str(i[2]))
+            #       pdf.drawString(190,x,str(i[18]))
+            #       pdf.drawString(298,x,str(i[34]))
+            #       pdf.drawString(358,x,str(i[2])) 
+            #       pdf.drawString(425,x,str(i[18]))
+            #       pdf.drawString(515,x,str(i[9]))
+                  
+            #   count += 1
+            #   x-=15
 
 
       pdf.save()
@@ -10214,25 +13963,73 @@ def mainpage():
                   pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
                   count=0
-                  sql_inv_dt='SELECT * FROM productservice where stock>stocklimit'
+                  sql_inv_dt='SELECT * FROM productservice where stock > stocklimit'
               
                   fbcursor.execute(sql_inv_dt)
                   tre=fbcursor.fetchall()
                   x=705
+                  sqlr= 'select currencysign from company'
+                  fbcursor.execute(sqlr)
+                  crncy=fbcursor.fetchone()
+                                
+                  crc=crncy[0]
+                  sqlrt= 'select currsignplace from company'
+                  fbcursor.execute(sqlrt)
+                  post_rp=fbcursor.fetchone()
+                  ps_cr=post_rp[0]
                   for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10258,25 +14055,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Products" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Products" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10302,25 +14147,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Service" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Service" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10346,25 +14239,73 @@ def mainpage():
               pdf.drawString(28,733,"Product ID    Category     Product/ Service Name  Description        Warehouse        Stock  Cost    Price      ")
 
               count=0
-              sql_inv_dt='SELECT * FROM productservice where category="Default" and where stock>stocklimit'
+              sql_inv_dt='SELECT * FROM productservice where category="Default" and stock>stocklimit'
           
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10398,20 +14339,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10442,24 +14431,70 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
-
-
               pdf.save()
               win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
           elif rth=="All Service":
@@ -10486,20 +14521,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10529,20 +14612,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10575,20 +14706,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10619,20 +14798,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10663,23 +14890,70 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
-
               pdf.save()
               win32api.ShellExecute(0,"","reports\Product_And_Services_Report.pdf",None,".",0)
           elif rth=="Default":
@@ -10706,20 +14980,68 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
                               pdf.showPage()
                               x=750
                           else:
-                              pdf.drawString(28,x,str(i[0]))
+                              if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(95,x,str(i[3]))
-                              pdf.drawString(165,x,str(i[4]))
-                              pdf.drawString(295,x,str(i[5]))
-                              pdf.drawString(380,x,str(i[15])) 
-                              pdf.drawString(475,x,str(i[13]))
-                              pdf.drawString(510,x,str(i[9]))
-                              pdf.drawString(545,x,str(i[11]))
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+str(i[11]))
+                          
+                    
+                                
+                              elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+str(crc))
+                                
+                              elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(crc)+" "+str(i[9]))
+                                    pdf.drawString(545,x,str(crc)+" "+str(i[11]))
+                                
+                              elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                                    pdf.drawString(95,x,str(i[3]))
+                                    pdf.drawString(165,x,str(i[4]))
+                                    pdf.drawString(295,x,str(i[5]))
+                                    pdf.drawString(380,x,str(i[15])) 
+                                    pdf.drawString(475,x,str(i[13]))
+                                    pdf.drawString(510,x,str(i[9])+" "+str(crc))
+                                    pdf.drawString(545,x,str(i[11])+" "+str(crc))
+                                        
+                              else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10766,21 +15088,72 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
+                        #   else:
+                  
+                        #       pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                        #       pdf.drawString(145,x,str(i[4]))
+                        #       pdf.drawString(373,x,str(i[5]))
+                              
+                        #       pdf.drawString(515,x,str(i[7]))
+                          
 
 
               pdf.save()
@@ -10809,19 +15182,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10852,19 +15266,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10895,22 +15350,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
               win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
@@ -10941,19 +15436,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -10984,19 +15520,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11026,19 +15603,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11069,19 +15687,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11114,19 +15773,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11157,22 +15857,62 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
-
 
               pdf.save()
               win32api.ShellExecute(0,"","reports\Price_List.pdf",None,".",0)
@@ -11200,19 +15940,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11243,19 +16024,60 @@ def mainpage():
               fbcursor.execute(sql_inv_dt)
               tre=fbcursor.fetchall()
               x=705
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
                           if x==47 or x==50:
-                              pdf.showPage()
-                              x=750
+                            pdf.showPage()
+                            x=750
                           else:
-                  
-                              pdf.drawString(28,x,str(i[0]))
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
                               
-                              pdf.drawString(145,x,str(i[4]))
-                              pdf.drawString(373,x,str(i[5]))
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                               
-                              pdf.drawString(515,x,str(i[7]))
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[7]))
+                    
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                              
+                              
+                                    pdf.drawString(145,x,str(i[4]))
+                                    pdf.drawString(373,x,str(i[5]))
+                                    
+                                    pdf.drawString(515,x,str(i[7])+" "+str(crc))
+                    
+                            else:
+                                pass
                           count += 1
                           x-=15
 
@@ -11478,23 +16300,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11554,23 +16417,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11630,23 +16534,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11706,23 +16651,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11782,23 +16768,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11858,23 +16885,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -11934,24 +17002,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
-
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
               pdf.save()
               win32api.ShellExecute(0,"","reports\Tax_report_Invoice.pdf",None,".",0)
@@ -12010,23 +17118,64 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                        
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                          pdf.drawString(95,x,str(i[2]))
-                          pdf.drawString(150,x,str(i[3]))
-                          pdf.drawString(268,x,str(i[37]))
-                          pdf.drawString(348,x,str(i[16])) 
-                          pdf.drawString(400,x,str(i[36]))
-                          pdf.drawString(465,x,str(i[8]))
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
                           
-                      count += 1
-                      x-=15
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[37]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[16])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[36]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                          
+                                    pdf.drawString(95,x,str(i[2]))
+                                    pdf.drawString(150,x,str(i[3]))
+                                    pdf.drawString(268,x,str(i[37])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[16])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[36])+" "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                            else:
+                                pass
+                        count += 1
+                        x-=15
 
 
               pdf.save()
@@ -12099,24 +17248,77 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                        
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-              else:
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(crc)+str(i[28]))
+                                    pdf.drawString(348,x,str(crc)+str(i[14])) 
+                                    pdf.drawString(400,x,str(crc)+str(i[29]))
+                                    pdf.drawString(465,x,str(crc)+str(i[8]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(i[28])+str(crc))
+                                    pdf.drawString(348,x,str(i[14])+str(crc)) 
+                                    pdf.drawString(400,x,str(i[29])+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(crc)+" "+str(i[28]))
+                                    pdf.drawString(348,x,str(crc)+" "+str(i[14])) 
+                                    pdf.drawString(400,x,str(crc)+" "+str(i[29]))
+                                    pdf.drawString(465,x,str(crc)+" "+str(i[8]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                  
+                                    pdf.drawString(95,x,str(i[1]))
+                                    pdf.drawString(150,x,str(i[2]))
+                                    pdf.drawString(268,x,str(i[28])+" "+str(crc))
+                                    pdf.drawString(348,x,str(i[14])+" "+str(crc)) 
+                                    pdf.drawString(400,x,str(i[29])+ " "+str(crc))
+                                    pdf.drawString(465,x,str(i[8])+" "+str(crc))
+                  
+                            else:
+                                pass
+                        count += 1
+                        x-=15
+            #   else:
                           
-                  pdf.drawString(28,x,str(i[0]))
+            #       pdf.drawString(28,x,str(i[0]))
                   
-                  pdf.drawString(95,x,str(i[1]))
-                  pdf.drawString(150,x,str(i[2]))
-                  pdf.drawString(268,x,str(i[28]))
-                  pdf.drawString(348,x,str(i[14])) 
-                  pdf.drawString(400,x,str(i[29]))
-                  pdf.drawString(465,x,str(i[8]))
+            #       pdf.drawString(95,x,str(i[1]))
+            #       pdf.drawString(150,x,str(i[2]))
+            #       pdf.drawString(268,x,str(i[28]))
+            #       pdf.drawString(348,x,str(i[14])) 
+            #       pdf.drawString(400,x,str(i[29]))
+            #       pdf.drawString(465,x,str(i[8]))
                   
-              count += 1
-              x-=15
+              
 
 
       pdf.save()
@@ -12200,29 +17402,69 @@ def mainpage():
 
           
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                            
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre1:
               for j in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
-                      
-                  else:
-                          
-                      k=int(j[9]*int(i[38]))
-                      rt=int(i[8])
-                      l=rt-k
-                      
-
-                      pdf.drawString(28,x,str(i[2]))
-                      
-                      pdf.drawString(138,x,str(i[38]))
-                      pdf.drawString(245,x,str(k))
-                      pdf.drawString(385,x,str(i[8]))
-                      pdf.drawString(485,x,str(l)) 
-                  
-                  count += 1
-                  x-=15
-
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(crc)+str(k))
+                                    pdf.drawString(385,x,str(crc)+str(i[8]))
+                                    pdf.drawString(485,x,str(crc)+str(l)) 
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(k)+str(crc))
+                                    pdf.drawString(385,x,str(i[8])+str(crc))
+                                    pdf.drawString(485,x,str(l)+str(crc)) 
+                    
+                            elif ps_cr=="before amount with space":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(crc)+" "+str(k))
+                                    pdf.drawString(385,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(485,x,str(crc)+" "+str(l)) 
+                                
+                            elif ps_cr=="after amount with space":
+                                    k=int(j[9]*int(i[38]))
+                                    rt=int(i[8])
+                                    l=rt-k
+                                    pdf.drawString(28,x,str(i[2]))
+                                    
+                                    pdf.drawString(138,x,str(i[38]))
+                                    pdf.drawString(245,x,str(k)+" "+str(crc))
+                                    pdf.drawString(385,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(485,x,str(l)+" "+str(crc)) 
+                            else:
+                                pass
+                        count += 1
+                        x-=15
         
           pdf.save()
           win32api.ShellExecute(0,"","reports\Sales_Report_Group_By_Date.pdf",None,".",0)
@@ -12295,23 +17537,72 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=660
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                            
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                  pdf.showPage()
-                  x=750
-                      
-              else:
-                          
-                  pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(108,x,str(i[2]))
-                  pdf.drawString(180,x,str(i[29]))
-                  pdf.drawString(300,x,str(i[8]))
-                  pdf.drawString(435,x,str(i[9])) 
-                  pdf.drawString(520,x,str(i[10]))
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(crc)+str(i[8]))
+                                    pdf.drawString(435,x,str(crc)+str(i[9])) 
+                                    pdf.drawString(520,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(i[8])+str(crc))
+                                    pdf.drawString(435,x,str(i[9])+str(crc)) 
+                                    pdf.drawString(520,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(435,x,str(crc)+" "+str(i[9])) 
+                                    pdf.drawString(520,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(108,x,str(i[2]))
+                                    pdf.drawString(180,x,str(i[29]))
+                                    pdf.drawString(300,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(435,x,str(i[9])+" "+str(crc)) 
+                                    pdf.drawString(520,x,str(i[10])+" "+str(crc))
+                  
+                            else:
+                                pass 
+                        count += 1
+                        x-=15 
+            #   else:
+                          
+                #   pdf.drawString(28,x,str(i[1]))
+                  
+                #   pdf.drawString(108,x,str(i[2]))
+                #   pdf.drawString(180,x,str(i[29]))
+                #   pdf.drawString(300,x,str(i[8]))
+                #   pdf.drawString(435,x,str(i[9])) 
+                #   pdf.drawString(520,x,str(i[10]))
                 
-              count += 1
-              x-=15
+              
 
 
       pdf.save()
@@ -12386,23 +17677,72 @@ def mainpage():
       fbcursor.execute(sql_inv_dt,inv_valuz)
       tre=fbcursor.fetchall()
       x=655
+      sqlr= 'select currencysign from company'
+      fbcursor.execute(sqlr)
+      crncy=fbcursor.fetchone()
+                            
+      crc=crncy[0]
+      sqlrt= 'select currsignplace from company'
+      fbcursor.execute(sqlrt)
+      post_rp=fbcursor.fetchone()
+      ps_cr=post_rp[0]
       for i in tre:
-              if x==44 or x==50:
-                  pdf.showPage()
-                  x=750
-                      
-              else:
-                      
-                  pdf.drawString(28,x,str(i[1]))
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[1]))
                   
-                  pdf.drawString(100,x,str(i[2]))
-                  pdf.drawString(178,x,str(i[29]))
-                  pdf.drawString(295,x,str(i[8]))
-                  pdf.drawString(428,x,str(i[9])) 
-                  pdf.drawString(515,x,str(i[10]))
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(crc)+str(i[8]))
+                                    pdf.drawString(428,x,str(crc)+str(i[9])) 
+                                    pdf.drawString(515,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(i[8])+str(crc))
+                                    pdf.drawString(428,x,str(i[9])+str(crc)) 
+                                    pdf.drawString(515,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(crc)+" "+str(i[8]))
+                                    pdf.drawString(428,x,str(crc)+" "+str(i[9])) 
+                                    pdf.drawString(515,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[1]))
+                  
+                                    pdf.drawString(100,x,str(i[2]))
+                                    pdf.drawString(178,x,str(i[29]))
+                                    pdf.drawString(295,x,str(i[8])+" "+str(crc))
+                                    pdf.drawString(428,x,str(i[9])+" "+str(crc)) 
+                                    pdf.drawString(515,x,str(i[10])+" "+str(crc))
+                  
+                            else:
+                                pass  
+                        count += 1
+                        x-=15   
+            #   else:
+                      
+            #       pdf.drawString(28,x,str(i[1]))
+                  
+            #       pdf.drawString(100,x,str(i[2]))
+            #       pdf.drawString(178,x,str(i[29]))
+            #       pdf.drawString(295,x,str(i[8]))
+            #       pdf.drawString(428,x,str(i[9])) 
+            #       pdf.drawString(515,x,str(i[10]))
                 
-              count += 1
-              x-=15
+              
       
 
 
@@ -12476,23 +17816,61 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=660
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
 
 
           pdf.save()
@@ -12556,23 +17934,61 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=655
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
 
 
           pdf.save()
@@ -12637,23 +18053,61 @@ def mainpage():
           fbcursor.execute(sql_inv_dt,inv_valuz)
           tre=fbcursor.fetchall()
           x=655
+          sqlr= 'select currencysign from company'
+          fbcursor.execute(sqlr)
+          crncy=fbcursor.fetchone()
+                                
+          crc=crncy[0]
+          sqlrt= 'select currsignplace from company'
+          fbcursor.execute(sqlrt)
+          post_rp=fbcursor.fetchone()
+          ps_cr=post_rp[0]
           for i in tre:
-                  if x==44 or x==50:
-                      pdf.showPage()
-                      x=750
+                        if x==44 or x==50:
+                            pdf.showPage()
+                            x=750
+                        else:
+                            if ps_cr=="before amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                  else:
-                          
-                      pdf.drawString(28,x,str(i[0]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+str(i[10]))
+                    
+                                
+                            elif ps_cr=="after amount":
+                                    pdf.drawString(28,x,str(i[0]))
                       
-                      pdf.drawString(88,x,str(i[2]))
-                      pdf.drawString(160,x,str(i[3]))
-                      pdf.drawString(280,x,str(i[26]))
-                      pdf.drawString(395,x,str(i[5])) 
-                      pdf.drawString(495,x,str(i[10]))
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+str(crc))
+                    
+                            elif ps_cr=="before amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(crc)+" "+str(i[10]))
+                                
+                            elif ps_cr=="after amount with space":
+                                    pdf.drawString(28,x,str(i[0]))
+                      
+                                    pdf.drawString(88,x,str(i[2]))
+                                    pdf.drawString(160,x,str(i[3]))
+                                    pdf.drawString(280,x,str(i[26]))
+                                    pdf.drawString(395,x,str(i[5])) 
+                                    pdf.drawString(495,x,str(i[10])+" "+str(crc))
                   
-                  count += 1
-                  x-=15
+                            else:
+                                pass
+                        count += 1
+                        x-=15  
 
 
           pdf.save()
@@ -12729,24 +18183,73 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
+                    
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
+                    #   else:
                           
                     
-                          pdf.drawString(28,x,str(i[4]))
+                    #       pdf.drawString(28,x,str(i[4]))
                           
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
+                    #       pdf.drawString(105,x,str(i[10]))
+                    #       pdf.drawString(220,x,str(i[5]))
+                    #       pdf.drawString(330,x,str(i[14]))
+                    #       pdf.drawString(405,x,str(i[16])) 
+                    #       pdf.drawString(520,x,str(i[3]))
                       
-                      count += 1
-                      x-=15
+                      
 
 
               pdf.save()
@@ -12811,25 +18314,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
-
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
               pdf.save()
               win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
@@ -12895,24 +18434,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -12978,24 +18554,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -13066,24 +18679,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
               pdf.save()
               win32api.ShellExecute(0,"","reports\Expenses_Report.pdf",None,".",0)
@@ -13146,24 +18796,61 @@ def mainpage():
               fbcursor.execute(sql_inv_dt,inv_valuz)
               tre=fbcursor.fetchall()
               x=660
+              sqlr= 'select currencysign from company'
+              fbcursor.execute(sqlr)
+              crncy=fbcursor.fetchone()
+                                    
+              crc=crncy[0]
+              sqlrt= 'select currsignplace from company'
+              fbcursor.execute(sqlrt)
+              post_rp=fbcursor.fetchone()
+              ps_cr=post_rp[0]
               for i in tre:
-                      if x==44 or x==50:
-                          pdf.showPage()
-                          x=750
-                      
-                      else:
-                          
+                            if x==44 or x==50:
+                                pdf.showPage()
+                                x=750
+                            else:
+                                if ps_cr=="before amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+str(i[3]))
+                        
+                                    
+                                elif ps_cr=="after amount":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+str(crc))
+                        
+                                elif ps_cr=="before amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(crc)+" "+str(i[16])) 
+                                        pdf.drawString(520,x,str(crc)+" "+str(i[3]))
+                                    
+                                elif ps_cr=="after amount with space":
+                                        pdf.drawString(28,x,str(i[4]))
+                            
+                                        pdf.drawString(105,x,str(i[10]))
+                                        pdf.drawString(220,x,str(i[5]))
+                                        pdf.drawString(330,x,str(i[14]))
+                                        pdf.drawString(405,x,str(i[16])+" "+str(crc)) 
+                                        pdf.drawString(520,x,str(i[3])+" "+str(crc))
                     
-                          pdf.drawString(28,x,str(i[4]))
-                          
-                          pdf.drawString(105,x,str(i[10]))
-                          pdf.drawString(220,x,str(i[5]))
-                          pdf.drawString(330,x,str(i[14]))
-                          pdf.drawString(405,x,str(i[16])) 
-                          pdf.drawString(520,x,str(i[3]))
-                      
-                      count += 1
-                      x-=15
+                                else:
+                                    pass
+                            count += 1
+                            x-=15
 
 
               pdf.save()
@@ -13505,11 +19192,31 @@ def mainpage():
               hypbtn2 = Button(top,text="Cancel",width=10)
               hypbtn2.place(x=315,y=35)
 
-          rp_mframe=scrolledtext.Text(rp_emailmessage_Frame,  undo=True,width=88, bg="white", height=22)
+
+
+          rp_mframe=Text(rp_emailmessage_Frame,undo=True,width=85, bg="white", height=22)
+          rp_mframe.pack(padx=0,pady=28,expand=False)
+
+
+          scrollbar1 = Scrollbar(rp_emailmessage_Frame,orient=VERTICAL)
+          scrollbar2= Scrollbar(rp_mframe,orient=HORIZONTAL,command=rp_mframe.xview)
+          scrollbar2.place(x=5, y=310, height=20,width=690)
+          rp_mframe.config(xscrollcommand=scrollbar2.set)
+          rp_mframe.config(yscrollcommand=scrollbar1.set)
+          scrollbar1.config(command=rp_mframe.yview)
+          scrollbar1.place(x =690, y=30, height=330)
+          scrollbar2.config(command=rp_mframe.xview)
+         
+
+        #   rp_mframe=Text(rp_emailmessage_Frame, yscrollcommand=scrollbar1.set, xscrollcommand=scrollbar2.set,undo=True,width=88, bg="white", height=22)
+        #   scrollbar1.config(command=rp_mframe.yview)
+        #   scrollbar1.place(x=0, y=0, height=30)
+        # #   scrollbar2.config(command=rp_mframe.xview)
+        # #   scrollbar2.place(x=1000, y=400, height=200)
           
-          rp_mframe.place(x=0, y=30)
+        #   rp_mframe.place(x=0, y=30)
           
-          # link.bind("<Button-1>",lambda e:callback("http://www.tutorialspoint.com"))
+        #   # link.bind("<Button-1>",lambda e:callback("http://www.tutorialspoint.com"))
           
           
           
@@ -13557,7 +19264,7 @@ def mainpage():
           rp_btn16.place(x=491, y=1)
 
           size_variable=IntVar()
-          dropcomp11 = ttk.Combobox(rp_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,100)))
+          dropcomp11 = ttk.Combobox(rp_emailmessage_Frame, width=6, textvariable=size_variable, values=tuple(range(8,17)))
           dropcomp11.place(x=530, y=5)
           
           font_family_variable=StringVar()
@@ -13605,6 +19312,36 @@ def mainpage():
   #Filter by category----------------------------------------------------------------------------
   #-----------------------------------------------ScreenChart-------------------------------
   def screen_flt(): 
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      global dts
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
       rth=scrfilter.get()
 
       
@@ -13615,16 +19352,16 @@ def mainpage():
       if rth=="Last 3 Month":
           if company is not None:
               
-              in_dat = (datetime.now()-relativedelta(months=3)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(months=3))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=in_dat
               
@@ -13657,7 +19394,7 @@ def mainpage():
               fbcursor.execute(sql_outstanding,inv_valuz)
               outstanding= fbcursor.fetchone()
 
-
+              
               frame = Frame(
                       reportframe,
                       width=1380,
@@ -13959,11 +19696,11 @@ def mainpage():
               test_date=pendulum.today().date()
               start = test_date.start_of('year')
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, start)
+              rp_scr_frm.insert(0, start.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
               
               lscr=start
               lscr1=cr
@@ -14056,7 +19793,7 @@ def mainpage():
               canvasbar.draw()
               canvasbar.get_tk_widget().place(x=0, y=85) # show the barchart on the ouput window
 
-              #second graph
+            #   #second graph
 
               sec_paid = "SELECT invoicetot from (select invodate, invoicetot from invoice  GROUP BY businessname having invodate BETWEEN %s and %s ORDER by COUNT(businessname) DESC LIMIT 1)as sec"
               inv_valuz=(var_1,var_2)
@@ -14094,35 +19831,35 @@ def mainpage():
 
               # #second graph
 
-              thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
-              inv_valuz=(var_1,var_2)
-              fbcursor.execute(thrd_paid,inv_valuz)
-              paid_thrd_x= fbcursor.fetchone()
+            #   thrd_paid = "SELECT invoicetot from(select invodate,invoicetot from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii"
+            #   inv_valuz=(var_1,var_2)
+            #   fbcursor.execute(thrd_paid,inv_valuz)
+            #   paid_thrd_x= fbcursor.fetchone()
               
 
 
-              thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
-              inv_valuz=(var_1,var_2)
-              fbcursor.execute(thrd_paid_y,inv_valuz)
+            #   thrd_paid_y = "select name from productservice where Productserviceid=(SELECT Productserviceid from(select invodate,Productserviceid from invoice GROUP BY Productserviceid HAVING invodate BETWEEN %s and %s ORDER by COUNT(Productserviceid) DESC LIMIT 1)as lkiii)"
+            #   inv_valuz=(var_1,var_2)
+            #   fbcursor.execute(thrd_paid_y,inv_valuz)
 
-              paid_thrd_y= fbcursor.fetchone()
+            #   paid_thrd_y= fbcursor.fetchone()
 
 
-              figlast = plt.figure(figsize=(9, 4), dpi=80)
+            #   figlast = plt.figure(figsize=(9, 4), dpi=80)
 
-              x=paid_thrd_y
-              y=paid_thrd_x   
-              plt.barh(x,y, label="Top Product Sale", color="blue") 
-              plt.legend()
-              plt.xlabel("Total Sales")
-              plt.ylabel("")
-              axes=plt.gca()
-              axes.xaxis.grid()
+            #   x=paid_thrd_y
+            #   y=paid_thrd_x   
+            #   plt.barh(x,y, label="Top Product Sale", color="blue") 
+            #   plt.legend()
+            #   plt.xlabel("Total Sales")
+            #   plt.ylabel("")
+            #   axes=plt.gca()
+            #   axes.xaxis.grid()
               
 
-              canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
-              canvasbar.draw()
-              canvasbar.get_tk_widget().place(x=650, y=370)
+            #   canvasbar = FigureCanvasTkAgg(figlast, master=reportframe)
+            #   canvasbar.draw()
+            #   canvasbar.get_tk_widget().place(x=650, y=370)
 
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
@@ -14267,10 +20004,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
             
           #===============================================================================================
@@ -14282,12 +20023,12 @@ def mainpage():
               test_date=pendulum.today().date()
               start = test_date.start_of('year')
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, start)
+              rp_scr_frm.insert(0, start.strftime(dts))
 
               test_date_end=pendulum.today().date()
               end = test_date_end.end_of('year')
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, end)
+              rp_sc_to.insert(0, end.strftime(dts))
 
               lscr=start
               lscr1=end
@@ -14605,10 +20346,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
               
       #==============================================================================================================
@@ -14616,16 +20361,16 @@ def mainpage():
               
           
           if company is not None:
-              in_dat = (datetime.now()-relativedelta(months=6)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(months=6))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=in_dat
               
@@ -14945,10 +20690,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
               
           #=====================================================================================================
@@ -14957,16 +20706,16 @@ def mainpage():
 
           
           if company is not None:
-              in_dat = (datetime.now()-relativedelta(months=12)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(months=12))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
               
 
               lscr=in_dat
@@ -15287,10 +21036,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
               
           #=================================================================================================
@@ -15298,16 +21051,16 @@ def mainpage():
           
       
           if company is not None:
-              in_dat = (datetime.now()-relativedelta(months=18)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(months=18))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=in_dat
               
@@ -15627,10 +21380,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
               
       
@@ -15639,16 +21396,16 @@ def mainpage():
         
           
           if company is not None:
-              in_dat = (datetime.now()-relativedelta(months=6)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(months=6))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=in_dat
               
@@ -15967,10 +21724,14 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
               
       #========================================================================================================
@@ -15980,16 +21741,16 @@ def mainpage():
       elif rth=="Before Previous Year":
           
           if company is not None:
-              in_dat = (datetime.now()-relativedelta(years=2)).strftime("%Y-%m-%d")
+              in_dat = (datetime.now()-relativedelta(years=2))
               # given_date = datetime.today().month()
               # in_dat = given_date.replace(months=3)
               
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, in_dat)
+              rp_scr_frm.insert(0, in_dat.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=in_dat
               
@@ -16309,23 +22070,27 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
+
 
           
           #===========================================================================================================
       elif rth=="Previous year":
           
           if company is not None:
-              last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+              last_year = (datetime.now()-relativedelta(years=1))
               rp_scr_frm.delete(0,'end')
-              rp_scr_frm.insert(0, last_year)
+              rp_scr_frm.insert(0, last_year.strftime(dts))
 
               cr=date.today()
               rp_sc_to.delete(0,'end')
-              rp_sc_to.insert(0, cr)
+              rp_sc_to.insert(0, cr.strftime(dts))
 
               lscr=last_year
               lscr1=cr
@@ -16644,14 +22409,25 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
           irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
           irwcuw1.place(x=1135, y=97)
           lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
           lbl_invdtt2.place(x=1140, y=97)
 
+
               
       # ------------------------------
       elif rth=="Custom Range":
+          lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
+          lbl_invdtt2.place(x=2, y=85)
+
+          irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
+          irwcuw1.place(x=1135, y=97)
+          lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
+          lbl_invdtt2.place(x=1140, y=97)
           
 
           
@@ -17131,10 +22907,8 @@ def mainpage():
               lbl_invdtt2 =Label(reportframe, text="Screen Charts", bg="white" , font=("arial", 16))
               lbl_invdtt2.place(x=2, y=85)
 
-          irwcuw1 = Label(reportframe,text="                                                                                               ", bg="white")
-          irwcuw1.place(x=1135, y=97)
-          lbl_invdtt2 =Label(reportframe, text="Right Click on Preview For More Options", bg="white" , font=("arial",8 ))
-          lbl_invdtt2.place(x=1140, y=97)
+          
+
 
             
 
@@ -17262,39 +23036,7 @@ def mainpage():
               em_ser_conbtn=Button(account_Frame, text="Test E-mail Server Connection")
               em_ser_conbtn.place(x=710, y=110)
 
-
-#   sql='select dateformat from company'
-#   fbcursor.execute(sql)
-#   rp_date_for=fbcursor.fetchone()
-#   global dts
-#   if not rp_date_for:
-#         pass
-#   else:
-#           if rp_date_for[0]=="mm-dd-yyyy":
-#              dts='%m-%d-%Y'
-
-#           elif rp_date_for[0]=="dd-mm-yyyy":
-#              dts='%d-%m-%Y'
-   
-#           elif rp_date_for[0]=="yyyy.mm.dd":
-#              dts='%Y.%m.%d'
-    
-#           elif rp_date_for[0]=="mm/dd/yyyy":
-#               dts='%m/%d/%y'
-    
-#           elif rp_date_for[0]=="dd/mm/yyyy":
-#               dts='%d/%m/%Y'
-             
-#           elif rp_date_for[0]=="dd.mm.yyyy":
-#               dts='%d.%m.%Y'
-              
-#           elif rp_date_for[0]=="yyyy/mm/dd":
-#               dts='%Y/%m/%d'
-
-#           else:
-#               dts='%d-%m-%Y'
-              
-
+ 
 
   def category():
       sql='select dateformat from company'
@@ -17310,8 +23052,8 @@ def mainpage():
                 elif rp_date_for[0]=="dd-mm-yyyy":
                     dts='%d-%m-%Y'
         
-                elif rp_date_for[0]=="yyyy.mm.dd":
-                    dts='%Y.%m.%d'
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
             
                 elif rp_date_for[0]=="mm/dd/yyyy":
                     dts='%m/%d/%y'
@@ -17322,8 +23064,8 @@ def mainpage():
                 elif rp_date_for[0]=="dd.mm.yyyy":
                     dts='%d.%m.%Y'
                     
-                elif rp_date_for[0]=="yyyy/mm/dd":
-                    dts='%Y/%m/%d'
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
 
                 else:
                     dts='%d-%m-%Y'
@@ -19148,9 +24890,9 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
       # ------------------------------
       elif rth=="Custom Range":
-          trt=rp_exir.get_date()
-          ltt=trt.set_date(trt).strftime(dts)
-          ltt1=rp_exir1.get_date().strftime(dts)
+          ltt=rp_exir.get_date()
+        #   ltt=trt.set_date(trt).strftime(dts)
+          ltt1=rp_exir1.get_date()
 
           
           
@@ -19338,8 +25080,8 @@ def mainpage():
                 elif rp_date_for[0]=="dd-mm-yyyy":
                     dts='%d-%m-%Y'
         
-                elif rp_date_for[0]=="yyyy.mm.dd":
-                    dts='%Y.%m.%d'
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
             
                 elif rp_date_for[0]=="mm/dd/yyyy":
                     dts='%m/%d/%y'
@@ -19350,8 +25092,8 @@ def mainpage():
                 elif rp_date_for[0]=="dd.mm.yyyy":
                     dts='%d.%m.%Y'
                     
-                elif rp_date_for[0]=="yyyy/mm/dd":
-                    dts='%Y/%m/%d'
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
 
                 else:
                     dts='%d-%m-%Y'
@@ -21206,6 +26948,35 @@ def mainpage():
 
   #-------------------------------------------------Order report-----------------------------------------
   def category_or():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       # #for company details
@@ -21229,11 +27000,11 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame( 
           reportframe,
@@ -21393,11 +27164,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, start)
+          orfrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -21557,12 +27328,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, start)
+          orfrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           orto1.delete(0,'end')
-          orto1.insert(0, end)
+          orto1.insert(0, end.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -21719,12 +27490,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           orto1.delete(0,'end')
-          orto1.insert(0, nxt_mnth)
+          orto1.insert(0, nxt_mnth.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -21884,11 +27655,11 @@ def mainpage():
       elif rth=="Current days":
           given_date = date.today()
           orfrm1.delete(0,'end')
-          orfrm1.insert(0,given_date)
+          orfrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -22045,11 +27816,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -22209,11 +27980,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -22373,11 +28144,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -22535,11 +28306,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, in_dat)
+          orfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -22694,13 +28465,13 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           orfrm1.delete(0,'end')
-          orfrm1.insert(0, last_year)
+          orfrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           orto1.delete(0,'end')
-          orto1.insert(0, cr)
+          orto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -23017,6 +28788,35 @@ def mainpage():
           pass
   #-------------------------------------------------Tax Report Invoice-----------------------------------------
   def category_tri():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       tri_company = "SELECT * from company"
@@ -23039,11 +28839,11 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -23222,11 +29022,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, start)
+          trifrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -23403,12 +29203,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, start)
+          trifrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           trito1.delete(0,'end')
-          trito1.insert(0, end)
+          trito1.insert(0, end.strftime(dts))
           
           frame = Frame(
           reportframe,
@@ -23585,12 +29385,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           trito1.delete(0,'end')
-          trito1.insert(0, nxt_mnth)
+          trito1.insert(0, nxt_mnth.strftime(dts))
           
           frame = Frame(
           reportframe,
@@ -23766,11 +29566,11 @@ def mainpage():
       elif rth=="Current days":
           given_date = date.today()
           trifrm1.delete(0,'end')
-          trifrm1.insert(0,given_date)
+          trifrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -23947,11 +29747,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -24131,11 +29931,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -24312,11 +30112,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -24491,11 +30291,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, in_dat)
+          trifrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -24667,13 +30467,13 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           trifrm1.delete(0,'end')
-          trifrm1.insert(0, last_year)
+          trifrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           trito1.delete(0,'end')
-          trito1.insert(0, cr)
+          trito1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25025,6 +30825,35 @@ def mainpage():
       drf=canvas
   #-------------------------------------------------tax report order-----------------------------------------
   def category_tro():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
 
@@ -25049,11 +30878,11 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25234,11 +31063,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, start)
+          trofrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25419,12 +31248,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, start)
+          trofrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           troto1.delete(0,'end')
-          troto1.insert(0, end)
+          troto1.insert(0, end.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25603,12 +31432,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           troto1.delete(0,'end')
-          troto1.insert(0, nxt_mnth)
+          troto1.insert(0, nxt_mnth.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25786,11 +31615,11 @@ def mainpage():
       elif rth=="Current days":
           given_date = date.today()
           trofrm1.delete(0,'end')
-          trofrm1.insert(0,given_date)
+          trofrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -25968,11 +31797,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -26152,11 +31981,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -26336,11 +32165,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -26518,11 +32347,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, in_dat)
+          trofrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -26697,13 +32526,13 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           trofrm1.delete(0,'end')
-          trofrm1.insert(0, last_year)
+          trofrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           troto1.delete(0,'end')
-          troto1.insert(0, cr)
+          troto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -27060,6 +32889,35 @@ def mainpage():
           pass
   #-------------------------------------------------Sales report group by date------------------------------------------
   def category_srgd():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       # #for company details
@@ -27253,6 +33111,35 @@ def mainpage():
 
   #----------------------------------------invoice report detail------------------------------------------------------
   def category_ird():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       ird1=irdfrm1.get_date()
@@ -27436,13 +33323,42 @@ def mainpage():
           pass
   #-----------------------------------daily invoice report
   def category_dir():
+          sql='select dateformat from company'
+          fbcursor.execute(sql)
+          rp_date_for=fbcursor.fetchone()
+          if not rp_date_for:
+                        pass
+          else:
+                        if rp_date_for[0]=="mm-dd-yyyy":
+                            dts='%m-%d-%Y'
+
+                        elif rp_date_for[0]=="dd-mm-yyyy":
+                            dts='%d-%m-%Y'
+                
+                        # elif rp_date_for[0]=="yyyy.mm.dd":
+                        #     dts='%Y.%m.%d'
+                    
+                        elif rp_date_for[0]=="mm/dd/yyyy":
+                            dts='%m/%d/%y'
+                    
+                        elif rp_date_for[0]=="dd/mm/yyyy":
+                            dts='%d/%m/%Y'
+                            
+                        elif rp_date_for[0]=="dd.mm.yyyy":
+                            dts='%d.%m.%Y'
+                            
+                        # elif rp_date_for[0]=="yyyy/mm/dd":
+                        #     dts='%Y/%m/%d'
+
+                        else:
+                            dts='%d-%m-%Y'
           tro_company = "SELECT * from company"
           fbcursor.execute(tro_company)
           company_tro= fbcursor.fetchone()
           
           ddr=dir_frm.get_date()
 
-          ddr2=date.today()
+          ddr2=date.today().strftime(dts)
           rth=invfilter.get()
           sqlr= 'select currencysign from company'
           fbcursor.execute(sqlr)
@@ -27617,6 +33533,35 @@ def mainpage():
   #----------------------------------------------Purchase Order Report-------------------------------------
 
   def category_por():   
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       # #for company details
@@ -27641,11 +33586,11 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
           
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           
           frame = Frame(
@@ -27805,11 +33750,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, start)
+          porfrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -27965,12 +33910,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, start)
+          porfrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           porto1.delete(0,'end')
-          porto1.insert(0, end)
+          porto1.insert(0, end.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -28130,12 +34075,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           porto1.delete(0,'end')
-          porto1.insert(0, nxt_mnth)
+          porto1.insert(0, nxt_mnth.strftime(dts))
           
           frame = Frame(
           reportframe,
@@ -28289,11 +34234,11 @@ def mainpage():
       elif rth=="Current days":
           given_date = date.today()
           porfrm1.delete(0,'end')
-          porfrm1.insert(0,given_date)
+          porfrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -28449,11 +34394,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -28611,11 +34556,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -28772,11 +34717,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -28931,11 +34876,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, in_dat)
+          porfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -29088,13 +35033,13 @@ def mainpage():
           canvaspor.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           porfrm1.delete(0,'end')
-          porfrm1.insert(0, last_year)
+          porfrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           porto1.delete(0,'end')
-          porto1.insert(0, cr)
+          porto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -29403,6 +35348,35 @@ def mainpage():
           pass
   #------------------------------------expense report--------------------
   def category_exp():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
       
     # firtst filter-----------------------------------Month to date
       
@@ -29765,6 +35739,35 @@ def mainpage():
       
   #------------------------------payment report------------------------
   def category_pyr():
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+                pass
+      else:
+                if rp_date_for[0]=="mm-dd-yyyy":
+                    dts='%m-%d-%Y'
+
+                elif rp_date_for[0]=="dd-mm-yyyy":
+                    dts='%d-%m-%Y'
+        
+                # elif rp_date_for[0]=="yyyy.mm.dd":
+                #     dts='%Y.%m.%d'
+            
+                elif rp_date_for[0]=="mm/dd/yyyy":
+                    dts='%m/%d/%y'
+            
+                elif rp_date_for[0]=="dd/mm/yyyy":
+                    dts='%d/%m/%Y'
+                    
+                elif rp_date_for[0]=="dd.mm.yyyy":
+                    dts='%d.%m.%Y'
+                    
+                # elif rp_date_for[0]=="yyyy/mm/dd":
+                #     dts='%Y/%m/%d'
+
+                else:
+                    dts='%d-%m-%Y'
     # firtst filter-----------------------------------Month to date
       
       tri_company = "SELECT * from company"
@@ -29786,11 +35789,11 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
 
           frame = Frame(
@@ -29946,11 +35949,11 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, start)
+          pyrfrm1.insert(0, start.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30108,12 +36111,12 @@ def mainpage():
           test_date=pendulum.today().date()
           start = test_date.start_of('year')
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, start)
+          pyrfrm1.insert(0, start.strftime(dts))
 
           test_date_end=pendulum.today().date()
           end = test_date_end.end_of('year')
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, end)
+          pyrto1.insert(0, end.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30270,12 +36273,12 @@ def mainpage():
           given_date = datetime.today().date()
           in_dat = given_date.replace(day=1)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           test_date=date.today()
           nxt_mnth=(test_date+relativedelta(day=31))
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, nxt_mnth)
+          pyrto1.insert(0, nxt_mnth.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30431,11 +36434,11 @@ def mainpage():
       elif rth=="Current days":
           given_date = date.today()
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0,given_date)
+          pyrfrm1.insert(0,given_date.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30592,11 +36595,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=30)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30754,11 +36757,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=60)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -30916,11 +36919,11 @@ def mainpage():
           date_filter=date.today()
           in_dat=date_filter-timedelta(days=90)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -31076,11 +37079,11 @@ def mainpage():
           last_day_of_prev_month=date.today().replace(day=1)- timedelta(days=1)
           in_dat=date.today().replace(day=1)-timedelta(last_day_of_prev_month.day)
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, in_dat)
+          pyrfrm1.insert(0, in_dat.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -31233,13 +37236,13 @@ def mainpage():
           canvas.bind("<Button-3>", my_popup)
           #===========================================================================================================
       elif rth=="Previous year":
-          last_year = (datetime.now()-relativedelta(years=1)).strftime("%Y-%m-%d")
+          last_year = (datetime.now()-relativedelta(years=1))
           pyrfrm1.delete(0,'end')
-          pyrfrm1.insert(0, last_year)
+          pyrfrm1.insert(0, last_year.strftime(dts))
 
           cr=date.today()
           pyrto1.delete(0,'end')
-          pyrto1.insert(0, cr)
+          pyrto1.insert(0, cr.strftime(dts))
 
           frame = Frame(
           reportframe,
@@ -33694,6 +39697,35 @@ def mainpage():
 
   #####################################(Drop down Function)##################################################
   def maindropmenu(event):
+    sql='select dateformat from company'
+    fbcursor.execute(sql)
+    rp_date_for=fbcursor.fetchone()
+    if not rp_date_for:
+        ldt='yyyy-MM-dd'
+    
+    elif rp_date_for[0]=="mm-dd-yyyy":
+        ldt='mm-dd-yyyy'
+
+    elif rp_date_for[0]=="dd-mm-yyyy":
+        ldt='dd-mm-yyyy'
+                
+    # elif rp_date_for[0]=="yyyy.mm.dd":
+    #     ldt='yyyy.mm.dd'
+                    
+    elif rp_date_for[0]=="mm/dd/yyyy":
+        ldt='mm/dd/yyyy'
+                    
+    elif rp_date_for[0]=="dd/mm/yyyy":
+        ldt='dd/mm/yyyy'
+                            
+    elif rp_date_for[0]=="dd.mm.yyyy":
+        ldt='dd.mm.yyyy'
+                            
+    # elif rp_date_for[0]=="yyyy/mm/dd":
+    #     ldt='yyyy/mm/dd'
+
+    else:
+        ldt='yyyy-MM-dd'
     menuvar=menu1.get()
     if menuvar== "Screen Charts":
           rprefreshlebel = Button(midFrame,compound="top", text="Refresh",relief=RAISED, image=photo8,bg="#f5f3f2", fg="black", height=55, bd=1, width=55, command=lambda:screen_flt())
@@ -33708,7 +39740,7 @@ def mainpage():
           rpsaveLabel = Button(midFrame,compound="top", text="Save Chart\nimage",relief=RAISED, image=photo3,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
           rpsaveLabel.place(x=168,y=12)
 
-          rpcopyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command="convert")
+          rpcopyLabel = Button(midFrame,compound="top", text="Copy Chart\n to Clipboard",relief=RAISED, image=copy,bg="#f8f8f2", fg="black", height=55, bd=1, width=55,command=lambda:image())
           rpcopyLabel.place(x=240,y=12)
           
           iruw1 = Label(midFrame,text="                                    ", bg="#f8f8f2")
@@ -33723,13 +39755,13 @@ def mainpage():
           lbl_ir =Label(midFrame, text="From:" , bg="#f8f8f2")
           lbl_ir.place(x=676,y=10)
 
-          exir=DateEntry(midFrame,textvariable=scrfrm, date_pattern='y-mm-dd')
+          exir=DateEntry(midFrame,textvariable=scrfrm,date_pattern=ldt)
           exir.place(x=721,y=10)
 
           lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
           lbl_ir.place(x=690,y=50)
 
-          exir=DateEntry(midFrame,textvariable=scrto, date_pattern='y-mm-dd')
+          exir=DateEntry(midFrame,textvariable=scrto,date_pattern=ldt)
           exir.place(x=721,y=50)
 
           lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
@@ -33960,7 +39992,7 @@ def mainpage():
       lbl_ir.place(x=676,y=10)
 
       global rp_exir
-      rp_exir=DateEntry(midFrame, textvariable=invfrm,  )
+      rp_exir=DateEntry(midFrame, textvariable=invfrm,date_pattern=ldt)
       rp_exir.place(x=721,y=10)
 
       lbl_ir =Label(midFrame, text="To:", bg="#f8f8f2")
@@ -33969,42 +40001,10 @@ def mainpage():
 
 
       global rp_exir1
-      rp_exir1=DateEntry(midFrame,textvariable=invto, )
+      rp_exir1=DateEntry(midFrame,textvariable=invto,date_pattern=ldt)
       rp_exir1.place(x=721,y=50)
 
-      sql='select dateformat from company'
-      fbcursor.execute(sql)
-      rp_date_for=fbcursor.fetchone()
-      if not rp_date_for:
-          pass
-      else:
-          if rp_date_for[0]=="mm-dd-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m-%d-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m-%d-%Y'))
-          elif rp_date_for[0]=="dd-mm-yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-        #   elif rp_date_for[0]=="yyyy.mm.dd":
-        #       rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
-        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
-          elif rp_date_for[0]=="mm/dd/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%m/%d/%y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%m/%d/%y'))
-          elif rp_date_for[0]=="dd/mm/yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d/%m/%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d/%m/%Y'))
-          elif rp_date_for[0]=="dd.mm.yyyy":
-              rp_exir.set_date(rp_exir._date.strftime('%d.%m.%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d.%m.%Y'))
-        #   elif rp_date_for[0]=="yyyy/mm/dd":
-        #       rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
-        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
-          else:
-              rp_exir.set_date(rp_exir._date.strftime('%d-%m-%Y'))
-              rp_exir1.set_date(rp_exir1._date.strftime('%d-%m-%Y'))
-              
-
-
+      
 
       lbl_ir = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_ir.place(x=470,y=10)
@@ -34128,18 +40128,50 @@ def mainpage():
       lbl_ir.place(x=0,y=500)
 
       global irwcfrm1
-      irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm,date_pattern='y-mm-dd')
+      irwcfrm1=DateEntry(midFrame, textvariable=irwcfrm,date_pattern=ldt)
       irwcfrm1.place(x=721,y=10)
 
       lbl_irwc =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_irwc.place(x=690,y=50)
 
       global irwcto1
-      irwcto1=DateEntry(midFrame, textvariable=irwcto, date_pattern='y-mm-dd')
+      irwcto1=DateEntry(midFrame, textvariable=irwcto,date_pattern=ldt)
       irwcto1.place(x=721,y=50)
+      
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+          pass
+      else:
+          if rp_date_for[0]=="mm-dd-yyyy":
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%m-%d-%Y'))
+              irwcto1.set_date(irwcto1._date.strftime('%m-%d-%Y'))
+          elif rp_date_for[0]=="dd-mm-yyyy":
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%d-%m-%Y'))
+              irwcto1.set_date(irwcto1._date.strftime('%d-%m-%Y'))
+        #   elif rp_date_for[0]=="yyyy.mm.dd":
+        #       rp_exir.set_date(rp_exir._date.strftime('%Y.%m.%d'))
+        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y.%m.%d'))
+          elif rp_date_for[0]=="mm/dd/yyyy":
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%m/%d/%y'))
+              irwcto1.set_date(irwcto1._date.strftime('%m/%d/%y'))
+          elif rp_date_for[0]=="dd/mm/yyyy":
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%d/%m/%Y'))
+              irwcto1.set_date(irwcto1._date.strftime('%d/%m/%Y'))
+          elif rp_date_for[0]=="dd.mm.yyyy":
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%d.%m.%Y'))
+              irwcto1.set_date(irwcto1._date.strftime('%d.%m.%Y'))
+        #   elif rp_date_for[0]=="yyyy/mm/dd":
+        #       rp_exir.set_date(rp_exir._date.strftime('%Y/%m/%d'))
+        #       rp_exir1.set_date(rp_exir1._date.strftime('%Y/%m/%d'))
+          else:
+              irwcfrm1.set_date(irwcfrm1._date.strftime('%d-%m-%Y'))
+              irwcto1.set_date(irwcto1._date.strftime('%d-%m-%Y'))
 
       lbl_irwc = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_irwc.place(x=470,y=10)
+
 
       menuirwc = StringVar()
       drop1irwc=ttk.Combobox(midFrame, textvariable=menuirwc)
@@ -34249,14 +40281,15 @@ def mainpage():
       lbl_or.place(x=676,y=10)
       
       global orfrm1
-      orfrm1=DateEntry(midFrame, textvariable=orfrm, date_pattern='y-mm-dd')
+      orfrm1=DateEntry(midFrame, textvariable=orfrm,date_pattern=ldt)
       orfrm1.place(x=721,y=10)
 
       lbl_or =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_or.place(x=690,y=50)
       global orto1
-      orto1=DateEntry(midFrame, textvariable=orto, date_pattern='y-mm-dd')
+      orto1=DateEntry(midFrame, textvariable=orto,date_pattern=ldt)
       orto1.place(x=721,y=50)
+      
 
       lbl_or = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_or.place(x=470,y=10)
@@ -34973,14 +41006,15 @@ def mainpage():
 
       global trifrm1
       global trito1
-      trifrm1=DateEntry(midFrame, textvariable=trifrm, date_pattern='y-mm-dd')
+      trifrm1=DateEntry(midFrame, textvariable=trifrm,date_pattern=ldt)
       trifrm1.place(x=721,y=10)
 
       lbl_tri =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_tri.place(x=690,y=50)
 
-      trito1=DateEntry(midFrame, textvariable=trito, date_pattern='y-mm-dd')
+      trito1=DateEntry(midFrame, textvariable=trito,date_pattern=ldt)
       trito1.place(x=721,y=50)
+      
 
       lbl_tri = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_tri.place(x=470,y=10)
@@ -35091,14 +41125,15 @@ def mainpage():
       lbl_tro.place(x=676,y=10)
       global trofrm1
       global troto1
-      trofrm1=DateEntry(midFrame, textvariable=trofrm, date_pattern='y-mm-dd')
+      trofrm1=DateEntry(midFrame, textvariable=trofrm,date_pattern=ldt)
       trofrm1.place(x=721,y=10)
 
       lbl_tro =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_tro.place(x=690,y=50)
 
-      troto1=DateEntry(midFrame, textvariable=troto, date_pattern='y-mm-dd')
+      troto1=DateEntry(midFrame, textvariable=troto,date_pattern=ldt)
       troto1.place(x=721,y=50)
+      
 
       lbl_tro = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_tro.place(x=470,y=10)
@@ -35192,17 +41227,23 @@ def mainpage():
 
       lbl_sr =Label(midFrame, text="From:" , bg="#f8f8f2")
       lbl_sr.place(x=728,y=10)
+        
 
       global srgd_frm
       global srgd_to
-      srgd_frm=DateEntry(midFrame, textvariable=srgdfrm, date_pattern='y-mm-dd')
+
+      
+
+      srgd_frm=DateEntry(midFrame, textvariable=srgdfrm,date_pattern=ldt)
       srgd_frm.place(x=773,y=10)
 
       lbl_sr =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_sr.place(x=743,y=50)
 
-      srgd_to=DateEntry(midFrame, textvariable=srgdto, date_pattern='y-mm-dd')
+      srgd_to=DateEntry(midFrame, textvariable=srgdto,date_pattern=ldt)
       srgd_to.place(x=773,y=50)
+      
+
 
       lbl_sr = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_sr.place(x=470,y=10)
@@ -35309,14 +41350,15 @@ def mainpage():
       
       global irdfrm1
       global irdfrm2 
-      irdfrm1=DateEntry(midFrame, textvariable=irdfrm, date_pattern='y-mm-dd')
+      irdfrm1=DateEntry(midFrame, textvariable=irdfrm,date_pattern=ldt)
       irdfrm1.place(x=773,y=10)
 
       lbl_ird =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_ird.place(x=743,y=50)
 
-      irdfrm2=DateEntry(midFrame, textvariable=irdto, date_pattern='y-mm-dd')
+      irdfrm2=DateEntry(midFrame, textvariable=irdto,date_pattern=ldt)
       irdfrm2.place(x=773,y=50)
+      
 
       lbl_ird = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_ird.place(x=470,y=10)
@@ -35411,10 +41453,41 @@ def mainpage():
 
       lbl_dir = Label(midFrame, text=" Day:", bg="#f8f8f2")
       lbl_dir.place(x=526,y=9)
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+        yrt='yyyy-MM-dd'
+    
+      elif rp_date_for[0]=="mm-dd-yyyy":
+        yrt='mm-dd-yyyy'
+
+      elif rp_date_for[0]=="dd-mm-yyyy":
+        yrt='dd-mm-yyyy'
+                
+      elif rp_date_for[0]=="yyyy.mm.dd":
+        yrt='yyyy.mm.dd'
+                    
+      elif rp_date_for[0]=="mm/dd/yyyy":
+        yrt='mm/dd/yyyy'
+                    
+      elif rp_date_for[0]=="dd/mm/yyyy":
+        yrt='dd/mm/yyyy'
+                            
+      elif rp_date_for[0]=="dd.mm.yyyy":
+        yrt='dd.mm.yyyy'
+                            
+      elif rp_date_for[0]=="yyyy/mm/dd":
+        yrt='yyyy/mm/dd'
+
+      else:
+        yrt='%d-%m-%Y'
+      
       
       global dir_frm
-      dir_frm=DateEntry(midFrame, textvariable=dirdate, date_pattern='y-mm-dd')
+      dir_frm=DateEntry(midFrame, textvariable=dirdate,date_pattern=yrt)
       dir_frm.place(x=530,y=50)
+    
 
     
       mainchartframe16 =Frame(reportframe,height=1500, width=200)
@@ -35492,16 +41565,49 @@ def mainpage():
 
       lbl_por =Label(midFrame, text="From:" , bg="#f8f8f2")
       lbl_por.place(x=676,y=10)
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      if not rp_date_for:
+        yrt='yyyy-MM-dd'
+    
+      elif rp_date_for[0]=="mm-dd-yyyy":
+        yrt='mm-dd-yyyy'
+
+      elif rp_date_for[0]=="dd-mm-yyyy":
+        yrt='dd-mm-yyyy'
+                
+      elif rp_date_for[0]=="yyyy.mm.dd":
+        yrt='yyyy.mm.dd'
+                    
+      elif rp_date_for[0]=="mm/dd/yyyy":
+        yrt='mm/dd/yyyy'
+                    
+      elif rp_date_for[0]=="dd/mm/yyyy":
+        yrt='dd/mm/yyyy'
+                            
+      elif rp_date_for[0]=="dd.mm.yyyy":
+        yrt='dd.mm.yyyy'
+                            
+      elif rp_date_for[0]=="yyyy/mm/dd":
+        yrt='yyyy/mm/dd'
+
+      else:
+        yrt='%d-%m-%Y'
       global porfrm1
       global porto1
-      porfrm1=DateEntry(midFrame, textvariable=porfrm, date_pattern='y-mm-dd')
+      porfrm1=DateEntry(midFrame, textvariable=porfrm, date_pattern=yrt)
       porfrm1.place(x=721,y=10)
 
       lbl_por =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_por.place(x=690,y=50)
 
-      porto1=DateEntry(midFrame, textvariable=porto, date_pattern='y-mm-dd')
+      porto1=DateEntry(midFrame, textvariable=porto, date_pattern=yrt)
       porto1.place(x=721,y=50)
+      sql='select dateformat from company'
+      fbcursor.execute(sql)
+      rp_date_for=fbcursor.fetchone()
+      
 
       lbl_por = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_por.place(x=470,y=10)
@@ -35604,14 +41710,15 @@ def mainpage():
       lbl_er.place(x=728,y=10)
       global exp_frm
       global exp_to
-      exp_frm=DateEntry(midFrame, textvariable=expfrm, date_pattern='y-mm-dd')
+      exp_frm=DateEntry(midFrame, textvariable=expfrm,date_pattern=ldt)
       exp_frm.place(x=773,y=10)
 
       lbl_er =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_er.place(x=743,y=50)
 
-      exp_to=DateEntry(midFrame, textvariable=expto, date_pattern='y-mm-dd')
+      exp_to=DateEntry(midFrame, textvariable=expto,date_pattern=ldt)
       exp_to.place(x=773,y=50)
+      
 
       lbl_er = Label(midFrame, text="Category:", bg="#f8f8f2")
       lbl_er.place(x=470,y=10)
@@ -35725,15 +41832,14 @@ def mainpage():
       lbl_pr.place(x=725,y=10)
       global pyrfrm1
       global pyrto1
-      pyrfrm1=DateEntry(midFrame, textvariable=pyrfrm, date_pattern='y-mm-dd')
+      pyrfrm1=DateEntry(midFrame, textvariable=pyrfrm,date_pattern=ldt)
       pyrfrm1.place(x=770,y=10)
 
       lbl_pr =Label(midFrame, text="To:", bg="#f8f8f2")
       lbl_pr.place(x=740,y=50)
 
-      pyrto1=DateEntry(midFrame, textvariable=pyrto, date_pattern='y-mm-dd')
+      pyrto1=DateEntry(midFrame, textvariable=pyrto,date_pattern=ldt)
       pyrto1.place(x=770,y=50)
-
 
       mainchartframe18 =Frame(reportframe,height=1500, width=200)
       mainchartframe18.pack(side="top", padx=0, pady=0)
@@ -38039,8 +44145,8 @@ def mainpage():
 
 
   def check_tri():
-      in_dat=trifrm.get_date()
-      cr=trito.get_date()
+      in_dat=trifrm1.get_date()
+      cr=trito1.get_date()
       sql_company = "SELECT * from company"
       fbcursor.execute(sql_company)
       company= fbcursor.fetchone()
