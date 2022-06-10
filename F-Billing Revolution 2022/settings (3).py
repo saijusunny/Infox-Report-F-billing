@@ -22424,8 +22424,10 @@ def mainpage():
 
 
           rp_scrollbar1 = Scrollbar(rp_emailmessage_Frame,orient=VERTICAL,command=rp_mframe.yview)
+          rp_scrollbar3= Scrollbar(rp_emailmessage_Frame,orient=HORIZONTAL,command=rp_mframe.xview, width=0)
+          rp_scrollbar3.place(x=0, y=340, height=20,width=690)
           rp_scrollbar2= Scrollbar(rp_mframe,orient=HORIZONTAL,command=rp_mframe.xview, width=0)
-          rp_scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=310,pady=163)
+          rp_scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=310,pady=155)
         #   rp_scrollbar2.place(x=0, y=310, height=20,width=670)
           rp_mframe.config(xscrollcommand=rp_scrollbar2.set)
           rp_mframe.config(yscrollcommand=rp_scrollbar1.set)
@@ -22486,7 +22488,7 @@ def mainpage():
           
           rp_btn15=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=color,command=rp_color_select)
           rp_btn15.place(x=420, y=1)
-          rp_btn16=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command=addlinkbox)
+          rp_btn16=Button(rp_emailmessage_Frame,width=31,height=23,compound = LEFT,image=hyperlink, command="addlinkbox")
           rp_btn16.place(x=491, y=1)
           global size_variable
           size_variable=IntVar()
@@ -59237,13 +59239,14 @@ def mainpage():
 
   scrollbar1 = Scrollbar(emailmessage_Frame,orient=VERTICAL)
   scrollbar2= Scrollbar(memaiframe,orient=HORIZONTAL,command=memaiframe.xview,width=0)
-  scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=502,pady=200)
+  scrollbar2.pack(fill=X,expand=True,side=BOTTOM,padx=502,pady=188)
   memaiframe.config(xscrollcommand=scrollbar2.set)
   memaiframe.config(yscrollcommand=scrollbar1.set)
   scrollbar1.config(command=memaiframe.yview)
-  scrollbar1.place(x =1040  , y=0, height=432)
+  scrollbar1.place(x =1040, y=0, height=432)
   scrollbar2.config(command=memaiframe.xview)
-
+  scrollbar3= Scrollbar(emailmessage_Frame,orient=HORIZONTAL,command=memaiframe.xview, width=0)
+  scrollbar3.place(x=0, y=410, height=20,width=1040)
 
  
   
